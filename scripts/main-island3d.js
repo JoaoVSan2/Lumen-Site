@@ -28,7 +28,15 @@ const renderer = new THREE.WebGLRenderer({
   alpha: false
 });
 
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+function getRenderPixelRatio() {
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  const compactScreen = host.clientWidth <= 700;
+  const modestDevice = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+  const pixelRatioCap = compactScreen || modestDevice ? 1.5 : 2;
+  return Math.min(devicePixelRatio, pixelRatioCap);
+}
+
+renderer.setPixelRatio(getRenderPixelRatio());
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -44,6 +52,11 @@ renderer.domElement.style.display = 'block';
 renderer.domElement.style.width = '100%';
 renderer.domElement.style.height = '100%';
 renderer.domElement.style.touchAction = 'none';
+renderer.domElement.tabIndex = 0;
+renderer.domElement.setAttribute(
+  'aria-label',
+  'Ilha 3D interativa. Use as setas para girar e mais ou menos para controlar o zoom.'
+);
 
 // ILUMINAÇÃO
 
@@ -1043,7 +1056,8 @@ function updateZoom() {
   camera.right = horizontalSize / 2;
 
   camera.updateProjectionMatrix();
-  renderer.setSize(width, height);
+  renderer.setPixelRatio(getRenderPixelRatio());
+  renderer.setSize(width, height, false);
 }
 
 function changeZoom(amount) {
@@ -1153,6 +1167,24 @@ function stopPointer(event) {
 renderer.domElement.addEventListener('pointerup', stopPointer);
 renderer.domElement.addEventListener('pointercancel', stopPointer);
 renderer.domElement.addEventListener('lostpointercapture', stopPointer);
+
+// CONTROLES DE TECLADO — ACESSIBILIDADE
+
+renderer.domElement.addEventListener('keydown', event => {
+  const key = event.key;
+
+  if (key === 'ArrowLeft' || key === 'ArrowRight') {
+    event.preventDefault();
+    cameraAngle += key === 'ArrowLeft' ? -0.08 : 0.08;
+    updateCamera();
+  } else if (key === '+' || key === '=') {
+    event.preventDefault();
+    changeZoom(-1.5);
+  } else if (key === '-' || key === '_') {
+    event.preventDefault();
+    changeZoom(1.5);
+  }
+});
 
 // ZOOM COM RODA DO MOUSE
 
