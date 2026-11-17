@@ -1,24 +1,39 @@
-# Lumen Society — Island Core
+# Lumen Society
 
-Estrutura inicial do site imersivo.
+Estrutura inicial do site imersivo da Lumen Society.
 
-## Arquivos
-- `index.html`: página inicial.
+## Arquitetura das ilhas
+
+- `scripts/main-island3d.js`: ponto de entrada da ilha principal compartilhada.
+- Futuro módulo de ilhas privadas: lógica reutilizável para criar uma ilha independente e personalizada para cada personagem.
+- Futuro módulo da ilha comercial: espaço dedicado a café, mercados, lojas e outros estabelecimentos.
+
+Os módulos das ilhas privadas e comercial serão adicionados quando essas experiências começarem a ser implementadas. Não manteremos arquivos vazios apenas como marcadores.
+
+## Arquivos atuais
+
+- `index.html`: página inicial e estrutura da experiência.
 - `styles/style.css`: identidade visual e layout responsivo.
-- `scripts/island3d.js`: ponto de entrada do mundo 3D.
+- `scripts/main-island3d.js`: entrada da ilha principal.
 
-## Integrar a ilha
-Substitua o conteúdo de `scripts/island3d.js` pelo código completo e funcional do Island Core. O elemento `#island-canvas` já está no HTML.
+## Integração do Island Core
 
-## Publicar
-1. Crie um repositório GitHub chamado `lumen-society`.
-2. Envie todos os arquivos e pastas deste projeto para a raiz do repositório.
-3. Importe o repositório no Vercel.
-4. Para um site estático sem framework, use:
-   - Framework Preset: Other
-   - Build Command: deixe vazio
-   - Output Directory: `.`
-   - Install Command: deixe vazio
-5. Clique em Deploy.
+O código funcional e validado da ilha principal deverá ser integrado em `scripts/main-island3d.js`.
 
-O plano Hobby da Vercel é gratuito para projetos pessoais e não comerciais. Consulte os limites e termos atuais antes de usar comercialmente.
+Cuidados durante a integração:
+- Preservar o elemento `#island-canvas`.
+- Manter a versão do Three.js já adotada pelo projeto.
+- Não alterar inclinação, rotação ou zoom da câmera sem solicitação explícita.
+- Priorizar melhorias no cenário natural sem descaracterizar a ilha atual.
+
+## Publicação
+
+O projeto é um site estático e pode ser publicado pela Vercel.
+
+Configuração básica:
+- Framework Preset: Other
+- Build Command: vazio
+- Output Directory: `.`
+- Install Command: vazio
+
+Verifique os limites e termos atuais do plano escolhido antes de usar o projeto comercialmente.
