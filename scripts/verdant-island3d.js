@@ -242,7 +242,7 @@ clearing(14,-7,3.6);
 clearing(2,24,3.4);
 
 // Camera controls: independent orbital camera for Verdant Island.
-let angle=Math.PI*.24, elevation=.68, distance=88, targetDistance=88;
+let angle=Math.PI*.24, elevation=.68, distance=108, targetDistance=108;
 const focus=new THREE.Vector3(0,2,0);
 const pointers=new Map();
 let previous={x:0,y:0}, pinch=0, dragging=false;
@@ -253,7 +253,12 @@ function updateCamera() {
 }
 function resize() {
   const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);
-  camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h,false);
+  camera.aspect=w/h;
+  // Em telas verticais, abre o campo de visão para manter a ilha grande visível.
+  camera.fov = camera.aspect < 1 ? Math.min(96, 43 / camera.aspect) : 43;
+  camera.updateProjectionMatrix();
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, (camera.aspect < 1 || touch) ? 1.35 : 1.8));
+  renderer.setSize(w,h,false);
 }
 function pinchDistance() {
   const p=[...pointers.values()]; if(p.length<2)return 0;
@@ -267,16 +272,16 @@ renderer.domElement.addEventListener('pointerdown',e=>{
 renderer.domElement.addEventListener('pointermove',e=>{
   if(!pointers.has(e.pointerId))return;
   pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(pointers.size===2){const d=pinchDistance();if(pinch)targetDistance=THREE.MathUtils.clamp(targetDistance-(d-pinch)*.12,5,112);pinch=d;return;}
+  if(pointers.size===2){const d=pinchDistance();if(pinch)targetDistance=THREE.MathUtils.clamp(targetDistance-(d-pinch)*.12,5,120);pinch=d;return;}
   if(dragging){angle-=(e.clientX-previous.x)*.005;elevation=THREE.MathUtils.clamp(elevation+(e.clientY-previous.y)*.003,.12,1.15);previous={x:e.clientX,y:e.clientY};}
 });
 function endPointer(e){pointers.delete(e.pointerId);if(pointers.size<2)pinch=0;dragging=pointers.size===1;if(dragging)previous=[...pointers.values()][0];}
 renderer.domElement.addEventListener('pointerup',endPointer);
 renderer.domElement.addEventListener('pointercancel',endPointer);
-renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();targetDistance=THREE.MathUtils.clamp(targetDistance+e.deltaY*.045,5,112);},{passive:false});
+renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();targetDistance=THREE.MathUtils.clamp(targetDistance+e.deltaY*.045,5,120);},{passive:false});
 renderer.domElement.addEventListener('keydown',e=>{
   if(e.key==='+'||e.key==='=')targetDistance=Math.max(5,targetDistance-4);
-  if(e.key==='-')targetDistance=Math.min(112,targetDistance+4);
+  if(e.key==='-')targetDistance=Math.min(120,targetDistance+4);
   if(e.key==='ArrowLeft')angle-=.08;
   if(e.key==='ArrowRight')angle+=.08;
 });
