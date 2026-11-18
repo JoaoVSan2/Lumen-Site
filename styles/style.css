@@ -467,3 +467,99 @@ body {
     bottom: max(32px, calc(env(safe-area-inset-bottom) + 14px));
   }
 }
+
+
+/* Island Core — apresentação editorial alinhada à Verdant Island. */
+.island-stage {
+  background: linear-gradient(145deg, #dcebd6 0%, #c9e1d2 48%, #a9d0c7 100%);
+}
+
+.scene-vignette {
+  background:
+    linear-gradient(145deg, rgba(224,239,215,.72), rgba(202,226,211,.34) 48%, rgba(159,201,190,.16)),
+    linear-gradient(0deg, rgba(64,104,87,.13), transparent 34%);
+}
+
+.hero-copy {
+  top: 19%;
+  left: 7%;
+  width: min(470px, 72%);
+}
+
+.hero-copy .eyebrow {
+  margin-bottom: 14px;
+  color: #668577;
+  font-size: 8px;
+  letter-spacing: .2em;
+}
+
+.hero-copy h1 {
+  color: #365b4c;
+  font-size: clamp(42px, 5.6vw, 68px);
+  font-weight: 400;
+  letter-spacing: -.075em;
+}
+
+.hero-copy h1 em {
+  color: #789b78;
+  font-weight: 400;
+}
+
+.hero-copy .intro {
+  max-width: 310px;
+  margin-top: 12px;
+  color: #607e70;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.bottom-note,
+.interaction-hint {
+  color: rgba(56,91,75,.78);
+}
+
+@media (max-width: 700px), (pointer: coarse) and (orientation: portrait) {
+  .hero-copy {
+    top: 21%;
+    bottom: auto;
+    left: 7%;
+    width: 86%;
+  }
+
+  .hero-copy .eyebrow {
+    margin-bottom: 12px;
+    font-size: 7px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(42px, 11vw, 56px);
+  }
+
+  .hero-copy .intro {
+    max-width: 245px;
+    margin-top: 10px;
+    font-size: 11px;
+    line-height: 1.55;
+  }
+
+  .scene-vignette {
+    background:
+      linear-gradient(180deg, rgba(224,239,215,.76), rgba(207,229,211,.40) 34%, rgba(183,215,201,.12) 62%, transparent 82%),
+      linear-gradient(0deg, rgba(64,104,87,.12), transparent 30%);
+  }
+
+  .bottom-note {
+    bottom: max(38px, calc(env(safe-area-inset-bottom) + 20px));
+  }
+
+  .interaction-hint {
+    bottom: max(38px, calc(env(safe-area-inset-bottom) + 20px));
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero-copy {
+    top: 17%;
+    width: min(430px, 55%);
+  }
+}
