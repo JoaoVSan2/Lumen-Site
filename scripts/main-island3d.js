@@ -1053,7 +1053,12 @@ function updateCamera() {
   );
 
   const horizontalDistance = cameraDistance;
-  const height = focus.y + Math.tan(elevation) * horizontalDistance;
+  const targetHeight = THREE.MathUtils.lerp(
+    focus.y,
+    terrainHeight(0, 0) + 0.3,
+    closeView
+  );
+  const height = targetHeight + Math.tan(elevation) * horizontalDistance;
 
   camera.position.set(
     Math.sin(cameraAngle) * horizontalDistance,
@@ -1061,7 +1066,7 @@ function updateCamera() {
     Math.cos(cameraAngle) * horizontalDistance
   );
 
-  camera.lookAt(focus);
+  camera.lookAt(focus.x, targetHeight, focus.z);
 }
 
 function updateZoom() {
