@@ -1040,10 +1040,20 @@ function smoothStep(edge0, edge1, value) {
   return t * t * (3 - 2 * t);
 }
 
+let panoramicFov = 38;
+let closeFov = 38;
+
 function updateCamera() {
   // Mantém a visão panorâmica aprovada quando afastada e baixa
   // gradualmente a câmera conforme o jogador se aproxima do terreno.
   const closeView = 1 - smoothStep(4.5, 27, cameraDistance);
+
+  // No celular em pé, amplia o campo de visão como na Verdant Island
+  // para enquadrar a ilha inteira. Ao aproximar, retorna ao FOV original,
+  // preservando a sensação de câmera próxima ao chão.
+  camera.fov = THREE.MathUtils.lerp(panoramicFov, closeFov, closeView);
+  camera.updateProjectionMatrix();
+
   const panoramicElevation = Math.atan(1.05);
   const explorationElevation = THREE.MathUtils.degToRad(13);
   const elevation = THREE.MathUtils.lerp(
@@ -1077,15 +1087,17 @@ function updateZoom() {
     (navigator.maxTouchPoints || 0) > 0;
   const portrait = window.matchMedia('(orientation: portrait)').matches;
 
-  // Preserva o enquadramento responsivo que já existia nos celulares.
-  const framingScale = touchDevice
-    ? (portrait ? 0.72 : 0.88)
-    : 1;
-
-  const baseFov = THREE.MathUtils.degToRad(38);
-  camera.fov = THREE.MathUtils.radToDeg(
-    2 * Math.atan(Math.tan(baseFov / 2) * framingScale)
+  // Mantém o enquadramento original ao aproximar. Na visão panorâmica,
+  // usa o mesmo princípio da Verdant Island: FOV amplo em telas verticais
+  // para que a ilha inteira caiba no viewport do celular.
+  const baseFov = 38;
+  const framingScale = touchDevice ? (portrait ? 0.72 : 0.88) : 1;
+  closeFov = THREE.MathUtils.radToDeg(
+    2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(baseFov) / 2) * framingScale)
   );
+  panoramicFov = touchDevice && portrait
+    ? Math.min(96, 43 / aspect)
+    : baseFov;
   camera.aspect = aspect;
   camera.updateProjectionMatrix();
 
