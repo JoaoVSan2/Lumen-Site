@@ -1047,7 +1047,7 @@ function updateZoom() {
   const aspect = width / height;
   const touchDevice = window.matchMedia('(pointer: coarse)').matches ||
     (navigator.maxTouchPoints || 0) > 0;
-  const portrait = height > width;
+  const portrait = window.matchMedia('(orientation: portrait)').matches;
 
   // Em celulares, enquadra a ilha de acordo com a orientação sem alterar
   // cameraDistance, o ângulo inicial ou os limites de zoom.
@@ -1271,7 +1271,7 @@ updateZoomControlsLayout();
 function updateZoomControlsLayout() {
   const touchDevice = window.matchMedia('(pointer: coarse)').matches ||
     (navigator.maxTouchPoints || 0) > 0;
-  const portrait = host.clientHeight > host.clientWidth;
+  const portrait = window.matchMedia('(orientation: portrait)').matches;
 
   if (touchDevice && portrait) {
     zoomControls.style.top = '50%';
