@@ -1017,6 +1017,7 @@ island.add(path);
 // ======================================================
 
 let cameraAngle = Math.PI / 4;
+let orbitElevation = 0;
 let cameraDistance = 27;
 let targetCameraDistance = 27;
 
@@ -1056,10 +1057,10 @@ function updateCamera() {
 
   const panoramicElevation = Math.atan(1.05);
   const explorationElevation = THREE.MathUtils.degToRad(13);
-  const elevation = THREE.MathUtils.lerp(
-    explorationElevation,
-    panoramicElevation,
-    closeView
+  const elevation = THREE.MathUtils.clamp(
+    THREE.MathUtils.lerp(explorationElevation, panoramicElevation, closeView) + orbitElevation,
+    0.12,
+    1.2
   );
 
   const horizontalDistance = cameraDistance;
@@ -1164,7 +1165,7 @@ renderer.domElement.addEventListener('pointermove', event => {
       const difference =
         currentDistance - previousPinchDistance;
 
-      changeZoom(-difference * 0.035);
+      changeZoom(-difference * 0.065);
     }
 
     previousPinchDistance = currentDistance;
@@ -1175,8 +1176,11 @@ renderer.domElement.addEventListener('pointermove', event => {
 
   if (dragging && activePointers.size === 1) {
     const deltaX = event.clientX - previousPointer.x;
+    const deltaY = event.clientY - previousPointer.y;
 
+    // Um dedo orbita a câmera nos dois eixos, como na Verdant Island.
     cameraAngle -= deltaX * 0.005;
+    orbitElevation = THREE.MathUtils.clamp(orbitElevation + deltaY * 0.003, -0.48, 0.52);
 
     previousPointer.x = event.clientX;
     previousPointer.y = event.clientY;
@@ -1243,12 +1247,13 @@ const zoomControls = document.createElement('div');
 
 zoomControls.style.cssText = `
   position: absolute;
-  right: 16px;
-  bottom: calc(30px + env(safe-area-inset-bottom, 0px));
+  right: max(14px, env(safe-area-inset-right, 0px));
+  bottom: calc(48px + env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   z-index: 20;
+  pointer-events: auto;
 `;
 
 function createZoomButton(symbol, amount, label) {
@@ -1259,13 +1264,14 @@ function createZoomButton(symbol, amount, label) {
   button.setAttribute('aria-label', label);
 
   button.style.cssText = `
-    width: 46px;
-    height: 46px;
+    width: 44px;
+    height: 44px;
     border: 1px solid rgba(255,255,255,0.65);
-    border-radius: 14px;
-    background: rgba(35,65,58,0.82);
+    border-radius: 13px;
+    background: rgba(45,75,64,0.58);
+    backdrop-filter: blur(10px);
     color: #ffffff;
-    font-size: 28px;
+    font-size: 25px;
     font-weight: 500;
     line-height: 1;
     box-shadow: 0 3px 10px rgba(0,0,0,0.18);

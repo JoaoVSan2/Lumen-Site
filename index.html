@@ -36,7 +36,9 @@
     .topbar .brand, .island-nav { pointer-events:auto; }
     .footer { position:fixed!important; inset:auto 0 0!important; z-index:10!important; min-height:34px!important; padding:0 clamp(16px,3vw,36px)!important; pointer-events:none; }
     .hero-copy { top:16%!important; bottom:auto!important; left:7%!important; width:min(430px,86%)!important; }
-    .bottom-note, .interaction-hint { bottom:max(42px,calc(env(safe-area-inset-bottom) + 24px))!important; }
+    .bottom-note { display:none!important; }
+    .interaction-hint { left:7%!important; right:7%!important; bottom:max(42px,calc(env(safe-area-inset-bottom) + 42px))!important; text-align:right!important; font-size:7px!important; line-height:1.5!important; }
+    .footer { min-height:30px!important; font-size:6px!important; }
     @media (max-width:700px), (pointer:coarse) and (orientation:portrait) {
       .topbar { min-height:54px!important; padding-inline:14px!important; }
       .brand { font-size:10px!important; gap:7px!important; }
@@ -48,8 +50,8 @@
       .hero-copy .eyebrow { margin-bottom:13px!important; font-size:7px!important; }
       .hero-copy h1 { font-size:clamp(42px,11vw,58px)!important; }
       .hero-copy .intro { max-width:240px!important; margin-top:10px!important; font-size:11px!important; }
-      .bottom-note { left:7%!important; bottom:max(38px,calc(env(safe-area-inset-bottom) + 20px))!important; gap:6px!important; font-size:6px!important; }
-      .interaction-hint { left:7%!important; right:7%!important; bottom:max(38px,calc(env(safe-area-inset-bottom) + 20px))!important; font-size:6px!important; }
+      .bottom-note { display:none!important; }
+      .interaction-hint { left:7%!important; right:7%!important; bottom:max(42px,calc(env(safe-area-inset-bottom) + 42px))!important; text-align:right!important; font-size:7px!important; line-height:1.5!important; }
       .footer { min-height:30px!important; padding-inline:14px!important; font-size:6px!important; }
     }
   </style>
@@ -74,16 +76,15 @@
         <p class="intro">Um pequeno refúgio natural. Explore, observe e descubra cada detalhe da ilha.</p>
       </div>
       <div class="bottom-note"><span class="status-dot"></span><span>ISLAND CORE</span><span class="note-divider">/</span><span>EXPERIÊNCIA INTERATIVA</span></div>
-      <div class="interaction-hint">Arraste para girar <span>·</span> Use dois dedos ou a roda para aproximar</div>
+      <div class="interaction-hint">Arraste com um dedo para girar <span>·</span> Pinça com dois dedos para aproximar</div>
     </section>
     <footer class="footer"><span>© 2026 LUMEN SOCIETY</span><span>CRIADO PARA EXPLORAR A NATUREZA</span></footer>
   </main>
   <script type="module" src="./scripts/main-island3d.js"></script>
   <script type="module">
-    // A cena continua com a mesma câmera e os mesmos controles.
-    // Apenas aplica um enquadramento inicial ligeiramente mais próximo.
+    // Mantém o enquadramento inicial da cena; a interação touch é controlada no módulo 3D.
     function frameIslandForViewport() {
-      if (window.lumenIsland?.changeZoom) { window.lumenIsland.changeZoom(-4); return; }
+      if (window.lumenIsland?.changeZoom) { return; }
       requestAnimationFrame(frameIslandForViewport);
     }
     requestAnimationFrame(frameIslandForViewport);
