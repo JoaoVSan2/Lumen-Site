@@ -19,9 +19,8 @@ scene.fog = new THREE.Fog('#b9d9d2', 24, 55);
 
 const focus = new THREE.Vector3(0, 0.2, 0);
 
-const camera = new THREE.OrthographicCamera(
-  -10, 10, 7, -7, 0.1, 100
-);
+// Perspectiva real: permite aproximar até uma visão baixa, próxima ao chão.
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 150);
 
 const renderer = new THREE.WebGLRenderer({
   antialias: true,
@@ -57,7 +56,7 @@ renderer.domElement.style.touchAction = 'none';
 renderer.domElement.tabIndex = 0;
 renderer.domElement.setAttribute(
   'aria-label',
-  'Ilha 3D interativa. Use as setas para girar e mais ou menos para controlar o zoom.'
+  'Ilha 3D interativa. Arraste para girar, use dois dedos ou os controles para aproximar até a visão próxima ao chão.'
 );
 
 // ILUMINAÇÃO
@@ -1018,7 +1017,11 @@ island.add(path);
 // ======================================================
 
 let cameraAngle = Math.PI / 4;
-let cameraDistance = 27; 
+let cameraDistance = 27;
+let targetCameraDistance = 27;
+
+const MIN_CAMERA_DISTANCE = 4.5;
+const MAX_CAMERA_DISTANCE = 36;
 
 let dragging = false;
 let previousPointer = { x: 0, y: 0 };
@@ -1028,14 +1031,34 @@ let previousPinchDistance = 0;
 
 
 
+function smoothStep(edge0, edge1, value) {
+  const t = THREE.MathUtils.clamp(
+    (value - edge0) / (edge1 - edge0),
+    0,
+    1
+  );
+  return t * t * (3 - 2 * t);
+}
+
 function updateCamera() {
-  // Câmera mais elevada, com visão inclinada de cima.
-  const height = cameraDistance * 1.05;
+  // Mantém a visão panorâmica aprovada quando afastada e baixa
+  // gradualmente a câmera conforme o jogador se aproxima do terreno.
+  const closeView = 1 - smoothStep(4.5, 27, cameraDistance);
+  const panoramicElevation = Math.atan(1.05);
+  const explorationElevation = THREE.MathUtils.degToRad(13);
+  const elevation = THREE.MathUtils.lerp(
+    explorationElevation,
+    panoramicElevation,
+    closeView
+  );
+
+  const horizontalDistance = cameraDistance;
+  const height = focus.y + Math.tan(elevation) * horizontalDistance;
 
   camera.position.set(
-    Math.sin(cameraAngle) * cameraDistance,
+    Math.sin(cameraAngle) * horizontalDistance,
     height,
-    Math.cos(cameraAngle) * cameraDistance
+    Math.cos(cameraAngle) * horizontalDistance
   );
 
   camera.lookAt(focus);
@@ -1049,35 +1072,28 @@ function updateZoom() {
     (navigator.maxTouchPoints || 0) > 0;
   const portrait = window.matchMedia('(orientation: portrait)').matches;
 
-  // Em celulares, enquadra a ilha de acordo com a orientação sem alterar
-  // cameraDistance, o ângulo inicial ou os limites de zoom.
+  // Preserva o enquadramento responsivo que já existia nos celulares.
   const framingScale = touchDevice
     ? (portrait ? 0.72 : 0.88)
     : 1;
-  const viewSize = cameraDistance * framingScale;
 
-  camera.top = viewSize / 2;
-  camera.bottom = -viewSize / 2;
-
-  const horizontalSize = viewSize * aspect;
-
-  camera.left = -horizontalSize / 2;
-  camera.right = horizontalSize / 2;
-
+  const baseFov = THREE.MathUtils.degToRad(38);
+  camera.fov = THREE.MathUtils.radToDeg(
+    2 * Math.atan(Math.tan(baseFov / 2) * framingScale)
+  );
+  camera.aspect = aspect;
   camera.updateProjectionMatrix();
+
   renderer.setPixelRatio(getRenderPixelRatio());
   renderer.setSize(width, height, false);
 }
 
 function changeZoom(amount) {
-  cameraDistance = THREE.MathUtils.clamp(
-  cameraDistance + amount,
-  18,
-  36
-);
-
-  updateZoom();
-  updateCamera();
+  targetCameraDistance = THREE.MathUtils.clamp(
+    targetCameraDistance + amount,
+    MIN_CAMERA_DISTANCE,
+    MAX_CAMERA_DISTANCE
+  );
 }
 
 function getPinchDistance() {
@@ -1308,6 +1324,17 @@ function animate() {
 
   const elapsed = clock.getElapsedTime();
 
+  // Suaviza a aproximação e o afastamento da câmera.
+  cameraDistance = THREE.MathUtils.lerp(
+    cameraDistance,
+    targetCameraDistance,
+    1 - Math.exp(-7 * clock.getDelta())
+  );
+  if (Math.abs(cameraDistance - targetCameraDistance) < 0.001) {
+    cameraDistance = targetCameraDistance;
+  }
+  updateCamera();
+
   // Movimento suave da água.
 
   ocean.position.y =
@@ -1355,4 +1382,4 @@ window.lumenIsland = {
 
 window.lumenIslandReady = true;
 
-console.log('Lumen Society Island Core 0.3 carregado.');
+console.log('Lumen Society Island Core 0.4 — zoom panorâmico até visão próxima ao chão carregado.');
