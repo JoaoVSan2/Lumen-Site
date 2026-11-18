@@ -287,3 +287,83 @@ h1 em { color: #668d70; font-style: normal; font-weight: 400; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; }
 }
+
+
+/* Dispositivos touch: estas regras também funcionam com o Chrome em
+   "Versão para computador", que pode reportar uma largura de desktop. */
+@media (pointer: coarse) and (orientation: portrait) {
+  :root { --page-gutter: 14px; }
+
+  .topbar {
+    min-height: 62px;
+    flex-basis: 62px;
+  }
+
+  .brand { font-size: 11px; letter-spacing: .12em; }
+  .brand-mark { font-size: 22px; }
+  .edition { font-size: 7px; letter-spacing: .1em; }
+
+  .island-stage {
+    min-height: 620px;
+    height: clamp(620px, calc(100svh - 140px), 900px);
+    border-radius: 5px;
+  }
+
+  /* Deixa a ilha livre na região superior e leva o texto para baixo. */
+  .hero-copy {
+    top: auto;
+    bottom: 17%;
+    left: 7%;
+    width: 86%;
+  }
+
+  .eyebrow { margin-bottom: 13px; font-size: 8px; }
+  h1 { max-width: 520px; font-size: clamp(38px, 7vw, 58px); }
+  .intro { max-width: 250px; margin-top: 12px; font-size: 12px; }
+
+  .scene-vignette {
+    background:
+      linear-gradient(180deg, rgba(242,247,232,.12), transparent 34%),
+      linear-gradient(0deg, rgba(242,247,232,.58), rgba(242,247,232,.10) 35%, transparent 62%);
+  }
+
+  .bottom-note { bottom: 20px; }
+  .interaction-hint {
+    right: 7%;
+    bottom: 48px;
+    left: 7%;
+    max-width: 72%;
+    font-size: 7px;
+    line-height: 1.5;
+  }
+
+  .footer { min-height: 48px; font-size: 7px; }
+}
+
+@media (pointer: coarse) and (orientation: landscape) {
+  :root { --page-gutter: 16px; }
+
+  .topbar {
+    min-height: 54px;
+    flex-basis: 54px;
+  }
+
+  .island-stage {
+    min-height: 390px;
+    height: clamp(390px, calc(100svh - 112px), 720px);
+  }
+
+  .hero-copy {
+    top: 8%;
+    left: 6%;
+    width: min(390px, 43%);
+  }
+
+  .eyebrow { margin-bottom: 12px; }
+  h1 { font-size: clamp(32px, 4.8vw, 52px); }
+  .intro { margin-top: 12px; font-size: 12px; }
+
+  .bottom-note { left: 6%; bottom: 18px; }
+  .interaction-hint { right: 6%; bottom: 18px; max-width: 45%; }
+  .footer { min-height: 42px; }
+}
