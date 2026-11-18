@@ -1322,13 +1322,14 @@ const clock = new THREE.Clock();
 function animate() {
   requestAnimationFrame(animate);
 
-  const elapsed = clock.getElapsedTime();
+  const delta = clock.getDelta();
+  const elapsed = clock.elapsedTime;
 
   // Suaviza a aproximação e o afastamento da câmera.
   cameraDistance = THREE.MathUtils.lerp(
     cameraDistance,
     targetCameraDistance,
-    1 - Math.exp(-7 * clock.getDelta())
+    1 - Math.exp(-7 * delta)
   );
   if (Math.abs(cameraDistance - targetCameraDistance) < 0.001) {
     cameraDistance = targetCameraDistance;
