@@ -13,24 +13,44 @@
   <style>
     .island-nav { margin-left: auto; margin-right: 22px; pointer-events: auto; }
     .island-nav a {
-      color: #49695e;
-      text-decoration: none;
-      font: 700 9px "DM Sans", sans-serif;
-      letter-spacing: .12em;
-      padding: 9px 12px;
-      border: 1px solid rgba(41,70,62,.2);
-      border-radius: 999px;
-      background: rgba(243,241,231,.58);
-      backdrop-filter: blur(8px);
+      color: #49695e; text-decoration: none; font: 700 9px "DM Sans", sans-serif;
+      letter-spacing: .12em; padding: 9px 12px; border: 1px solid rgba(41,70,62,.2);
+      border-radius: 999px; background: rgba(243,241,231,.58); backdrop-filter: blur(8px);
     }
     .island-nav a:hover { background: rgba(255,255,255,.82); }
 
-    /* Mesma hierarquia editorial da Verdant Island. */
-    .hero-copy { top: 16% !important; }
-    @media (max-width: 700px), (pointer: coarse) and (orientation: portrait) {
-      .island-nav { margin-right: 10px; }
-      .island-nav a { font-size: 7px; padding: 8px 9px; }
-      .hero-copy { top: 12% !important; }
+    /* O canvas e a composição usam exatamente a área visível do dispositivo.
+       Não dependem da altura intrínseca do conteúdo/flex da página. */
+    html, body { width:100%; height:100%; min-height:0; overflow:hidden; }
+    .experience { position:static!important; width:100vw!important; height:100vh!important; height:100dvh!important; min-height:0!important; padding:0!important; overflow:visible!important; }
+    .island-stage {
+      position:fixed!important; inset:0!important; width:100vw!important;
+      height:100vh!important; height:100dvh!important; min-height:0!important;
+      max-height:none!important; flex:none!important; overflow:hidden!important;
+      border:0!important; border-radius:0!important; box-shadow:none!important;
+      z-index:1!important; transform:none!important;
+    }
+    .island-canvas { position:absolute!important; inset:0!important; width:100%!important; height:100%!important; }
+    .island-canvas canvas { width:100%!important; height:100%!important; }
+    .topbar { position:fixed!important; inset:0 0 auto!important; z-index:10!important; min-height:58px!important; padding:0 clamp(16px,3vw,36px)!important; pointer-events:none; }
+    .topbar .brand, .island-nav { pointer-events:auto; }
+    .footer { position:fixed!important; inset:auto 0 0!important; z-index:10!important; min-height:34px!important; padding:0 clamp(16px,3vw,36px)!important; pointer-events:none; }
+    .hero-copy { top:16%!important; bottom:auto!important; left:7%!important; width:min(430px,86%)!important; }
+    .bottom-note, .interaction-hint { bottom:max(42px,calc(env(safe-area-inset-bottom) + 24px))!important; }
+    @media (max-width:700px), (pointer:coarse) and (orientation:portrait) {
+      .topbar { min-height:54px!important; padding-inline:14px!important; }
+      .brand { font-size:10px!important; gap:7px!important; }
+      .brand-mark { font-size:21px!important; }
+      .edition { font-size:6px!important; letter-spacing:.1em!important; }
+      .island-nav { margin-right:8px; }
+      .island-nav a { font-size:6px; padding:7px 8px; }
+      .hero-copy { top:16%!important; left:7%!important; width:86%!important; }
+      .hero-copy .eyebrow { margin-bottom:13px!important; font-size:7px!important; }
+      .hero-copy h1 { font-size:clamp(42px,11vw,58px)!important; }
+      .hero-copy .intro { max-width:240px!important; margin-top:10px!important; font-size:11px!important; }
+      .bottom-note { left:7%!important; bottom:max(38px,calc(env(safe-area-inset-bottom) + 20px))!important; gap:6px!important; font-size:6px!important; }
+      .interaction-hint { left:7%!important; right:7%!important; bottom:max(38px,calc(env(safe-area-inset-bottom) + 20px))!important; font-size:6px!important; }
+      .footer { min-height:30px!important; padding-inline:14px!important; font-size:6px!important; }
     }
   </style>
 </head>
@@ -38,51 +58,32 @@
   <main class="experience">
     <header class="topbar">
       <a class="brand" href="./" aria-label="Lumen Society, início">
-        <span class="brand-mark">✳</span>
-        <span>LUMEN <b>SOCIETY</b></span>
+        <span class="brand-mark">✳</span><span>LUMEN <b>SOCIETY</b></span>
       </a>
       <nav class="island-nav"><a href="./verdant-island.html">VERDANT ISLAND ↗</a></nav>
       <span class="edition">ISLAND CORE <i>·</i> 0.6</span>
     </header>
-
     <section class="island-stage" aria-label="Experiência 3D da ilha">
       <div id="island-canvas" class="island-canvas">
-        <div class="loading">
-          <span class="loading-mark">✳</span>
-          <span>Preparando a ilha...</span>
-        </div>
+        <div class="loading"><span class="loading-mark">✳</span><span>Preparando a ilha...</span></div>
       </div>
       <div class="scene-vignette" aria-hidden="true"></div>
-
       <div class="hero-copy">
         <p class="eyebrow">LUMEN SOCIETY <span> / </span> ISLAND 01</p>
         <h1>Island <em>Core</em></h1>
         <p class="intro">Um pequeno refúgio natural. Explore, observe e descubra cada detalhe da ilha.</p>
       </div>
-
-      <div class="bottom-note">
-        <span class="status-dot"></span>
-        <span>ISLAND CORE</span>
-        <span class="note-divider">/</span>
-        <span>EXPERIÊNCIA INTERATIVA</span>
-      </div>
+      <div class="bottom-note"><span class="status-dot"></span><span>ISLAND CORE</span><span class="note-divider">/</span><span>EXPERIÊNCIA INTERATIVA</span></div>
       <div class="interaction-hint">Arraste para girar <span>·</span> Use dois dedos ou a roda para aproximar</div>
     </section>
-
-    <footer class="footer">
-      <span>© 2026 LUMEN SOCIETY</span>
-      <span>CRIADO PARA EXPLORAR A NATUREZA</span>
-    </footer>
+    <footer class="footer"><span>© 2026 LUMEN SOCIETY</span><span>CRIADO PARA EXPLORAR A NATUREZA</span></footer>
   </main>
   <script type="module" src="./scripts/main-island3d.js"></script>
   <script type="module">
-    // Ajusta apenas o enquadramento inicial; os controles de zoom/rotação
-    // e a câmera de exploração continuam sendo os mesmos.
+    // A cena continua com a mesma câmera e os mesmos controles.
+    // Apenas aplica um enquadramento inicial ligeiramente mais próximo.
     function frameIslandForViewport() {
-      if (window.lumenIsland?.changeZoom) {
-        window.lumenIsland.changeZoom(-10);
-        return;
-      }
+      if (window.lumenIsland?.changeZoom) { window.lumenIsland.changeZoom(-4); return; }
       requestAnimationFrame(frameIslandForViewport);
     }
     requestAnimationFrame(frameIslandForViewport);
