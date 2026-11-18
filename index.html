@@ -24,9 +24,13 @@
       backdrop-filter: blur(8px);
     }
     .island-nav a:hover { background: rgba(255,255,255,.82); }
-    @media (max-width: 700px) {
+
+    /* Mesma hierarquia editorial da Verdant Island. */
+    .hero-copy { top: 16% !important; }
+    @media (max-width: 700px), (pointer: coarse) and (orientation: portrait) {
       .island-nav { margin-right: 10px; }
       .island-nav a { font-size: 7px; padding: 8px 9px; }
+      .hero-copy { top: 12% !important; }
     }
   </style>
 </head>
@@ -71,5 +75,17 @@
     </footer>
   </main>
   <script type="module" src="./scripts/main-island3d.js"></script>
+  <script type="module">
+    // Ajusta apenas o enquadramento inicial; os controles de zoom/rotação
+    // e a câmera de exploração continuam sendo os mesmos.
+    function frameIslandForViewport() {
+      if (window.lumenIsland?.changeZoom) {
+        window.lumenIsland.changeZoom(-10);
+        return;
+      }
+      requestAnimationFrame(frameIslandForViewport);
+    }
+    requestAnimationFrame(frameIslandForViewport);
+  </script>
 </body>
 </html>
