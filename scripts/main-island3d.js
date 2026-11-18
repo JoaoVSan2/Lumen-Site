@@ -30,7 +30,9 @@ const renderer = new THREE.WebGLRenderer({
 
 function getRenderPixelRatio() {
   const devicePixelRatio = window.devicePixelRatio || 1;
-  const compactScreen = host.clientWidth <= 700;
+  const touchDevice = window.matchMedia('(pointer: coarse)').matches ||
+    (navigator.maxTouchPoints || 0) > 0;
+  const compactScreen = host.clientWidth <= 700 || touchDevice;
   const modestDevice = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
   const pixelRatioCap = compactScreen || modestDevice ? 1.5 : 2;
   return Math.min(devicePixelRatio, pixelRatioCap);
@@ -1043,10 +1045,17 @@ function updateZoom() {
   const width = Math.max(1, host.clientWidth);
   const height = Math.max(1, host.clientHeight);
   const aspect = width / height;
-  const viewSize = cameraDistance;
+  const touchDevice = window.matchMedia('(pointer: coarse)').matches ||
+    (navigator.maxTouchPoints || 0) > 0;
+  const portrait = height > width;
 
-  // Mantém o tamanho vertical como referência.
-  // Em telas retrato, ajusta a largura proporcionalmente.
+  // Em celulares, enquadra a ilha de acordo com a orientação sem alterar
+  // cameraDistance, o ângulo inicial ou os limites de zoom.
+  const framingScale = touchDevice
+    ? (portrait ? 0.72 : 0.88)
+    : 1;
+  const viewSize = cameraDistance * framingScale;
+
   camera.top = viewSize / 2;
   camera.bottom = -viewSize / 2;
 
@@ -1253,14 +1262,32 @@ zoomControls.appendChild(
 );
 
 host.appendChild(zoomControls);
+updateZoomControlsLayout();
 
 // ======================================================
 // REDIMENSIONAMENTO
 // ======================================================
 
+function updateZoomControlsLayout() {
+  const touchDevice = window.matchMedia('(pointer: coarse)').matches ||
+    (navigator.maxTouchPoints || 0) > 0;
+  const portrait = host.clientHeight > host.clientWidth;
+
+  if (touchDevice && portrait) {
+    zoomControls.style.top = '50%';
+    zoomControls.style.bottom = 'auto';
+    zoomControls.style.transform = 'translateY(-50%)';
+  } else {
+    zoomControls.style.top = 'auto';
+    zoomControls.style.bottom = 'calc(30px + env(safe-area-inset-bottom, 0px))';
+    zoomControls.style.transform = 'none';
+  }
+}
+
 function resize() {
   updateZoom();
   updateCamera();
+  updateZoomControlsLayout();
 }
 
 const resizeObserver = new ResizeObserver(resize);
