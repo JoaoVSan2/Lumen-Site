@@ -540,7 +540,7 @@ for (let i = 0; i < 48; i++) {
   const x = Math.cos(angle) * radius;
   const z = Math.sin(angle) * radius;
 
-  const scale = 0.65 + grassRandom() * 0.8;
+  const scale = (0.65 + grassRandom() * 0.8) * 0.5;
 
   createGrassTuft(x, z, scale, i % 5);
 }
@@ -1006,7 +1006,7 @@ for (let fieldIndex = 0; fieldIndex < flowerFields.length; fieldIndex++) {
       z
     );
 
-    const scale = 0.75 + flowerRandom() * 0.65;
+    const scale = (0.75 + flowerRandom() * 0.65) * 0.55;
     flower.scale.setScalar(scale);
 
     // Haste.
