@@ -79,8 +79,8 @@ for(const side of [-1,1]){const post=new THREE.Mesh(new THREE.BoxGeometry(.34,h+
 const lintel=new THREE.Mesh(new THREE.BoxGeometry(w+.2,.38,.48),trim);lintel.position.set(0,.24+h+.02,d/2-.18);shell.add(lintel);
 const roof=new THREE.Mesh(new THREE.BoxGeometry(w+.35,.24,d+.35),modern?mat('#aebfbb'):mat('#b86f53'));roof.position.set(0,.24+h+.24,0);shell.add(roof);
 const signboard=new THREE.Mesh(new THREE.BoxGeometry(w*.62,.48,.12),modern?mat('#536d6b'):mat('#77533f'));signboard.position.set(0,.24+h-.65,d/2+.045);shell.add(signboard);
-const edgeMat=mat(modern?'#6d9691':'#bd946d'),corners=[[-w/2,-d/2],[w/2,-d/2],[w/2,d/2],[-w/2,d/2]];
-for(let i=0;i<4;i++){const a=corners[i],b=corners[(i+1)%4],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),line=new THREE.Mesh(new THREE.BoxGeometry(len,.035,.07),edgeMat);line.position.set((a[0]+b[0])/2,.205,(a[1]+b[1])/2);line.rotation.y=-Math.atan2(dz,dx);g.add(line);}
+// The pad itself defines the lot boundary; separate connector bars are omitted
+// so no exposed grid or cross-members remain at ground level.
 g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});sign(g,id,style,d/2+.85);plots.push({...p,position:[x,z],size:[w,d],structureScale:.55});return g;}
 [
 {x:-25,z:-15,w:8.2,d:8.4,h:4.5,style:'modern',id:'M-01',kind:'Pequeno'},
