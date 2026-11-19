@@ -1209,6 +1209,7 @@ constructionStatus.innerHTML = '<span class="construction-status__eyebrow">LUMEN
 host.appendChild(constructionStatus);
 
 let constructionStartAt = null;
+let constructionClockOffset = 0;
 let constructionLastUpdate = 0;
 const CONSTRUCTION_DAY_MS = 24 * 60 * 60 * 1000;
 const CONSTRUCTION_TOTAL_MS = 3 * CONSTRUCTION_DAY_MS;
@@ -1253,15 +1254,19 @@ function updateConstructionStatus(now = Date.now()) {
 }
 
 fetch('./data/core-construction.json', { cache: 'no-store' })
-  .then(response => response.ok ? response.json() : null)
+  .then(response => {
+    const serverDate = Date.parse(response.headers.get('Date') || '');
+    if (Number.isFinite(serverDate)) constructionClockOffset = serverDate - Date.now();
+    return response.ok ? response.json() : null;
+  })
   .then(config => {
     if (config?.startAt) {
       const parsedStart = Date.parse(config.startAt);
       if (Number.isFinite(parsedStart)) constructionStartAt = parsedStart;
     }
-    updateConstructionStatus();
+    updateConstructionStatus(Date.now() + constructionClockOffset);
   })
-  .catch(() => updateConstructionStatus());
+  .catch(() => updateConstructionStatus(Date.now() + constructionClockOffset));
 
 setConstructionStage(-1);
 updateConstructionStatus();
@@ -1626,7 +1631,7 @@ function animate() {
 
   if (elapsed - constructionLastUpdate >= 1) {
     constructionLastUpdate = elapsed;
-    updateConstructionStatus();
+    updateConstructionStatus(Date.now() + constructionClockOffset);
   }
 
   // Suaviza a aproximação e o afastamento da câmera.
