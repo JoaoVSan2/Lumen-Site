@@ -15,7 +15,7 @@ const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 const touch = matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
 
 renderer.setPixelRatio(Math.min(devicePixelRatio || 1, touch ? 1.35 : 1.8));
-renderer.shadowMap.enabled = true;
+renderer.shadowMap.enabled = !touch;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -27,8 +27,8 @@ Object.assign(renderer.domElement.style, { width: '100%', height: '100%', displa
 scene.add(new THREE.HemisphereLight('#e9f5e7', '#526b54', 2.0));
 const sun = new THREE.DirectionalLight('#fff0d5', 2.7);
 sun.position.set(-70, 114, 51);
-sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048);
+sun.castShadow = !touch;
+sun.shadow.mapSize.set(touch ? 1024 : 2048, touch ? 1024 : 2048);
 sun.shadow.camera.left = -640;
 sun.shadow.camera.right = 640;
 sun.shadow.camera.top = 640;
@@ -307,7 +307,7 @@ trail([[0,-8],[8,-3],[13,5],[20,10],[29,12]],.2);
 // WOODEN FOOTBRIDGE — connects the main trail across the western river cut.
 const riverBridge = new THREE.Group();
 riverBridge.position.set(-8.3, heightAt(-8.3, -3.5) + 0.52, -3.5);
-riverBridge.rotation.y = 0.72;
+riverBridge.rotation.y = -0.69;
 islandWorld.add(riverBridge);
 const bridgeDeck = new THREE.Mesh(
   new THREE.BoxGeometry(4.9, 0.18, 1.55),
