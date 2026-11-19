@@ -1,5 +1,5 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 // LUMEN SOCIETY — ENTERTAINMENT ISLAND 1.0
 // Ilha independente: parque de diversões, festival, arcade e orla de lazer.
 const host=document.getElementById('entertainment-canvas');
