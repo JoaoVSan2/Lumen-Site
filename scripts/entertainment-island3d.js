@@ -1,4 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
 // LUMEN SOCIETY — ENTERTAINMENT ISLAND 1.0
 // Ilha independente: parque de diversões, festival, arcade e orla de lazer.
 const host=document.getElementById('entertainment-canvas');
@@ -60,6 +61,48 @@ function beamBetween(parent,a,b,radius,material,segments=10){const start=new THR
 function path(points,width=2.3){const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z))),samples=curve.getPoints(180),v=[],ind=[];for(let i=0;i<samples.length;i++){const p=samples[i],t=curve.getTangent(i/(samples.length-1)),len=Math.hypot(t.x,t.z)||1,nx=-t.z/len,nz=t.x/len;for(const side of [-1,1]){const x=p.x+nx*side*width/2,z=p.z+nz*side*width/2;v.push(x,surface(x,z)+.06,z);}if(i<samples.length-1){const k=i*2;ind.push(k,k+1,k+2,k+1,k+3,k+2);}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(v,3));g.setIndex(ind);g.computeVertexNormals();const mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:pathMat.color,roughness:1,side:THREE.DoubleSide}));mesh.receiveShadow=true;islandWorld.add(mesh);}
 function platform(x,z,w,d,m=cream){const o=new THREE.Mesh(new THREE.BoxGeometry(w,.2,d),m);o.position.set(x,surface(x,z)+.1,z);return add(o);}
 function tree(x,z,s=1,palm=false){const g=new THREE.Group();g.position.set(x,surface(x,z),z);g.scale.setScalar(s);cylinder(.18,.28,2.5,wood,0,1.25,0,g);if(palm){for(let i=0;i<7;i++){const a=i/7*Math.PI*2,leaf=new THREE.Mesh(new THREE.ConeGeometry(.24,2.7,6),grassA);leaf.position.set(Math.cos(a)*.85,2.55+Math.sin(i*2)*.15,Math.sin(a)*.85);leaf.rotation.z=-Math.cos(a)*.9;leaf.rotation.x=Math.sin(a)*.9;add(leaf,g);}}else{for(let i=0;i<3;i++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.15-i*.1,1),[grassA,grassB,mat('#a5b889')][i]);crown.position.set((rand()-.5)*.3,2.4+i*.42,(rand()-.5)*.3);add(crown,g);}}islandWorld.add(g);}
+
+// Reusable GLB pipeline: normalize each supplied model to a predictable park footprint.
+const parkAssetLoader = new GLTFLoader();
+const parkAssetRegistry = [];
+function loadParkAsset(file, x, z, targetSize, rotation = 0, yOffset = 0) {
+  parkAssetLoader.load(`./assets/entertainment/${file}.glb`, gltf => {
+    const model = gltf.scene;
+    model.updateMatrixWorld(true);
+    let bounds = new THREE.Box3().setFromObject(model);
+    const size = bounds.getSize(new THREE.Vector3());
+    const largest = Math.max(size.x, size.y, size.z);
+    if (!Number.isFinite(largest) || largest <= 0) {
+      console.warn('Asset GLB sem dimensões válidas:', file);
+      return;
+    }
+    model.scale.setScalar(targetSize / largest);
+    model.updateMatrixWorld(true);
+    bounds = new THREE.Box3().setFromObject(model);
+    const center = bounds.getCenter(new THREE.Vector3());
+    model.position.x -= center.x;
+    model.position.z -= center.z;
+    model.position.y -= bounds.min.y;
+    model.traverse(node => {
+      if (!node.isMesh) return;
+      node.castShadow = !touch;
+      node.receiveShadow = true;
+      if (node.material) {
+        const materials = Array.isArray(node.material) ? node.material : [node.material];
+        materials.forEach(material => {
+          if (material.map) material.map.colorSpace = THREE.SRGBColorSpace;
+        });
+      }
+    });
+    const placement = new THREE.Group();
+    placement.position.set(x, surface(x, z) + yOffset, z);
+    placement.rotation.y = rotation;
+    placement.add(model);
+    islandWorld.add(placement);
+    parkAssetRegistry.push({ file, placement, model });
+  }, undefined, error => console.warn('Falha ao carregar asset do parque:', file, error));
+}
+
 // Coherent pedestrian circulation: an entrance spine, central plaza and clear branches to every attraction.
 path([[0,-38],[0,-31],[0,-23],[0,-16],[0,-10],[0,-6]],3.2);
 path([[-5,-1],[-10,-3],[-14,-6],[-14,-11]],2.5);
@@ -314,7 +357,7 @@ box(7,2.1,.25,mat('#263f48',.4,{emissive:'#1b3541',emissiveIntensity:.18}),0,3.1
 for(let i=0;i<5;i++){const light=sphere(.22,[gold,pink,blue,teal,cream][i],-4+i*2,5.45,-2.6,stage);}
 // Food kiosks and beach-side rest huts.
 function kiosk(x,z,accent){const g=new THREE.Group();g.position.set(x,surface(x,z),z);islandWorld.add(g);box(4,2.8,3.1,cream,0,1.4,0,g);box(4.5,.35,3.5,accent,0,2.95,0,g);box(3.2,.15,.2,darkWood,0,1.85,1.62,g);for(const sx of [-1.45,1.45])cylinder(.09,.11,2.7,gold,sx,1.35,1.55,g,8);}
-kiosk(-6,-25,coral);kiosk(31,14,teal);kiosk(-31,0,gold);
+kiosk(31,14,teal);kiosk(-31,0,gold);
 // Boardwalk and pier reaching into the water.
 const pier=new THREE.Group();pier.position.set(0,surface(0,34),34);islandWorld.add(pier);
 box(5,.3,13,wood,0,.12,5,pier);box(10,.3,5,wood,0,.12,13,pier);
@@ -393,7 +436,7 @@ function ticketBooth(x,z,accent){
   box(1.8,.16,.22,gold,0,1.22,1.12,g);
   box(.1,.95,.1,wood,-.9,.48,.78,g);box(.1,.95,.1,wood,.9,.48,.78,g);
 }
-ticketBooth(-5.4,-33,coral);ticketBooth(5.4,-33,teal);
+
 
 // Queue rails define orderly approach lanes without fencing off the attractions.
 function queueLane(cx,cz,w,d,railMaterial=gold){
@@ -405,7 +448,6 @@ function queueLane(cx,cz,w,d,railMaterial=gold){
   }
   for(let z=-d/2;z<=d/2+.01;z+=1.7)beamBetween(islandWorld,[cx-w/2,y+.5,cz+z],[cx+w/2,y+.5,cz+z],.045,railMaterial,7);
 }
-queueLane(-31,-11,5.0,4.2,coral);
 queueLane(22,10,6.0,3.8,teal);
 
 queueLane(-14,17,5.4,3.8,blue);
@@ -444,6 +486,23 @@ for(const [x,z] of [[-10,3],[10,3]]){box(1.8,.16,1.1,wood,x,surface(x,z)+.65,z+1
 path([[17,-23],[22,-26],[27,-29],[32,-27],[34,-21]],2.3);
 // Additional palms frame the outer beach and the entrance promenade.
 [[-38,-4],[-37,16],[-19,35],[19,35],[38,8],[38,-8],[5,-39]].forEach(([x,z],i)=>tree(x,z,.82,i%2===0));
+
+
+// Supplied park GLBs: authored props complement procedural rides without duplicating them.
+loadParkAsset('popcorn-stall', -6, -25, 5.2, 0);
+loadParkAsset('ring-toss-booth', -31, -11, 5.0, Math.PI / 2);
+loadParkAsset('ticket-booth', -5.4, -33, 2.9, 0);
+loadParkAsset('ticket-booth', 5.4, -33, 2.9, 0);
+loadParkAsset('directional-signpost', 5.2, -15.5, 2.8, Math.PI / 2);
+loadParkAsset('park-tram', 27, -12.5, 5.8, Math.PI / 2);
+loadParkAsset('bunting-strand', -7.5, 12.2, 12.0, Math.PI / 2, 3.8);
+loadParkAsset('string-light-strand', -8, 22.5, 13.0, 0, 5.0);
+loadParkAsset('topiary-tree-in-planter', -6.2, -34.5, 2.4, 0);
+loadParkAsset('topiary-tree-in-planter', 6.2, -34.5, 2.4, 0);
+loadParkAsset('park-bench', 15, 3.5, 2.7, Math.PI / 2);
+loadParkAsset('picnic-table', -13, -19.5, 3.4, -.25);
+loadParkAsset('litter-bin', -10, -13, 1.0, 0);
+loadParkAsset('low-picket-fence', -28, 23, 6.5, Math.PI / 2);
 
 // Fit the whole island on first load, retaining generous zoom-out range on mobile.
 let angle=Math.PI*.24,elevation=.68,distance=648,targetDistance=648;
