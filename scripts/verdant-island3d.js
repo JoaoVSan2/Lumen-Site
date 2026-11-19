@@ -306,7 +306,7 @@ trail([[0,-8],[8,-3],[13,5],[20,10],[29,12]],.2);
 
 // WOODEN FOOTBRIDGE — connects the main trail across the western river cut.
 const riverBridge = new THREE.Group();
-riverBridge.position.set(-8.3, heightAt(-8.3, -3.5) + 0.52, -3.5);
+riverBridge.position.set(-8.3, heightAt(-8.3, -3.5) + 0.95, -3.5);
 riverBridge.rotation.y = -0.69;
 islandWorld.add(riverBridge);
 const bridgeDeck = new THREE.Mesh(
