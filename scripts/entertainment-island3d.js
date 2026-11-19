@@ -60,15 +60,17 @@ function beamBetween(parent,a,b,radius,material,segments=10){const start=new THR
 function path(points,width=2.3){const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z))),samples=curve.getPoints(180),v=[],ind=[];for(let i=0;i<samples.length;i++){const p=samples[i],t=curve.getTangent(i/(samples.length-1)),len=Math.hypot(t.x,t.z)||1,nx=-t.z/len,nz=t.x/len;for(const side of [-1,1]){const x=p.x+nx*side*width/2,z=p.z+nz*side*width/2;v.push(x,surface(x,z)+.06,z);}if(i<samples.length-1){const k=i*2;ind.push(k,k+1,k+2,k+1,k+3,k+2);}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(v,3));g.setIndex(ind);g.computeVertexNormals();const mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:pathMat.color,roughness:1,side:THREE.DoubleSide}));mesh.receiveShadow=true;islandWorld.add(mesh);}
 function platform(x,z,w,d,m=cream){const o=new THREE.Mesh(new THREE.BoxGeometry(w,.2,d),m);o.position.set(x,surface(x,z)+.1,z);return add(o);}
 function tree(x,z,s=1,palm=false){const g=new THREE.Group();g.position.set(x,surface(x,z),z);g.scale.setScalar(s);cylinder(.18,.28,2.5,wood,0,1.25,0,g);if(palm){for(let i=0;i<7;i++){const a=i/7*Math.PI*2,leaf=new THREE.Mesh(new THREE.ConeGeometry(.24,2.7,6),grassA);leaf.position.set(Math.cos(a)*.85,2.55+Math.sin(i*2)*.15,Math.sin(a)*.85);leaf.rotation.z=-Math.cos(a)*.9;leaf.rotation.x=Math.sin(a)*.9;add(leaf,g);}}else{for(let i=0;i<3;i++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.15-i*.1,1),[grassA,grassB,mat('#a5b889')][i]);crown.position.set((rand()-.5)*.3,2.4+i*.42,(rand()-.5)*.3);add(crown,g);}}islandWorld.add(g);}
-// Main pedestrian loop and radial paths.
-path([[-31,-5],[-23,-3],[-14,-1],[-5,1],[5,1],[15,0],[25,2],[32,8]],3.1);
-path([[-7,-30],[-5,-20],[-3,-10],[-1,0],[0,11],[-4,22],[-8,30]],2.5);
-path([[1,2],[10,7],[18,14],[22,23]],2.1);
-path([[-2,1],[-11,8],[-19,15],[-25,22]],2.1);
+// Coherent pedestrian circulation: an entrance spine, central plaza and clear branches to every attraction.
+path([[0,-38],[0,-31],[0,-23],[0,-16],[0,-10],[0,-6]],3.2);
+path([[-5,-1],[-10,-3],[-14,-6],[-14,-11]],2.5);
+path([[-4,4],[-9,9],[-14,14],[-19,21],[-23,25]],2.4);
+path([[-3,7],[-5,13],[-7,18],[-8,21]],2.8);
+path([[5,3],[11,5],[17,8],[22,11]],2.4);
+path([[3,7],[4,14],[4,22],[2,29],[0,33]],2.5);
+path([[0,-8],[1,-16],[7,-22],[17,-23],[27,-18],[30,-10],[30,-2],[28,6]],2.2);
 // PARK ENTRANCE — a clear, welcoming threshold aligned with the main approach path.
 const parkGate = new THREE.Group();
-parkGate.position.set(22, surface(22, 25), 25);
-parkGate.rotation.y = 0.42;
+parkGate.position.set(0, surface(0, -34), -34);
 islandWorld.add(parkGate);
 for (const x of [-2.8, 2.8]) {
   box(0.62, 4.7, 0.72, cream, x, 2.35, 0, parkGate);
@@ -111,9 +113,9 @@ function parkBench(x, z, rotation = 0) {
     box(0.14, 0.62, 0.18, gold, sx, 0.31, 0, bench);
   }
 }
-parkBench(9, 15, -0.12);
-parkBench(-12, -20, 0.2);
-parkBench(10, 26, Math.PI / 2);
+parkBench(-11, -1, Math.PI / 2);
+parkBench(11, -1, -Math.PI / 2);
+parkBench(-1, 13, 0);
 
 // Central festival square with a small circular stage.
 platform(0,2,16,13,mat('#d9d0bd'));
@@ -122,7 +124,7 @@ cylinder(3.35,3.35,.34,coral,0,surface(0,2)+.31,2,islandWorld,48);
 cylinder(2.65,2.65,.12,cream,0,surface(0,2)+.55,2,islandWorld,48);
 for(let i=0;i<8;i++){const a=i/8*Math.PI*2;const lamp=sphere(.18,gold,Math.cos(a)*3.7,surface(0,2)+.55,2+Math.sin(a)*3.7);}
 // Ferris wheel: reinforced A-frame supports, steel spokes and enclosed passenger cabins.
-const ferris=new THREE.Group();ferris.position.set(-21,surface(-21,-10),-10);islandWorld.add(ferris);
+const ferris=new THREE.Group();ferris.position.set(-22,surface(-22,-11),-11);islandWorld.add(ferris);
 const wheelCenter=new THREE.Vector3(0,10.2,0),wheelRadius=7.6;
 const wheelRing=new THREE.Mesh(new THREE.TorusGeometry(wheelRadius,.24,12,72),coral);wheelRing.position.copy(wheelCenter);add(wheelRing,ferris);
 const innerRing=new THREE.Mesh(new THREE.TorusGeometry(wheelRadius*.78,.13,10,56),gold);innerRing.position.copy(wheelCenter);add(innerRing,ferris);
@@ -217,7 +219,7 @@ for (let i = 0; i < 3; i++) {
 }
 
 // Carousel pavilion with ten sculpted carousel animals, poles and a striped canopy.
-const carousel=new THREE.Group();carousel.position.set(18,surface(18,19),19);islandWorld.add(carousel);
+const carousel=new THREE.Group();carousel.position.set(22,surface(22,18),18);islandWorld.add(carousel);
 cylinder(5.2,5.2,.35,cream,0,.25,0,carousel,40);
 const animalMaterials=[cream,coral,teal,gold,blue,pink];
 function carouselAnimal(parent,index){
@@ -298,13 +300,13 @@ const canopy=new THREE.Mesh(new THREE.ConeGeometry(5.4,2.0,10),coral);canopy.pos
 cylinder(.38,.38,1.2,gold,0,6.15,0,carousel,12);
 for(let i=0;i<10;i++){const a=i/10*Math.PI*2;const stripe=box(.12,1.35,.035,cream,Math.cos(a)*2.68,5.55,Math.sin(a)*2.68,carousel);stripe.rotation.y=-a;}
 // Arcade pavilion and colorful game-front panels.
-const arcade=new THREE.Group();arcade.position.set(-18,surface(-18,18),18);islandWorld.add(arcade);
+const arcade=new THREE.Group();arcade.position.set(-23,surface(-23,17),17);islandWorld.add(arcade);
 box(10,4.4,7,cream,0,2.2,0,arcade);box(10.6,.55,7.6,teal,0,4.55,0,arcade);
 box(7.5,1.45,.22,darkWood,0,3.55,3.62,arcade);
 for(let i=0;i<4;i++){box(1.35,1.8,.18,[coral,gold,blue,pink][i],-3+i*2,1.65,3.62,arcade);box(1.0,.55,.08,mat('#f5e8ca',.45,{emissive:'#f2cb8c',emissiveIntensity:.3}),-3+i*2,2.2,3.76,arcade);}
 for(const x of [-4.6,4.6])for(const z of [-3.2,3.2])box(.32,4.5,.32,gold,x,2.25,z,arcade);
 // Festival stage, screen and backstage wings.
-const stage=new THREE.Group();stage.position.set(-5,surface(-5,27),27);islandWorld.add(stage);
+const stage=new THREE.Group();stage.position.set(-8,surface(-8,27),27);islandWorld.add(stage);
 box(13,.65,6,darkWood,0,.45,0,stage);box(12,4.4,.45,teal,0,2.8,-2.7,stage);
 box(13,.45,1,coral,0,5.1,-2.7,stage);
 for(const x of [-6,6]){cylinder(.2,.25,5.6,gold,x,2.8,-2.7,stage,10);box(1.4,3.6,.7,coral,x,2.2,-1.9,stage);}
@@ -312,15 +314,25 @@ box(7,2.1,.25,mat('#263f48',.4,{emissive:'#1b3541',emissiveIntensity:.18}),0,3.1
 for(let i=0;i<5;i++){const light=sphere(.22,[gold,pink,blue,teal,cream][i],-4+i*2,5.45,-2.6,stage);}
 // Food kiosks and beach-side rest huts.
 function kiosk(x,z,accent){const g=new THREE.Group();g.position.set(x,surface(x,z),z);islandWorld.add(g);box(4,2.8,3.1,cream,0,1.4,0,g);box(4.5,.35,3.5,accent,0,2.95,0,g);box(3.2,.15,.2,darkWood,0,1.85,1.62,g);for(const sx of [-1.45,1.45])cylinder(.09,.11,2.7,gold,sx,1.35,1.55,g,8);}
-kiosk(5,-25,coral);kiosk(30,-13,teal);kiosk(-25,-25,gold);
+kiosk(-6,-25,coral);kiosk(31,-13,teal);kiosk(-29,-20,gold);
 // Boardwalk and pier reaching into the water.
 const pier=new THREE.Group();pier.position.set(0,surface(0,34),34);islandWorld.add(pier);
 box(5,.3,13,wood,0,.12,5,pier);box(10,.3,5,wood,0,.12,13,pier);
 for(let z=0;z<=14;z+=2)for(const x of [-2.1,2.1])cylinder(.13,.16,2.6,darkWood,x,-.8,z,pier,8);
 for(const x of [-4.7,4.7])for(const z of [11,15])cylinder(.13,.16,2.5,darkWood,x,-.8,z,pier,8);
 // Palms, shade trees and small landscaped pockets.
-[[-34,-20],[-32,9],[-25,29],[31,22],[34,-18],[3,-33],[-4,32],[25,-27]].forEach(([x,z],i)=>tree(x,z,.85+rand()*.22,i%2===0));
-for(let i=0;i<28;i++){const a=rand()*Math.PI*2,r=25+rand()*12,x=Math.cos(a)*r,z=Math.sin(a)*r;if(Math.hypot(x,z)<39)tree(x,z,.32+rand()*.22,false);}
+// Peripheral trees frame the park without crowding entrances, rides or walking routes.
+[[-35,-21],[-34,8],[-30,31],[33,24],[36,-18],[7,-36],[12,33],[28,-27]].forEach(([x,z],i)=>tree(x,z,.72+rand()*.18,i%2===0));
+const protectedZones=[
+  {x:0,z:-34,r:8},{x:-22,z:-11,r:10},{x:13,z:-8,r:16},
+  {x:22,z:18,r:9},{x:-23,z:17,r:9},{x:-8,z:27,r:9},
+  {x:0,z:34,r:9},{x:-6,z:-25,r:5},{x:31,z:-13,r:5},{x:-29,z:-20,r:5}
+];
+for(let i=0;i<16;i++){
+  const a=rand()*Math.PI*2,r=27+rand()*9,x=Math.cos(a)*r,z=Math.sin(a)*r;
+  if(Math.hypot(x,z)>39||protectedZones.some(zone=>Math.hypot(x-zone.x,z-zone.z)<zone.r))continue;
+  tree(x,z,.3+rand()*.18,false);
+}
 function lamp(x,z){const g=new THREE.Group();g.position.set(x,surface(x,z),z);islandWorld.add(g);cylinder(.07,.1,2.8,darkWood,0,1.4,0,g,8);sphere(.23,gold,0,2.9,0,g);}
 [[-28,-7],[-12,-2],[5,5],[25,6],[11,24],[-15,22],[0,31]].forEach(([x,z])=>lamp(x,z));
 // Fit the whole island on first load, retaining generous zoom-out range on mobile.
