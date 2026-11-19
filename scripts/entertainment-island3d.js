@@ -56,6 +56,7 @@ function add(mesh,parent=islandWorld){mesh.castShadow=true;mesh.receiveShadow=tr
 function box(w,h,d,m,x,y,z,parent=islandWorld){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);return add(o,parent);}
 function cylinder(rt,rb,h,m,x,y,z,parent=islandWorld,segments=12){const o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,segments),m);o.position.set(x,y,z);return add(o,parent);}
 function sphere(r,m,x,y,z,parent=islandWorld){const o=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),m);o.position.set(x,y,z);return add(o,parent);}
+function beamBetween(parent,a,b,radius,material,segments=10){const start=new THREE.Vector3(...a),end=new THREE.Vector3(...b),delta=end.clone().sub(start),mesh=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,delta.length(),segments),material);mesh.position.copy(start).add(end).multiplyScalar(.5);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());return add(mesh,parent);}
 function path(points,width=2.3){const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z))),samples=curve.getPoints(180),v=[],ind=[];for(let i=0;i<samples.length;i++){const p=samples[i],t=curve.getTangent(i/(samples.length-1)),len=Math.hypot(t.x,t.z)||1,nx=-t.z/len,nz=t.x/len;for(const side of [-1,1]){const x=p.x+nx*side*width/2,z=p.z+nz*side*width/2;v.push(x,surface(x,z)+.06,z);}if(i<samples.length-1){const k=i*2;ind.push(k,k+1,k+2,k+1,k+3,k+2);}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(v,3));g.setIndex(ind);g.computeVertexNormals();const mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:pathMat.color,roughness:1,side:THREE.DoubleSide}));mesh.receiveShadow=true;islandWorld.add(mesh);}
 function platform(x,z,w,d,m=cream){const o=new THREE.Mesh(new THREE.BoxGeometry(w,.2,d),m);o.position.set(x,surface(x,z)+.1,z);return add(o);}
 function tree(x,z,s=1,palm=false){const g=new THREE.Group();g.position.set(x,surface(x,z),z);g.scale.setScalar(s);cylinder(.18,.28,2.5,wood,0,1.25,0,g);if(palm){for(let i=0;i<7;i++){const a=i/7*Math.PI*2,leaf=new THREE.Mesh(new THREE.ConeGeometry(.24,2.7,6),grassA);leaf.position.set(Math.cos(a)*.85,2.55+Math.sin(i*2)*.15,Math.sin(a)*.85);leaf.rotation.z=-Math.cos(a)*.9;leaf.rotation.x=Math.sin(a)*.9;add(leaf,g);}}else{for(let i=0;i<3;i++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.15-i*.1,1),[grassA,grassB,mat('#a5b889')][i]);crown.position.set((rand()-.5)*.3,2.4+i*.42,(rand()-.5)*.3);add(crown,g);}}islandWorld.add(g);}
@@ -70,28 +71,88 @@ const plazaRing=new THREE.Mesh(new THREE.RingGeometry(3.4,4.15,48),gold);plazaRi
 cylinder(3.35,3.35,.34,coral,0,surface(0,2)+.31,2,islandWorld,48);
 cylinder(2.65,2.65,.12,cream,0,surface(0,2)+.55,2,islandWorld,48);
 for(let i=0;i<8;i++){const a=i/8*Math.PI*2;const lamp=sphere(.18,gold,Math.cos(a)*3.7,surface(0,2)+.55,2+Math.sin(a)*3.7);}
-// Ferris wheel: open steel frame, spokes and suspended gondolas.
+// Ferris wheel: reinforced A-frame supports, steel spokes and enclosed passenger cabins.
 const ferris=new THREE.Group();ferris.position.set(-21,surface(-21,-10),-10);islandWorld.add(ferris);
 const wheelCenter=new THREE.Vector3(0,10.2,0),wheelRadius=7.6;
-const wheelRing=new THREE.Mesh(new THREE.TorusGeometry(wheelRadius,.22,10,64),coral);wheelRing.position.copy(wheelCenter);add(wheelRing,ferris);
-const innerRing=new THREE.Mesh(new THREE.TorusGeometry(wheelRadius*.78,.11,8,48),gold);innerRing.position.copy(wheelCenter);add(innerRing,ferris);
-for(let i=0;i<12;i++){const a=i/12*Math.PI*2,dir=new THREE.Vector3(Math.cos(a),Math.sin(a),0),spoke=new THREE.Mesh(new THREE.CylinderGeometry(.09,.12,wheelRadius*2,8),cream);spoke.position.copy(wheelCenter).addScaledVector(dir,wheelRadius);spoke.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir);add(spoke,ferris);const gondola=box(1.05,1.05,.9,[coral,teal,gold,pink,blue][i%5],Math.cos(a)*wheelRadius,10.2+Math.sin(a)*wheelRadius,0,ferris);gondola.position.y-=.8;}
-sphere(.62,gold,0,10.2,.05,ferris);
-for(const side of [-1,1]){const support=new THREE.Mesh(new THREE.CylinderGeometry(.2,.32,10.4,10),cream);support.position.set(side*3.25,5.15,0);support.rotation.z=side*.31;add(support,ferris);const brace=new THREE.Mesh(new THREE.CylinderGeometry(.13,.16,9.1,8),gold);brace.position.set(side*1.65,4.8,.15);brace.rotation.z=-side*.36;add(brace,ferris);}
-box(10,.42,3.2,darkWood,0,.35,0,ferris);
-// Roller coaster track and supports.
+const wheelRing=new THREE.Mesh(new THREE.TorusGeometry(wheelRadius,.24,12,72),coral);wheelRing.position.copy(wheelCenter);add(wheelRing,ferris);
+const innerRing=new THREE.Mesh(new THREE.TorusGeometry(wheelRadius*.78,.13,10,56),gold);innerRing.position.copy(wheelCenter);add(innerRing,ferris);
+for(let i=0;i<12;i++){const a=i/12*Math.PI*2,dir=new THREE.Vector3(Math.cos(a),Math.sin(a),0),spoke=new THREE.Mesh(new THREE.CylinderGeometry(.105,.14,wheelRadius*2,10),cream);spoke.position.copy(wheelCenter).addScaledVector(dir,wheelRadius);spoke.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir);add(spoke,ferris);}
+// The two A-frames straddle the wheel and meet at the axle, rather than leaning in the same direction.
+for(const z of [-1.45,1.45]){
+  beamBetween(ferris,[-4.9,.32,z],[0,10.2,z],.27,cream,12);
+  beamBetween(ferris,[4.9,.32,z],[0,10.2,z],.27,cream,12);
+  beamBetween(ferris,[-2.45,5.35,z],[2.45,5.35,z],.13,gold,10);
+  beamBetween(ferris,[-4.9,.32,z],[4.9,.32,z],.16,darkWood,10);
+}
+for(const x of [-4.9,4.9])for(const z of [-1.45,1.45])box(.72,.28,.72,gold,x,.2,z,ferris);
+sphere(.72,gold,0,10.2,0,ferris);
+// Each cabin has a floor, roof, corner posts, railings and glazed windows.
+const cabinColors=[coral,teal,gold,pink,blue,cream];
+for(let i=0;i<12;i++){
+  const a=i/12*Math.PI*2,x=Math.cos(a)*wheelRadius,pointY=10.2+Math.sin(a)*wheelRadius;
+  const cabin=new THREE.Group();cabin.position.set(x,pointY-1.38,0);ferris.add(cabin);
+  const color=cabinColors[i%cabinColors.length],glass=new THREE.MeshStandardMaterial({color:'#b9d9d5',roughness:.22,metalness:.08,transparent:true,opacity:.78});
+  box(1.42,.16,1.18,darkWood,0,-.48,0,cabin);
+  box(1.38,.12,1.14,color,0,.52,0,cabin);
+  for(const cx of [-.62,.62])for(const cz of [-.48,.48])box(.1,.96,.1,cream,cx,0,cz,cabin);
+  box(1.12,.62,.045,glass,0,.12,.565,cabin);
+  box(1.12,.62,.045,glass,0,.12,-.565,cabin);
+  for(const cx of [-.69,.69])box(.045,.62,.92,glass,cx,.12,0,cabin);
+  box(1.5,.12,1.25,color,0,.62,0,cabin);
+  box(.92,.08,.08,gold,0,-.12,.61,cabin);
+  // Twin suspension arms keep each cabin hanging beneath its wheel rim.
+  beamBetween(ferris,[x,pointY-.05,-.34],[x,pointY-.72,-.34],.055,gold,8);
+  beamBetween(ferris,[x,pointY-.05,.34],[x,pointY-.72,.34],.055,gold,8);
+}
+box(11,.42,3.8,darkWood,0,.28,0,ferris);
+// Roller coaster: raised twin rails, cross-ties and terrain-aware support columns.
 const coaster=new THREE.Group();coaster.position.set(13,surface(13,-8),-8);islandWorld.add(coaster);
-const coasterPoints=[[-10,0,5],[-8,5,0],[-5,11,-4],[-1,7,-7],[3,3,-5],[6,8,-1],[9,12,4],[12,5,8],[10,1,11],[4,2,12],[-2,6,10],[-8,2,8]].map(p=>new THREE.Vector3(...p));
+const coasterPoints=[[-10,5.2,5],[-8,9.5,0],[-5,14.2,-4],[-1,10.2,-7],[3,7.1,-5],[6,11.2,-1],[9,15.0,4],[12,8.5,8],[10,6.2,11],[4,6.8,12],[-2,10.0,10],[-8,6.5,8]].map(p=>new THREE.Vector3(...p));
 const coasterCurve=new THREE.CatmullRomCurve3(coasterPoints,true,'catmullrom',.35);
-const track=new THREE.Mesh(new THREE.TubeGeometry(coasterCurve,220,.22,10,true),coral);add(track,coaster);
-const rail=new THREE.Mesh(new THREE.TubeGeometry(coasterCurve,220,.095,8,true),gold);rail.position.z=.38;add(rail,coaster);
-for(let i=0;i<36;i++){const p=coasterCurve.getPoint(i/36),post=cylinder(.12,.16,Math.max(.6,p.y),cream,p.x,Math.max(.3,p.y/2),p.z,coaster,8);}
-// Carousel pavilion with striped canopy.
+const railGeometry=curve=>new THREE.TubeGeometry(curve,260,.19,10,true);
+const leftRail=new THREE.CatmullRomCurve3(coasterPoints.map(p=>new THREE.Vector3(p.x-.48,p.y,p.z)),true,'catmullrom',.35);
+const rightRail=new THREE.CatmullRomCurve3(coasterPoints.map(p=>new THREE.Vector3(p.x+.48,p.y,p.z)),true,'catmullrom',.35);
+add(new THREE.Mesh(railGeometry(leftRail),coral),coaster);add(new THREE.Mesh(railGeometry(rightRail),coral),coaster);
+// Cross-ties visibly connect both rails and prevent the track from reading as a single tube.
+for(let i=0;i<72;i++){const p=coasterCurve.getPoint(i/72),tie=box(1.42,.16,.34,darkWood,p.x,p.y,p.z,coaster);tie.rotation.y=coasterCurve.getTangent(i/72).x*.12;}
+// Every support reaches the actual local ground and meets the underside of the track.
+for(let i=0;i<48;i++){
+  const t=i/48,p=coasterCurve.getPoint(t),ground=surface(13+p.x,-8+p.z)-coaster.position.y+.12,top=p.y-.38;
+  if(top>ground+.35){const h=top-ground;cylinder(.13,.18,h,cream,p.x,ground+h/2,p.z,coaster,10);}
+}
+// Diagonal braces stabilize the taller sections of the coaster.
+for(const x of [-7,7]){beamBetween(coaster,[x,2.4,-1],[x,10,2],.1,gold,8);beamBetween(coaster,[x,2.4,8],[x,8,5],.1,gold,8);}
+// Carousel pavilion with ten sculpted carousel animals, poles and a striped canopy.
 const carousel=new THREE.Group();carousel.position.set(18,surface(18,19),19);islandWorld.add(carousel);
 cylinder(5.2,5.2,.35,cream,0,.25,0,carousel,40);
-for(let i=0;i<10;i++){const a=i/10*Math.PI*2,x=Math.cos(a)*3.9,z=Math.sin(a)*3.9;cylinder(.09,.12,4.2,gold,x,2.35,z,carousel,8);const horse=box(.72,.78,.42,[cream,coral,teal,gold][i%4],x,1.35,z,carousel);horse.rotation.y=-a;}
+const animalMaterials=[cream,coral,teal,gold,blue,pink];
+function carouselAnimal(parent,index){
+  const animal=new THREE.Group();parent.add(animal);const coat=animalMaterials[index%animalMaterials.length],mane=index%2?darkWood:gold;
+  const body=sphere(.43,coat,0,0,0,animal);body.scale.set(1.35,.72,.72);
+  const chest=sphere(.29,coat,-.34,.16,0,animal);chest.scale.set(.72,1.15,.85);
+  const neck=beamBetween(animal,[-.34,.12,0],[-.58,.83,0],.19,coat,12);
+  const head=sphere(.25,coat,-.61,.88,0,animal);head.scale.set(1.05,.82,.78);
+  const muzzle=sphere(.16,cream,-.79,.78,0,animal);muzzle.scale.set(1,.7,.8);
+  for(const side of [-1,1]){const eye=sphere(.045,darkWood,-.68,.94,side*.19,animal);const ear=new THREE.Mesh(new THREE.ConeGeometry(.09,.28,8),coat);ear.position.set(-.53,1.12,side*.13);ear.rotation.z=-.2;add(ear,animal);}
+  // Mane, tail and four separated legs give the familiar carousel-horse silhouette.
+  for(let j=0;j<4;j++){const z=(j<2?-.2:.2),x=j%2?-.12:.27;beamBetween(animal,[x,-.12,z],[x+.02,-.68,z],.085,coat,8);}
+  for(let j=0;j<4;j++){const lock=sphere(.105,mane,-.55+j*.13,.99,0,animal);lock.scale.set(.75,1.3,.8);}
+  beamBetween(animal,[.48,.16,0],[.78,.5,0],.07,mane,8);
+  const saddle=box(.48,.09,.52,coral,.02,.34,0,animal);saddle.rotation.z=-.08;
+  // A small bridle and decorative saddle blanket finish the mount.
+  beamBetween(animal,[-.64,.83,-.22],[-.84,.74,-.13],.025,gold,6);
+  box(.42,.07,.55,animalMaterials[(index+2)%animalMaterials.length],-.02,.27,0,animal);
+  animal.rotation.y=-index/10*Math.PI*2;
+  return animal;
+}
+for(let i=0;i<10;i++){
+  const a=i/10*Math.PI*2,x=Math.cos(a)*3.9,z=Math.sin(a)*3.9;
+  cylinder(.09,.12,4.2,gold,x,2.35,z,carousel,8);
+  const mount=new THREE.Group();mount.position.set(x,1.35,z);carousel.add(mount);carouselAnimal(mount,i);
+}
 const canopy=new THREE.Mesh(new THREE.ConeGeometry(5.4,2.0,10),coral);canopy.position.y=5.45;add(canopy,carousel);
 cylinder(.38,.38,1.2,gold,0,6.15,0,carousel,12);
+for(let i=0;i<10;i++){const a=i/10*Math.PI*2;const stripe=box(.12,1.35,.035,cream,Math.cos(a)*2.68,5.55,Math.sin(a)*2.68,carousel);stripe.rotation.y=-a;}
 // Arcade pavilion and colorful game-front panels.
 const arcade=new THREE.Group();arcade.position.set(-18,surface(-18,18),18);islandWorld.add(arcade);
 box(10,4.4,7,cream,0,2.2,0,arcade);box(10.6,.55,7.6,teal,0,4.55,0,arcade);
