@@ -314,7 +314,7 @@ box(7,2.1,.25,mat('#263f48',.4,{emissive:'#1b3541',emissiveIntensity:.18}),0,3.1
 for(let i=0;i<5;i++){const light=sphere(.22,[gold,pink,blue,teal,cream][i],-4+i*2,5.45,-2.6,stage);}
 // Food kiosks and beach-side rest huts.
 function kiosk(x,z,accent){const g=new THREE.Group();g.position.set(x,surface(x,z),z);islandWorld.add(g);box(4,2.8,3.1,cream,0,1.4,0,g);box(4.5,.35,3.5,accent,0,2.95,0,g);box(3.2,.15,.2,darkWood,0,1.85,1.62,g);for(const sx of [-1.45,1.45])cylinder(.09,.11,2.7,gold,sx,1.35,1.55,g,8);}
-kiosk(-6,-25,coral);kiosk(31,-13,teal);kiosk(-29,-20,gold);
+kiosk(-6,-25,coral);kiosk(31,14,teal);kiosk(-31,0,gold);
 // Boardwalk and pier reaching into the water.
 const pier=new THREE.Group();pier.position.set(0,surface(0,34),34);islandWorld.add(pier);
 box(5,.3,13,wood,0,.12,5,pier);box(10,.3,5,wood,0,.12,13,pier);
