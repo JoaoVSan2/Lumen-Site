@@ -273,9 +273,32 @@ flowerInstances.forEach((m,i)=>{m.count=flowerCounts[i];islandWorld.add(m);});
 
 // Natural footpaths, following the terrain contours.
 function trail(points,width=.24) {
-  const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,heightAt(x,z)+.09,z)));
-  const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,150,width,7,false),mat('#bca77e'));
-  mesh.receiveShadow=true; islandWorld.add(mesh);
+  // Faixa de terra apoiada diretamente no relevo, em vez de um tubo
+  // arredondado que ficava visualmente suspenso acima do chão.
+  const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z)));
+  const segments=220, vertices=[], indices=[];
+  for(let i=0;i<=segments;i++) {
+    const t=i/segments, p=curve.getPoint(t), tangent=curve.getTangent(t);
+    const len=Math.hypot(tangent.x,tangent.z)||1;
+    const nx=-tangent.z/len, nz=tangent.x/len;
+    for(const side of [-1,1]) {
+      const x=p.x+nx*side*width, z=p.z+nz*side*width;
+      vertices.push(x,heightAt(x,z)+.025,z);
+    }
+    if(i<segments) {
+      const k=i*2;
+      indices.push(k,k+1,k+2,k+1,k+3,k+2);
+    }
+  }
+  const geometry=new THREE.BufferGeometry();
+  geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+  const mesh=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({
+    color:'#bca77e',roughness:1,side:THREE.DoubleSide
+  }));
+  mesh.receiveShadow=true;
+  islandWorld.add(mesh);
 }
 trail([[-34,7],[-25,3],[-17,-1],[-8,-4],[0,-8],[10,-12],[24,-16],[34,-12]],.32);
 trail([[-8,-4],[-11,5],[-10,14],[-4,23],[4,30]],.24);
