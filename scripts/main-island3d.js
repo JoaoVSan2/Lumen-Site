@@ -15,7 +15,7 @@ if (!host) {
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('#b9d9d2');
-scene.fog = new THREE.Fog('#b9d9d2', 72, 180);
+scene.fog = new THREE.Fog('#b9d9d2', 125, 320);
 
 const focus = new THREE.Vector3(0, 0.2, 0);
 
@@ -1083,7 +1083,7 @@ let cameraDistance = 27;
 let targetCameraDistance = 27;
 
 const MIN_CAMERA_DISTANCE = 4.5;
-const MAX_CAMERA_DISTANCE = 36;
+const MAX_CAMERA_DISTANCE = 150;
 
 let dragging = false;
 let previousPointer = { x: 0, y: 0 };
