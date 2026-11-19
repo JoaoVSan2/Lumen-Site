@@ -1104,6 +1104,19 @@ function smoothStep(edge0, edge1, value) {
 
 let panoramicFov = 38;
 let closeFov = 38;
+let initialIslandFramingDone = false;
+
+function getInitialIslandCameraDistance() {
+  // Inclui a copa das árvores e a borda externa da ilha ampliada em 6x.
+  const islandBoundingRadius = 43;
+  const verticalHalfFov = THREE.MathUtils.degToRad(camera.fov * 0.5);
+  const horizontalHalfFov = Math.atan(Math.tan(verticalHalfFov) * camera.aspect);
+  const limitingHalfFov = Math.min(verticalHalfFov, horizontalHalfFov);
+  return Math.min(
+    MAX_CAMERA_DISTANCE,
+    Math.ceil((islandBoundingRadius / Math.sin(limitingHalfFov)) * 1.1)
+  );
+}
 
 function updateCamera() {
   // Mantém a visão panorâmica aprovada quando afastada e baixa
@@ -1162,6 +1175,14 @@ function updateZoom() {
     : baseFov;
   camera.aspect = aspect;
   camera.updateProjectionMatrix();
+
+  // Na primeira abertura, afasta automaticamente até enquadrar a Core Island
+  // inteira, respeitando o formato vertical do celular ou horizontal do PC.
+  if (!initialIslandFramingDone) {
+    cameraDistance = getInitialIslandCameraDistance();
+    targetCameraDistance = cameraDistance;
+    initialIslandFramingDone = true;
+  }
 
   renderer.setPixelRatio(getRenderPixelRatio());
   renderer.setSize(width, height, false);
