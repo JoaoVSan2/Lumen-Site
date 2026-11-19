@@ -373,6 +373,101 @@ clearing(-10,8,4.2);
 clearing(14,-7,3.6);
 clearing(2,24,3.4);
 
+
+// PLAYER BUILDING — Verdant Island (local prototype, saved per browser).
+const BUILD_PLOTS = [
+  {id:'fern-glade',name:'Clareira das Samambaias',x:-25,z:13},
+  {id:'moss-hollow',name:'Vale dos Musgos',x:24,z:14},
+  {id:'sunny-ridge',name:'Colina do Sol',x:25,z:-5}
+];
+const BUILD_KEY='lumen-verdant-buildings-v1';
+let savedBuilds={};
+try { savedBuilds=JSON.parse(localStorage.getItem(BUILD_KEY)||'{}')||{}; } catch { savedBuilds={}; }
+const buildMaterials={
+  wood:mat('#8a6546'), lightWood:mat('#b58a5e'), wall:mat('#e4d5b7'),
+  roof:mat('#6e8061'), glass:new THREE.MeshStandardMaterial({color:'#a8d4d0',roughness:.25,metalness:.08}),
+  stone:mat('#858a78')
+};
+function addBox(parent,w,h,d,material,x,y,z){
+  const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);
+  mesh.position.set(x,y,z); mesh.castShadow=true; mesh.receiveShadow=true; parent.add(mesh); return mesh;
+}
+function buildCabin(parent){
+  addBox(parent,4.6,.32,3.8,buildMaterials.wood,0,.2,0);
+  addBox(parent,4.25,2.35,3.45,buildMaterials.wall,0,1.52,0);
+  addBox(parent,.95,1.45,.12,buildMaterials.wood,-.85,1.05,1.79);
+  addBox(parent,.72,.92,.1,buildMaterials.glass,.95,1.68,1.79);
+  // Two sloped roof panels form a simple gable.
+  const roofA=addBox(parent,2.65,.2,4.25,buildMaterials.roof,-1.02,3.05,0); roofA.rotation.z=-.48;
+  const roofB=addBox(parent,2.65,.2,4.25,buildMaterials.roof,1.02,3.05,0); roofB.rotation.z=.48;
+  addBox(parent,4.8,.16,4.0,buildMaterials.wood,0,.48,0);
+  for(const x of [-1.85,1.85]) for(const z of [-1.45,1.45]) addBox(parent,.16,1.25,.16,buildMaterials.wood,x,-.25,z);
+}
+function buildTreehouse(parent){
+  for(const x of [-1.45,1.45]) for(const z of [-1.25,1.25]) addBox(parent,.2,3.15,.2,buildMaterials.wood,x,-1.25,z);
+  addBox(parent,4.1,.28,3.6,buildMaterials.lightWood,0,.42,0);
+  addBox(parent,3.65,1.9,3.1,buildMaterials.wall,0,1.48,0);
+  addBox(parent,.8,1.35,.12,buildMaterials.wood,-.7,1.2,1.62);
+  addBox(parent,.78,.8,.1,buildMaterials.glass,.95,1.75,1.62);
+  const a=addBox(parent,2.2,.18,3.8,buildMaterials.roof,-.82,2.8,0); a.rotation.z=-.52;
+  const b=addBox(parent,2.2,.18,3.8,buildMaterials.roof,.82,2.8,0); b.rotation.z=.52;
+  // Ladder on the front side.
+  for(let i=0;i<6;i++) addBox(parent,.9,.09,.12,buildMaterials.lightWood,-.95,-.7+i*.32,1.9);
+  for(const x of [-1.45,-.45]) addBox(parent,.1,2.1,.1,buildMaterials.wood,x,-.85,1.9);
+}
+function createBuiltStructure(plot,type){
+  const group=new THREE.Group(); group.position.set(plot.x,heightAt(plot.x,plot.z),plot.z);
+  if(type==='treehouse') buildTreehouse(group); else buildCabin(group);
+  group.rotation.y=plot.id==='moss-hollow'?.65:plot.id==='sunny-ridge'?-0.35:0.2;
+  islandWorld.add(group); return group;
+}
+const builtGroups={};
+for(const plot of BUILD_PLOTS){
+  const saved=savedBuilds[plot.id];
+  if(saved && ['cabin','treehouse'].includes(saved.type)) builtGroups[plot.id]=createBuiltStructure(plot,saved.type);
+}
+let selectedPlot=BUILD_PLOTS[0].id;
+const buildPanel=document.createElement('aside');
+buildPanel.className='verdant-build-panel';
+buildPanel.setAttribute('aria-label','Construção na Verdant Island');
+buildPanel.innerHTML=`
+  <div class="verdant-build-heading"><span>REFÚGIOS NATURAIS</span><b>Construir</b></div>
+  <label for="verdant-plot">Local da construção</label>
+  <select id="verdant-plot"></select>
+  <div class="verdant-build-types">
+    <button type="button" data-build-type="cabin" aria-pressed="true"><span>⌂</span> Cabana</button>
+    <button type="button" data-build-type="treehouse" aria-pressed="false"><span>♧</span> Casa na árvore</button>
+  </div>
+  <p class="verdant-build-status" aria-live="polite"></p>
+  <button class="verdant-build-action" type="button">Construir refúgio</button>
+  <p class="verdant-build-note">Seu projeto fica salvo neste navegador.</p>`;
+host.appendChild(buildPanel);
+const plotSelect=buildPanel.querySelector('#verdant-plot');
+for(const plot of BUILD_PLOTS){const option=document.createElement('option');option.value=plot.id;option.textContent=plot.name;plotSelect.appendChild(option);}
+const typeButtons=[...buildPanel.querySelectorAll('[data-build-type]')];
+let selectedType='cabin';
+function refreshBuildPanel(){
+  const occupied=Boolean(builtGroups[selectedPlot]);
+  const plot=BUILD_PLOTS.find(p=>p.id===selectedPlot);
+  buildPanel.querySelector('.verdant-build-status').textContent=occupied?'Este terreno já tem uma construção.':plot.name+' está disponível.';
+  const action=buildPanel.querySelector('.verdant-build-action');
+  action.disabled=occupied; action.textContent=occupied?'Terreno ocupado':'Construir refúgio';
+}
+plotSelect.addEventListener('change',()=>{selectedPlot=plotSelect.value;refreshBuildPanel();});
+typeButtons.forEach(button=>button.addEventListener('click',()=>{
+  selectedType=button.dataset.buildType;
+  typeButtons.forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
+}));
+buildPanel.querySelector('.verdant-build-action').addEventListener('click',()=>{
+  if(builtGroups[selectedPlot])return;
+  const plot=BUILD_PLOTS.find(p=>p.id===selectedPlot);
+  builtGroups[selectedPlot]=createBuiltStructure(plot,selectedType);
+  savedBuilds[selectedPlot]={type:selectedType,builtAt:new Date().toISOString()};
+  try{localStorage.setItem(BUILD_KEY,JSON.stringify(savedBuilds));}catch(e){console.warn('Não foi possível salvar a construção neste navegador.',e);}
+  refreshBuildPanel();
+});
+refreshBuildPanel();
+
 // Camera controls: independent orbital camera for Verdant Island.
 let angle=Math.PI*.24, elevation=.68, distance=648, targetDistance=648;
 const focus=new THREE.Vector3(0,12,0);
