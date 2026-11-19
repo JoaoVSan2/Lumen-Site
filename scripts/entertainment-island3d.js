@@ -370,7 +370,7 @@ for(const x of [-5.8,5.8]){cylinder(.12,.18,1.8,wood,x,.9,0,castle,8);sphere(.28
 const pirateRide=new THREE.Group();
 pirateRide.position.set(28,surface(28,-27),-27);
 islandWorld.add(pirateRide);
-platform(0,0,13,10,mat('#d4c4a6'));
+box(13,.22,10,mat('#d4c4a6'),0,.12,0,pirateRide);
 for(const x of [-4.6,4.6])beamBetween(pirateRide,[x,.3,0],[0,9.4,0],.32,cream,12);
 beamBetween(pirateRide,[-4.6,.3,0],[4.6,.3,0],.24,darkWood,10);
 beamBetween(pirateRide,[0,9.4,-.35],[0,9.4,.35],.28,gold,10);
@@ -405,10 +405,10 @@ function queueLane(cx,cz,w,d,railMaterial=gold){
   }
   for(let z=-d/2;z<=d/2+.01;z+=1.7)beamBetween(islandWorld,[cx-w/2,y+.5,cz+z],[cx+w/2,y+.5,cz+z],.045,railMaterial,7);
 }
-queueLane(-22,-11,6.4,5.4,coral);
-queueLane(22,18,7.2,5.4,teal);
-queueLane(28,-27,7.8,4.2,gold);
-queueLane(-23,17,7.6,4.2,blue);
+queueLane(-31,-11,5.0,4.2,coral);
+queueLane(22,10,6.0,3.8,teal);
+
+queueLane(-14,17,5.4,3.8,blue);
 
 // Small garden islands, flower beds and guest amenities make the walkways feel inhabited.
 function flowerBed(x,z,rx=1.3,rz=.8){
