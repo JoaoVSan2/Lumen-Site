@@ -1107,14 +1107,15 @@ let closeFov = 38;
 let initialIslandFramingDone = false;
 
 function getInitialIslandCameraDistance() {
-  // Inclui a copa das árvores e a borda externa da ilha ampliada em 6x.
-  const islandBoundingRadius = 43;
+  // Enquadramento mais próximo: prioriza a ilha visível e deixa uma margem pequena.
+  // A estimativa anterior afastava demais a câmera, sobretudo no celular em pé.
+  const islandBoundingRadius = camera.aspect < 1 ? 23 : 26;
   const verticalHalfFov = THREE.MathUtils.degToRad(camera.fov * 0.5);
   const horizontalHalfFov = Math.atan(Math.tan(verticalHalfFov) * camera.aspect);
   const limitingHalfFov = Math.min(verticalHalfFov, horizontalHalfFov);
   return Math.min(
     MAX_CAMERA_DISTANCE,
-    Math.ceil((islandBoundingRadius / Math.sin(limitingHalfFov)) * 1.1)
+    Math.ceil((islandBoundingRadius / Math.sin(limitingHalfFov)) * 1.02)
   );
 }
 
