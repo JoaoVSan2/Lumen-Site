@@ -137,11 +137,11 @@ function emptyLot({x,z,w=6.4,d=7.2,id,type='urban'}){
 }
 // A second row of compact plots makes the island read as a growing town.
 [
-{x:-32,z:-25,w:6.2,d:6.8,id:'L-11'},
-{x:-18,z:-29,w:6.4,d:6.8,id:'L-12'},
-{x:-5,z:-30,w:6.8,d:6.8,id:'L-13',type:'service'},
-{x:9,z:-29,w:6.4,d:6.8,id:'L-14'},
-{x:31,z:-25,w:6.2,d:6.8,id:'L-15'},
+{x:-29.1,z:-25.26,w:6.2,d:6.8,id:'L-11'},
+{x:-16.5,z:-26.52,w:6.4,d:6.8,id:'L-12'},
+{x:-4.8,z:-27.42,w:6.8,d:6.8,id:'L-13',type:'service'},
+{x:7.8,z:-26.52,w:6.4,d:6.8,id:'L-14'},
+{x:27.6,z:-25.26,w:6.2,d:6.8,id:'L-15'},
 {x:-34,z:11,w:6.2,d:6.8,id:'L-16'},
 {x:34,z:-3,w:6.2,d:6.8,id:'L-17'},
 {x:7,z:29,w:6.8,d:6.8,id:'L-18',type:'green'}
