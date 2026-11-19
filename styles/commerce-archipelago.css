@@ -15,3 +15,64 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden}body{min-width:320px;b
 .commerce-back{position:absolute;z-index:3;top:74px;right:24px;padding:10px 14px;border:1px solid rgba(255,255,255,.6);border-radius:999px;color:#fffdf5;background:rgba(49,75,69,.48);backdrop-filter:blur(10px);text-decoration:none;font-size:11px}
 @media(max-width:700px){.commerce-topbar{height:54px;padding-inline:14px}.commerce-brand{font-size:10px;gap:7px}.commerce-mark{font-size:21px}.commerce-edition{font-size:6px;letter-spacing:.1em}.commerce-title{top:12%;left:7%;width:86%}.commerce-title h1{margin:13px 0 8px;font-size:clamp(38px,10vw,58px)}.commerce-title p{max-width:240px;margin-top:8px;font-size:12px}.commerce-vignette{background:linear-gradient(180deg,rgba(236,244,237,.72),rgba(236,244,237,.12) 37%,transparent 65%),linear-gradient(0deg,rgba(35,62,59,.3),transparent 27%)}.commerce-regions{left:7%;bottom:max(22px,env(safe-area-inset-bottom));gap:7px;font-size:6px;letter-spacing:.08em}.commerce-hint{right:7%;bottom:max(43px,calc(env(safe-area-inset-bottom) + 42px));left:7%;text-align:right;font-size:6px}.commerce-back{top:65px;right:14px;padding:8px 11px;font-size:10px}}
 @media(max-width:380px){.commerce-regions{gap:5px;font-size:5px}}
+
+/* Shared world navigation — quick travel between all four islands. */
+.world-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-inline: auto 18px;
+  pointer-events: auto;
+  max-width: min(54vw, 560px);
+}
+.world-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 7px 10px;
+  border: 1px solid rgba(55, 83, 73, .18);
+  border-radius: 999px;
+  background: rgba(247, 246, 235, .58);
+  color: #46665a;
+  text-decoration: none;
+  white-space: nowrap;
+  font: 700 8px "DM Sans", sans-serif;
+  letter-spacing: .1em;
+  backdrop-filter: blur(10px);
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.world-nav a:hover {
+  background: rgba(255, 255, 248, .9);
+  border-color: rgba(55, 83, 73, .34);
+  transform: translateY(-1px);
+}
+.world-nav a[aria-current="page"] {
+  background: rgba(67, 104, 83, .88);
+  border-color: rgba(67, 104, 83, .88);
+  color: #fff9e9;
+}
+@media (max-width: 760px) {
+  .world-nav {
+    gap: 3px;
+    margin-inline: auto 6px;
+    max-width: 56vw;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .world-nav::-webkit-scrollbar { display: none; }
+  .world-nav a {
+    min-height: 27px;
+    padding: 6px 7px;
+    font-size: 6px;
+    letter-spacing: .06em;
+  }
+  .verdant-edition, .commerce-edition, .entertainment-edition {
+    display: none;
+  }
+}
+@media (max-width: 380px) {
+  .world-nav { max-width: 53vw; gap: 2px; }
+  .world-nav a { padding-inline: 5px; font-size: 5px; }
+}
