@@ -18,6 +18,7 @@
       border-radius: 999px; background: rgba(243,241,231,.58); backdrop-filter: blur(8px);
     }
     .island-nav a:hover { background: rgba(255,255,255,.82); }
+    .island-nav a[aria-current="page"] { background: rgba(67,104,83,.88); border-color: rgba(67,104,83,.88); color: #fff9e9; }
 
     /* O canvas e a composição usam exatamente a área visível do dispositivo.
        Não dependem da altura intrínseca do conteúdo/flex da página. */
@@ -62,7 +63,7 @@
       <a class="brand" href="./" aria-label="Lumen Society, início">
         <span class="brand-mark">✳</span><span>LUMEN <b>SOCIETY</b></span>
       </a>
-      <nav class="island-nav"><a href="./verdant-island.html">VERDANT ISLAND ↗</a> <a href="./commerce-archipelago.html">COMMERCE ↗</a> <a href="./entertainment-island.html">ENTERTAINMENT ↗</a></nav>
+      <nav class="island-nav" aria-label="Navegação entre ilhas"><a href="./" aria-current="page">ISLAND CORE</a><a href="./verdant-island.html">VERDANT ISLAND ↗</a> <a href="./commerce-archipelago.html">COMMERCE ↗</a> <a href="./entertainment-island.html">ENTERTAINMENT ↗</a></nav>
       <span class="edition">ISLAND CORE <i>·</i> 0.6</span>
     </header>
     <section class="island-stage" aria-label="Experiência 3D da ilha">
