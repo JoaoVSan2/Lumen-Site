@@ -8,9 +8,15 @@
 <link rel="stylesheet" href="./styles/commerce-archipelago.css"></head>
 <body><main class="commerce-experience"><header class="commerce-topbar">
 <a class="commerce-brand" href="./"><span class="commerce-mark">✳</span><span>LUMEN <b>SOCIETY</b></span></a>
-<nav class="world-nav" aria-label="Navegação entre ilhas">
-<a href="./">CORE</a><a href="./verdant-island.html">VERDANT</a><a href="./commerce-archipelago.html" aria-current="page">COMMERCE</a><a href="./entertainment-island.html">ENTERTAINMENT</a>
-</nav>
+<details class="lumen-island-switcher">
+  <summary aria-label="Abrir navegação entre as ilhas"><span class="lumen-switcher-kicker">EXPLORAR</span><span class="lumen-switcher-current">COMMERCE ARCHIPELAGO</span><span class="lumen-switcher-chevron" aria-hidden="true">⌄</span></summary>
+  <nav class="lumen-island-menu" aria-label="Escolher ilha">
+    <a href="./"><span class="lumen-island-menu-mark">○</span><span>ISLAND CORE</span></a>
+    <a href="./verdant-island.html"><span class="lumen-island-menu-mark">○</span><span>VERDANT ISLAND</span></a>
+    <a href="./commerce-archipelago.html" aria-current="page"><span class="lumen-island-menu-mark">✳</span><span>COMMERCE ARCHIPELAGO</span><span class="lumen-island-menu-current">VOCÊ ESTÁ AQUI</span></a>
+    <a href="./entertainment-island.html"><span class="lumen-island-menu-mark">○</span><span>ENTERTAINMENT ISLAND</span></a>
+  </nav>
+</details>
 <span class="commerce-edition">COMMERCE ARCHIPELAGO <i>·</i> 1.0</span></header>
 <section class="commerce-stage" aria-label="Exploração 3D do Commerce Archipelago">
 <div id="commerce-canvas" class="commerce-canvas"><div class="commerce-loading"><span>✳</span><p>Preparando o Commerce Archipelago...</p></div></div>
@@ -18,5 +24,5 @@
 <div class="commerce-title"><span class="commerce-eyebrow">COMÉRCIO · CRIATIVIDADE · COMUNIDADE</span><h1>Commerce <em>Archipelago</em></h1><p>Um distrito costeiro onde cada espaço pode ganhar uma identidade própria.</p></div>
 <div class="commerce-regions"><span>MODERN DISTRICT</span><i></i><span>THE CENTRAL SQUARE</span><i></i><span>COASTAL QUARTER</span></div>
 <div class="commerce-hint">Arraste para explorar <span>·</span> Pinça ou roda para aproximar</div>
-<a class="commerce-back" href="./">Voltar ao Island Core</a></section></main>
+</section></main>
 <script type="module" src="./scripts/commerce-archipelago3d.js?v=20261119-5"></script></body></html>
