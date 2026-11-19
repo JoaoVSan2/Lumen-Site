@@ -188,7 +188,7 @@ function lake(x,z,rx,rz) {
   m.receiveShadow=true;
   islandWorld.add(m);
 }
-for(const lake of LAKE_BASINS) lake(lake.x,lake.z,lake.rx,lake.rz);
+for(const basin of LAKE_BASINS) lake(basin.x,basin.z,basin.rx*.9,basin.rz*.9);
 
 function river(points,radius,color='#66aaa5') {
   const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z)));
@@ -198,7 +198,7 @@ function river(points,radius,color='#66aaa5') {
     const nx=-t.z/len,nz=t.x/len;
     for(const side of [-1,1]) {
       const x=p.x+nx*side*radius*1.45,z=p.z+nz*side*radius*1.45;
-      vertices.push(x,heightAt(x,z)+.055,z);
+      vertices.push(x,heightAt(p.x,p.z)+.055,z);
     }
     if(i<samples.length-1) {const k=i*2;indices.push(k,k+1,k+2,k+1,k+3,k+2);}
   }
