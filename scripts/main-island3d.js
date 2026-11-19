@@ -15,12 +15,12 @@ if (!host) {
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('#b9d9d2');
-scene.fog = new THREE.Fog('#b9d9d2', 420, 1100);
+scene.fog = new THREE.Fog('#b9d9d2', 700, 1800);
 
 const focus = new THREE.Vector3(0, 0.2, 0);
 
 // Perspectiva real: permite aproximar até uma visão baixa, próxima ao chão.
-const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 1500);
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 2200);
 
 const renderer = new THREE.WebGLRenderer({
   antialias: true,
@@ -69,10 +69,10 @@ const sunlight = new THREE.DirectionalLight('#fff0d2', 2.8);
 sunlight.position.set(-8, 15, 10);
 sunlight.castShadow = true;
 sunlight.shadow.mapSize.set(2048, 2048);
-sunlight.shadow.camera.left = -12;
-sunlight.shadow.camera.right = 12;
-sunlight.shadow.camera.top = 12;
-sunlight.shadow.camera.bottom = -12;
+sunlight.shadow.camera.left = -90;
+sunlight.shadow.camera.right = 90;
+sunlight.shadow.camera.top = 90;
+sunlight.shadow.camera.bottom = -90;
 sunlight.shadow.bias = -0.0003;
 scene.add(sunlight);
 
@@ -120,7 +120,7 @@ const SEA_LEVEL = -0.08;
 
 // Oceano amplo para que a borda do plano nunca apareça durante a rotação
 // ou a visão superior, mesmo com a câmera bastante afastada.
-const oceanGeometry = new THREE.PlaneGeometry(2000, 2000, 1, 1);
+const oceanGeometry = new THREE.PlaneGeometry(2400, 2400, 1, 1);
 const ocean = new THREE.Mesh(oceanGeometry, waterMaterial);
 
 ocean.rotation.x = -Math.PI / 2;
@@ -135,8 +135,8 @@ const waves = [];
 for (let i = 0; i < 18; i++) {
   const wave = new THREE.Mesh(
     new THREE.TorusGeometry(
-      (0.35 + (i % 3) * 0.2) * 6.0,
-      0.018 * 6.0,
+      (0.35 + (i % 3) * 0.2) * 11.0,
+      0.018 * 11.0,
       4,
       20
     ),
@@ -148,7 +148,7 @@ for (let i = 0; i < 18; i++) {
   );
 
   const angle = i * 2.4;
-  const radius = (6.25 + (i % 4) * 0.35) * 6.0;
+  const radius = (6.25 + (i % 4) * 0.35) * 11.0;
 
   wave.rotation.x = -Math.PI / 2;
   wave.position.set(
@@ -164,9 +164,9 @@ for (let i = 0; i < 18; i++) {
 // TERRENO ORGÂNICO
 
 const island = new THREE.Group();
-// Amplia toda a ilha de forma proporcional, preservando a escala relativa
-// entre terreno, árvores, vegetação, trilhas e detalhes naturais.
-island.scale.setScalar(6.0);
+// Escala global de 1000% acima do tamanho original (11x).
+// Terreno, costa, árvores, vegetação, trilhas e detalhes acompanham juntos.
+island.scale.setScalar(11.0);
 scene.add(island);
 
 const SEGMENTS = 96;
@@ -1085,7 +1085,7 @@ let cameraDistance = 27;
 let targetCameraDistance = 27;
 
 const MIN_CAMERA_DISTANCE = 4.5;
-const MAX_CAMERA_DISTANCE = 150;
+const MAX_CAMERA_DISTANCE = 260;
 
 let dragging = false;
 let previousPointer = { x: 0, y: 0 };
@@ -1111,7 +1111,7 @@ let initialIslandFramingDone = false;
 function getInitialIslandCameraDistance() {
   // Enquadramento mais próximo: prioriza a ilha visível e deixa uma margem pequena.
   // A estimativa anterior afastava demais a câmera, sobretudo no celular em pé.
-  const islandBoundingRadius = camera.aspect < 1 ? 23 : 26;
+  const islandBoundingRadius = camera.aspect < 1 ? 42.2 : 47.7;
   const verticalHalfFov = THREE.MathUtils.degToRad(camera.fov * 0.5);
   const horizontalHalfFov = Math.atan(Math.tan(verticalHalfFov) * camera.aspect);
   const limitingHalfFov = Math.min(verticalHalfFov, horizontalHalfFov);
