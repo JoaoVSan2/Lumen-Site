@@ -160,11 +160,29 @@ const coaster=new THREE.Group();coaster.position.set(13,surface(13,-8),-8);islan
 const coasterPoints=[[-10,5.2,5],[-8,9.5,0],[-5,14.2,-4],[-1,10.2,-7],[3,7.1,-5],[6,11.2,-1],[9,15.0,4],[12,8.5,8],[10,6.2,11],[4,6.8,12],[-2,10.0,10],[-8,6.5,8]].map(p=>new THREE.Vector3(...p));
 const coasterCurve=new THREE.CatmullRomCurve3(coasterPoints,true,'catmullrom',.35);
 const railGeometry=curve=>new THREE.TubeGeometry(curve,260,.19,10,true);
-const leftRail=new THREE.CatmullRomCurve3(coasterPoints.map(p=>new THREE.Vector3(p.x-.48,p.y,p.z)),true,'catmullrom',.35);
-const rightRail=new THREE.CatmullRomCurve3(coasterPoints.map(p=>new THREE.Vector3(p.x+.48,p.y,p.z)),true,'catmullrom',.35);
-add(new THREE.Mesh(railGeometry(leftRail),coral),coaster);add(new THREE.Mesh(railGeometry(rightRail),coral),coaster);
-// Cross-ties visibly connect both rails and prevent the track from reading as a single tube.
-for(let i=0;i<72;i++){const p=coasterCurve.getPoint(i/72),tie=box(1.42,.16,.34,darkWood,p.x,p.y,p.z,coaster);tie.rotation.y=coasterCurve.getTangent(i/72).x*.12;}
+function offsetRail(side){
+  const points=[];
+  for(let i=0;i<=120;i++){
+    const t=i/120,p=coasterCurve.getPointAt(t),tangent=coasterCurve.getTangentAt(t);
+    const len=Math.hypot(tangent.x,tangent.z)||1;
+    const nx=-tangent.z/len,nz=tangent.x/len;
+    points.push(new THREE.Vector3(p.x+nx*side*.48,p.y,p.z+nz*side*.48));
+  }
+  return new THREE.CatmullRomCurve3(points,true,'catmullrom',.35);
+}
+const leftRail=offsetRail(-1),rightRail=offsetRail(1);
+add(new THREE.Mesh(railGeometry(leftRail),coral),coaster);
+add(new THREE.Mesh(railGeometry(rightRail),coral),coaster);
+// Cross-ties span the true perpendicular distance between the two rails.
+for(let i=0;i<96;i++){
+  const t=i/96,p=coasterCurve.getPointAt(t),tangent=coasterCurve.getTangentAt(t);
+  const len=Math.hypot(tangent.x,tangent.z)||1,nx=-tangent.z/len,nz=tangent.x/len;
+  beamBetween(coaster,
+    [p.x-nx*.48,p.y,p.z-nz*.48],
+    [p.x+nx*.48,p.y,p.z+nz*.48],
+    .085,darkWood,8
+  );
+}
 // Every support reaches the actual local ground and meets the underside of the track.
 for(let i=0;i<48;i++){
   const t=i/48,p=coasterCurve.getPoint(t),ground=surface(13+p.x,-8+p.z)-coaster.position.y+.12,top=p.y-.38;
@@ -189,7 +207,7 @@ for (let i = 0; i < 3; i++) {
         new THREE.CylinderGeometry(0.16, 0.16, 0.13, 10),
         darkWood
       );
-      wheel.rotation.z = Math.PI / 2;
+      wheel.rotation.x = Math.PI / 2;
       wheel.position.set(x, -0.19, z);
       add(wheel, car);
     }
@@ -329,7 +347,7 @@ coasterCars.forEach((car,index)=>{
   const p=coasterCurve.getPointAt(progress);
   const tangent=coasterCurve.getTangentAt(progress);
   car.position.set(p.x,p.y+.48,p.z);
-  car.rotation.y=Math.atan2(tangent.x,tangent.z);
+  car.rotation.y=Math.atan2(-tangent.z,tangent.x);
 });
 renderer.render(scene,camera);}
 animate();
