@@ -191,6 +191,17 @@ function addPlot(p){
   plots.push({...p,position:[x,z],size:[w,d],structureScale:.55});
   return g;
 }
+[
+{x:-25,z:-15,w:8.2,d:8.4,h:4.5,style:'modern',id:'M-01',kind:'Pequeno'},
+{x:-13,z:-16,w:10,d:9,h:5.1,style:'modern',id:'M-02',kind:'Médio'},
+{x:-25,z:-1,w:11,d:10,h:5.4,style:'modern',id:'M-03',kind:'Médio'},
+{x:-11,z:-1,w:13,d:11,h:6.2,style:'modern',id:'M-04',kind:'Grande'},
+{x:14,z:-17,w:8.5,d:8.5,h:4.5,style:'coastal',id:'C-01',kind:'Pequeno'},
+{x:26,z:-15,w:10,d:9,h:5.2,style:'coastal',id:'C-02',kind:'Médio'},
+{x:14,z:14,w:11,d:10,h:5.4,style:'coastal',id:'C-03',kind:'Médio'},
+{x:28,z:12,w:13,d:11,h:6.2,style:'coastal',id:'C-04',kind:'Grande'},
+{x:-22,z:19,w:14,d:12,h:6.4,style:'modern',id:'S-01',kind:'Especial'},
+{x:20,z:25,w:14,d:12,h:6.4,style:'coastal',id:'S-02',kind:'Especial'}
 ].forEach(addPlot);
 
 // New urban blocks: additional vacant parcels, sidewalks and calmer side streets.
