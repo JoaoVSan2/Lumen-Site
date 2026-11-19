@@ -30,8 +30,9 @@ for(let i=0;i<pos.length;i+=3){const x=pos[i],y=pos[i+1],z=pos[i+2],n=(Math.sin(
 const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));geo.setIndex(idx);geo.computeVertexNormals();
 // Enlarge only the landmass footprint by 50%; buildings, lots, streets and camera stay unchanged.
 const LANDMASS_SCALE=1.5;
-for(let i=0;i<pos.length;i+=3){pos[i]*=LANDMASS_SCALE;pos[i+2]*=LANDMASS_SCALE;}
-geo.attributes.position.needsUpdate=true;geo.computeVertexNormals();
+const landPositions=geo.attributes.position;
+for(let i=0;i<landPositions.count;i++){landPositions.setX(i,landPositions.getX(i)*LANDMASS_SCALE);landPositions.setZ(i,landPositions.getZ(i)*LANDMASS_SCALE);}
+landPositions.needsUpdate=true;geo.computeVertexNormals();
 const terrain=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));terrain.receiveShadow=true;terrain.castShadow=true;world.add(terrain);
 // Sand ribbon around the island.
 const sp=[],si=[],layers=[1,1.025,1.055,1.085];for(let l=0;l<layers.length;l++)for(let i=0;i<SEG;i++){const a=i/SEG*Math.PI*2,r=edge(a)*layers[l],x=Math.cos(a)*r,z=Math.sin(a)*r,innerX=Math.cos(a)*edge(a),innerZ=Math.sin(a)*edge(a),y=THREE.MathUtils.lerp(surfaceHeight(innerX,innerZ)-.035,SEA-.5,l/(layers.length-1));sp.push(x,y,z);}
