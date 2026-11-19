@@ -716,6 +716,64 @@ function createTree(x, z, scale = 1, variant = 0) {
   return group;
 }
 
+// TEMPORARY SCALE-TEST CHARACTER — moved from Verdant Island.
+// Keep the model at its original 1.75-unit height while the island is enlarged.
+function createScaleCharacter() {
+  const character = new THREE.Group();
+  const skin = new THREE.MeshStandardMaterial({ color: '#d6a27d', roughness: .92 });
+  const shirt = new THREE.MeshStandardMaterial({ color: '#557b61', roughness: .95 });
+  const trousers = new THREE.MeshStandardMaterial({ color: '#354b43', roughness: .98 });
+  const boots = new THREE.MeshStandardMaterial({ color: '#594638', roughness: 1 });
+  const hair = new THREE.MeshStandardMaterial({ color: '#49372d', roughness: 1 });
+  const backpack = new THREE.MeshStandardMaterial({ color: '#8b6845', roughness: 1 });
+
+  function part(geometry, material, x, y, z, cast = true) {
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(x, y, z);
+    mesh.castShadow = cast;
+    mesh.receiveShadow = true;
+    character.add(mesh);
+    return mesh;
+  }
+
+  // Boots and legs.
+  part(new THREE.BoxGeometry(.16, .12, .27), boots, -.12, .06, .035);
+  part(new THREE.BoxGeometry(.16, .12, .27), boots, .12, .06, .035);
+  part(new THREE.CylinderGeometry(.075, .085, .48, 8), trousers, -.12, .36, 0);
+  part(new THREE.CylinderGeometry(.075, .085, .48, 8), trousers, .12, .36, 0);
+
+  // Torso, neck and head.
+  part(new THREE.BoxGeometry(.42, .48, .23), shirt, 0, .88, 0);
+  part(new THREE.CylinderGeometry(.07, .07, .12, 8), skin, 0, 1.18, 0);
+  part(new THREE.SphereGeometry(.17, 12, 10), skin, 0, 1.38, .015);
+  part(new THREE.SphereGeometry(.18, 12, 8, 0, Math.PI * 2, 0, Math.PI * .58), hair, 0, 1.43, -.005);
+
+  // Arms hang naturally at the sides.
+  const leftArm = part(new THREE.CylinderGeometry(.065, .075, .48, 8), shirt, -.29, 1.12, 0);
+  leftArm.rotation.z = -.12;
+  const rightArm = part(new THREE.CylinderGeometry(.065, .075, .48, 8), shirt, .29, 1.12, 0);
+  rightArm.rotation.z = .12;
+  part(new THREE.SphereGeometry(.075, 10, 8), skin, -.32, .86, .015);
+  part(new THREE.SphereGeometry(.075, 10, 8), skin, .32, .86, .015);
+
+  // Small explorer's backpack, visible from the three-quarter camera angle.
+  part(new THREE.BoxGeometry(.28, .38, .14), backpack, 0, 1.13, -.22);
+
+  // Central clearing: position is transformed to match the enlarged island,
+  // but the character itself remains 1.75 units tall in world space.
+  const localX = -0.2;
+  const localZ = 0.8;
+  character.position.set(
+    localX * island.scale.x,
+    terrainHeight(localX, localZ) * island.scale.y + .06,
+    localZ * island.scale.z
+  );
+  character.rotation.y = .62;
+  scene.add(character);
+  return character;
+}
+const scaleTestCharacter = createScaleCharacter();
+
 // POSIÇÕES DAS ÁRVORES
 
 
@@ -1404,7 +1462,8 @@ window.lumenIsland = {
   camera,
   renderer,
   island,
-  changeZoom
+  changeZoom,
+  scaleTestCharacter
 };
 
 window.lumenIslandReady = true;
