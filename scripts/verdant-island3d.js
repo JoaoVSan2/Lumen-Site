@@ -193,7 +193,7 @@ for(let i=0;i<330;i++) {
   const clearing2=Math.hypot(x-14,z+7)<6;
   const clearing3=Math.hypot(x-2,z-24)<5;
   if(clearing1||clearing2||clearing3) continue;
-  const y=heightAt(x,z), scale=.72+rand()*.78, crownIndex=Math.floor(rand()*leafMats.length);
+  const y=heightAt(x,z), scale=1.12+rand()*.98, crownIndex=Math.floor(rand()*leafMats.length);
   dummy.position.set(x,y+1.15*scale,z); dummy.rotation.set((rand()-.5)*.12,rand()*6.28,(rand()-.5)*.12); dummy.scale.set(scale,scale*(1.1+rand()*.35),scale); dummy.updateMatrix();
   trunkInstances.setMatrixAt(treeCount,dummy.matrix);
   dummy.position.y=y+2.55*scale; dummy.scale.set(scale*(1.35+rand()*.25),scale*(1.55+rand()*.35),scale*(1.35+rand()*.25)); dummy.updateMatrix();
