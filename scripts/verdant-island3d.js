@@ -245,7 +245,8 @@ function createScaleCharacter() {
   // Small explorer's backpack, visible from the three-quarter camera angle.
   part(new THREE.BoxGeometry(.28, .38, .14), backpack, 0, 1.13, -.22);
 
-  character.position.set(-25, heightAt(-25, 16) + .06, 16);
+  // Place the test character in the broad central clearing so it is not hidden by the western ridge or trees.
+  character.position.set(-10, heightAt(-10, 8) + .06, 8);
   character.rotation.y = .62;
   scene.add(character);
   return character;
