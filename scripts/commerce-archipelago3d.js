@@ -2,8 +2,8 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.m
 // LUMEN SOCIETY — COMMERCE ARCHIPELAGO 1.0. Cena independente, escala global 11.22x.
 const host=document.getElementById('commerce-canvas');if(!host)throw new Error('Elemento #commerce-canvas não encontrado.');
 const scene=new THREE.Scene();scene.background=new THREE.Color('#c6d9d6');scene.fog=new THREE.FogExp2('#c6d9d6',.00042);
-const camera=new THREE.PerspectiveCamera(43,1,.1,3000),renderer=new THREE.WebGLRenderer({antialias:!touch,alpha:false,powerPreference:'high-performance'});
 const touch=matchMedia('(pointer: coarse)').matches||navigator.maxTouchPoints>0;
+const camera=new THREE.PerspectiveCamera(43,1,.1,3000),renderer=new THREE.WebGLRenderer({antialias:!touch,alpha:false,powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(devicePixelRatio||1,touch?1.05:1.5));renderer.shadowMap.enabled=!touch;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
 host.innerHTML='';host.appendChild(renderer.domElement);Object.assign(renderer.domElement.style,{width:'100%',height:'100%',display:'block',touchAction:'none'});
 scene.add(new THREE.HemisphereLight('#eff7ed','#62756d',2));
