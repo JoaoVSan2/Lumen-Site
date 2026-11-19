@@ -8,9 +8,9 @@ if (!host) throw new Error('Elemento #verdant-canvas não encontrado.');
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('#b7d4bd');
-scene.fog = new THREE.FogExp2('#b7d4bd', 0.0045);
+scene.fog = new THREE.FogExp2('#b7d4bd', 0.00075);
 
-const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 260);
+const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 1800);
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 const touch = matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
 
@@ -29,12 +29,18 @@ const sun = new THREE.DirectionalLight('#fff0d5', 2.7);
 sun.position.set(-38, 62, 28);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
-sun.shadow.camera.left = -58;
-sun.shadow.camera.right = 58;
-sun.shadow.camera.top = 58;
-sun.shadow.camera.bottom = -58;
+sun.shadow.camera.left = -348;
+sun.shadow.camera.right = 348;
+sun.shadow.camera.top = 348;
+sun.shadow.camera.bottom = -348;
 sun.shadow.bias = -0.00025;
 scene.add(sun);
+
+// Escala global de 500% acima do tamanho original (6x), mantendo
+// todas as partes da ilha e seus elementos naturais na mesma proporção.
+const islandWorld = new THREE.Group();
+islandWorld.scale.setScalar(6);
+scene.add(islandWorld);
 
 const mat = (color, roughness = 1) => new THREE.MeshStandardMaterial({ color, roughness, flatShading: true });
 const grassMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, flatShading: false });
@@ -72,11 +78,11 @@ const ocean = new THREE.Mesh(new THREE.PlaneGeometry(240,240), waterMat);
 ocean.rotation.x = -Math.PI/2;
 ocean.position.y = SEA;
 ocean.receiveShadow = true;
-scene.add(ocean);
+islandWorld.add(ocean);
 
 // Large organic island terrain, built as a radial height mesh.
 const terrainGroup = new THREE.Group();
-scene.add(terrainGroup);
+islandWorld.add(terrainGroup);
 const SEG = 192, RINGS = 72;
 const positions = [0, heightAt(0,0), 0], indices = [], colors = [];
 for (let ring=1; ring<=RINGS; ring++) {
@@ -132,15 +138,15 @@ const shoreGeo=new THREE.BufferGeometry();
 shoreGeo.setAttribute('position',new THREE.Float32BufferAttribute(shoreVertices,3));
 shoreGeo.setIndex(shoreIndices); shoreGeo.computeVertexNormals();
 const shore=new THREE.Mesh(shoreGeo,new THREE.MeshStandardMaterial({color:'#d9c69a',roughness:1,side:THREE.DoubleSide}));
-shore.receiveShadow=true; scene.add(shore);
+shore.receiveShadow=true; islandWorld.add(shore);
 
 // Water bodies: natural lakes, river bends and waterfall curtains.
 function lake(x,z,rx,rz) {
   const g=new THREE.CircleGeometry(1,64);
   const m=new THREE.Mesh(g,waterMat);
-  m.rotation.x=-Math.PI/2; m.position.set(x,heightAt(x,z)+.10,z); m.scale.set(rx,rz,1); m.receiveShadow=true; scene.add(m);
+  m.rotation.x=-Math.PI/2; m.position.set(x,heightAt(x,z)+.10,z); m.scale.set(rx,rz,1); m.receiveShadow=true; islandWorld.add(m);
   const rim=new THREE.Mesh(new THREE.TorusGeometry(1,.08,6,64),mat('#9cae82'));
-  rim.rotation.x=Math.PI/2; rim.position.set(x,m.position.y-.04,z); rim.scale.set(rx,rz,1); scene.add(rim);
+  rim.rotation.x=Math.PI/2; rim.position.set(x,m.position.y-.04,z); rim.scale.set(rx,rz,1); islandWorld.add(rim);
 }
 lake(-10,8,5.5,3.8);
 lake(14,-7,4.2,3.0);
@@ -149,7 +155,7 @@ lake(5,25,3.1,2.1);
 function river(points,radius,color='#66aaa5') {
   const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,heightAt(x,z)+.18,z)));
   const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,180,radius,8,false),new THREE.MeshStandardMaterial({color,roughness:.25,transparent:true,opacity:.94}));
-  mesh.castShadow=false; scene.add(mesh); return mesh;
+  mesh.castShadow=false; islandWorld.add(mesh); return mesh;
 }
 river([[-5,-27],[-3,-20],[-7,-13],[-5,-7],[-10,-1],[-9,6],[-5,13],[0,19],[4,26]],.62);
 river([[18,-20],[15,-15],[17,-10],[14,-7],[10,-3],[7,3]],.42);
@@ -158,9 +164,9 @@ river([[18,-20],[15,-15],[17,-10],[14,-7],[10,-3],[7,3]],.42);
 function waterfall(x,z,width,drop,rotation=0) {
   const g=new THREE.PlaneGeometry(width,drop,8,24);
   const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:'#a8d8d2',transparent:true,opacity:.72,roughness:.18,side:THREE.DoubleSide,emissive:'#4d8f8b',emissiveIntensity:.18}));
-  m.position.set(x,heightAt(x,z)-drop*.48,z); m.rotation.y=rotation; scene.add(m);
+  m.position.set(x,heightAt(x,z)-drop*.48,z); m.rotation.y=rotation; islandWorld.add(m);
   const pool=new THREE.Mesh(new THREE.CircleGeometry(width*1.6,32),waterMat);
-  pool.rotation.x=-Math.PI/2; pool.position.set(x,m.position.y-drop*.52+.1,z+.7); pool.scale.y=.55; scene.add(pool);
+  pool.rotation.x=-Math.PI/2; pool.position.set(x,m.position.y-drop*.52+.1,z+.7); pool.scale.y=.55; islandWorld.add(pool);
 }
 waterfall(-8,-17,2.4,8,-.2);
 waterfall(14,-13,1.8,5,.35);
@@ -172,7 +178,7 @@ for(let i=0;i<170;i++) {
   const y=heightAt(x,z), size=.28+rand()*(y>6?1.5:.75);
   const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(size,0),rockMats[Math.floor(rand()*rockMats.length)]);
   rock.position.set(x,y+size*.25,z); rock.rotation.set(rand()*1.4,rand()*6,rand()*1.4);
-  rock.scale.set(.8+rand()*.8,.65+rand()*.9,.8+rand()*.8); rock.castShadow=true; rock.receiveShadow=true; scene.add(rock);
+  rock.scale.set(.8+rand()*.8,.65+rand()*.9,.8+rand()*.8); rock.castShadow=true; rock.receiveShadow=true; islandWorld.add(rock);
 }
 
 // Forest: instanced trunks and multi-layer canopies for good browser performance.
@@ -200,8 +206,8 @@ for(let i=0;i<330;i++) {
   crownInstances[crownIndex].setMatrixAt(counts[crownIndex]++,dummy.matrix);
   treeCount++;
 }
-trunkInstances.count=treeCount; scene.add(trunkInstances);
-crownInstances.forEach((m,i)=>{m.count=counts[i];scene.add(m);});
+trunkInstances.count=treeCount; islandWorld.add(trunkInstances);
+crownInstances.forEach((m,i)=>{m.count=counts[i];islandWorld.add(m);});
 
 // Flowers and low shrubs in the meadow region.
 const flowerGeo=new THREE.IcosahedronGeometry(.13,0);
@@ -213,20 +219,20 @@ for(let i=0;i<240;i++) {
   const d=new THREE.Object3D(); d.position.set(x,heightAt(x,z)+.22,z); d.scale.set(.8+rand(),.65+rand(),.8+rand()); d.rotation.y=rand()*6.28; d.updateMatrix();
   const k=Math.floor(rand()*4); flowerInstances[k].setMatrixAt(flowerCounts[k]++,d.matrix);
 }
-flowerInstances.forEach((m,i)=>{m.count=flowerCounts[i];scene.add(m);});
+flowerInstances.forEach((m,i)=>{m.count=flowerCounts[i];islandWorld.add(m);});
 
 // Natural footpaths, following the terrain contours.
 function trail(points,width=.24) {
   const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,heightAt(x,z)+.09,z)));
   const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,150,width,7,false),mat('#bca77e'));
-  mesh.receiveShadow=true; scene.add(mesh);
+  mesh.receiveShadow=true; islandWorld.add(mesh);
 }
 trail([[-34,7],[-25,3],[-17,-1],[-8,-4],[0,-8],[10,-12],[24,-16],[34,-12]],.32);
 trail([[-8,-4],[-11,5],[-10,14],[-4,23],[4,30]],.24);
 trail([[0,-8],[8,-3],[13,5],[20,10],[29,12]],.2);
 
 // Cave entrance at the foot of the northern ridge.
-const caveGroup=new THREE.Group(); caveGroup.position.set(-18,heightAt(-18,-18),-18); caveGroup.rotation.y=.45; scene.add(caveGroup);
+const caveGroup=new THREE.Group(); caveGroup.position.set(-18,heightAt(-18,-18),-18); caveGroup.rotation.y=.45; islandWorld.add(caveGroup);
 const caveDark=new THREE.Mesh(new THREE.CircleGeometry(1.55,32),new THREE.MeshBasicMaterial({color:'#17231d'}));
 caveDark.position.set(0,1.65,.05); caveDark.scale.set(1,1.12,1); caveGroup.add(caveDark);
 const arch=new THREE.Mesh(new THREE.TorusGeometry(1.55,.38,8,32,Math.PI),rockMats[1]);
@@ -235,15 +241,15 @@ arch.position.set(0,1.65,0); arch.rotation.z=Math.PI; arch.castShadow=true; cave
 // Open natural clearings prepared for future treehouses and cabins.
 function clearing(x,z,radius) {
   const ring=new THREE.Mesh(new THREE.RingGeometry(radius-.16,radius,64),new THREE.MeshStandardMaterial({color:'#c7b78c',roughness:1,transparent:true,opacity:.7,side:THREE.DoubleSide}));
-  ring.rotation.x=-Math.PI/2; ring.position.set(x,heightAt(x,z)+.12,z); scene.add(ring);
+  ring.rotation.x=-Math.PI/2; ring.position.set(x,heightAt(x,z)+.12,z); islandWorld.add(ring);
 }
 clearing(-10,8,4.2);
 clearing(14,-7,3.6);
 clearing(2,24,3.4);
 
 // Camera controls: independent orbital camera for Verdant Island.
-let angle=Math.PI*.24, elevation=.68, distance=108, targetDistance=108;
-const focus=new THREE.Vector3(0,2,0);
+let angle=Math.PI*.24, elevation=.68, distance=648, targetDistance=648;
+const focus=new THREE.Vector3(0,12,0);
 const pointers=new Map();
 let previous={x:0,y:0}, pinch=0, dragging=false;
 function updateCamera() {
@@ -272,16 +278,16 @@ renderer.domElement.addEventListener('pointerdown',e=>{
 renderer.domElement.addEventListener('pointermove',e=>{
   if(!pointers.has(e.pointerId))return;
   pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(pointers.size===2){const d=pinchDistance();if(pinch)targetDistance=THREE.MathUtils.clamp(targetDistance-(d-pinch)*.12,5,120);pinch=d;return;}
+  if(pointers.size===2){const d=pinchDistance();if(pinch)targetDistance=THREE.MathUtils.clamp(targetDistance-(d-pinch)*.72,30,720);pinch=d;return;}
   if(dragging){angle-=(e.clientX-previous.x)*.005;elevation=THREE.MathUtils.clamp(elevation+(e.clientY-previous.y)*.003,.12,1.15);previous={x:e.clientX,y:e.clientY};}
 });
 function endPointer(e){pointers.delete(e.pointerId);if(pointers.size<2)pinch=0;dragging=pointers.size===1;if(dragging)previous=[...pointers.values()][0];}
 renderer.domElement.addEventListener('pointerup',endPointer);
 renderer.domElement.addEventListener('pointercancel',endPointer);
-renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();targetDistance=THREE.MathUtils.clamp(targetDistance+e.deltaY*.045,5,120);},{passive:false});
+renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();targetDistance=THREE.MathUtils.clamp(targetDistance+e.deltaY*.27,30,720);},{passive:false});
 renderer.domElement.addEventListener('keydown',e=>{
-  if(e.key==='+'||e.key==='=')targetDistance=Math.max(5,targetDistance-4);
-  if(e.key==='-')targetDistance=Math.min(120,targetDistance+4);
+  if(e.key==='+'||e.key==='=')targetDistance=Math.max(30,targetDistance-24);
+  if(e.key==='-')targetDistance=Math.min(720,targetDistance+24);
   if(e.key==='ArrowLeft')angle-=.08;
   if(e.key==='ArrowRight')angle+=.08;
 });
