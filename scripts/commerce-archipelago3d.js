@@ -35,11 +35,11 @@ for(let l=0;l<layers.length-1;l++)for(let i=0;i<SEG;i++){const n=(i+1)%SEG,a=l*S
 const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(sp,3));sg.setIndex(si);sg.computeVertexNormals();world.add(new THREE.Mesh(sg,new THREE.MeshStandardMaterial({color:'#ddcba5',roughness:1,side:THREE.DoubleSide})));
 // Roads and walkways follow gentle curves over the island.
 function tube(points,radius,material,y=.13){const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,surfaceHeight(x,z)+y,z)));const m=new THREE.Mesh(new THREE.TubeGeometry(curve,180,radius,8,false),material);m.receiveShadow=true;world.add(m);return m;}
-function slab(x,z,w,d,y,m){const o=new THREE.Mesh(new THREE.BoxGeometry(w,.12,d),m);o.position.set(x,y,z);o.receiveShadow=true;o.castShadow=true;world.add(o);return o;}
+function slab(x,z,w,d,y,m){const o=new THREE.Mesh(new THREE.BoxGeometry(w,.12,d),m);o.position.set(x,y,z);conformFootprint(o,x,z,w,d,.12);o.receiveShadow=true;o.castShadow=true;world.add(o);return o;}
 function conformFootprint(mesh,x,z,w,d,thickness){const a=mesh.geometry.attributes.position,center=surfaceHeight(x,z);for(let i=0;i<a.count;i++){const dx=a.getX(i),dz=a.getZ(i),dy=surfaceHeight(x+dx,z+dz)-center;a.setY(i,a.getY(i)+dy);}a.needsUpdate=true;mesh.geometry.computeVertexNormals();}
-tube([[-34,-5],[-25,-7],[-15,-7],[-5,-6],[5,-5],[16,-4],[27,-1],[35,5]],1.05,roadMat);
-tube([[-2,-30],[-1,-20],[0,-10],[1,0],[4,11],[7,22],[11,31]],.72,roadMat);
-tube([[-30,16],[-20,19],[-9,20],[2,20],[14,18],[26,14],[33,9]],.48,paving);
+// Main streets now follow the open corridors between the commercial blocks.
+tube([[-35,-8],[-25,-8],[-15,-8],[-5,-8],[5,-8],[15,-8],[25,-8],[35,-8]],.72,roadMat);
+tube([[-35,6],[-25,6],[-15,6],[-5,6],[5,6],[15,6],[25,6],[35,6]],.48,paving);
 // Central plaza, fountain and benches.
 slab(1,2,17,14,surfaceHeight(1,2)+.06,paving);
 const basin=new THREE.Mesh(new THREE.CylinderGeometry(2.5,2.7,.55,48),mat('#d6d0bd'));basin.position.set(1,surfaceHeight(1,2)+.33,2);world.add(basin);
@@ -48,7 +48,8 @@ const fountain=new THREE.Mesh(new THREE.CylinderGeometry(.28,.4,.85,16),mat('#c5
 function bench(x,z,rot=0){const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)+.02,z);g.rotation.y=rot;const a=new THREE.Mesh(new THREE.BoxGeometry(2.1,.16,.55),wood);a.position.y=.65;g.add(a);const b=new THREE.Mesh(new THREE.BoxGeometry(2.1,.72,.14),wood);b.position.set(0,1,-.22);g.add(b);for(const sx of [-.78,.78]){const l=new THREE.Mesh(new THREE.BoxGeometry(.14,.62,.16),darkWood);l.position.set(sx,.31,0);g.add(l);}g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});world.add(g);}
 bench(-5,3,.2);bench(7,3,-.2);bench(1,9,Math.PI/2);
 // Boardwalk and pier.
-tube([[-29,27],[-18,31],[-5,32],[9,31],[22,27],[31,21]],.58,wood,.25);
+// Short boardwalk spur approaches the pier from the open east side, clear of S-02.
+tube([[31,20],[32,23],[32,27]],.58,wood,.25);
 slab(32,31,5,15,surfaceHeight(32,31)+.06,wood);for(let z=25;z<=37;z+=3)for(const x of [30,34]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.16,.19,1.8,8),darkWood);p.position.set(x,surfaceHeight(x,z)+.9,z);world.add(p);}
 // Empty storefront shells: plot pads, boundary lines, side/rear walls and open fronts.
 const plots=[];
@@ -124,18 +125,18 @@ const sideStreet=mat('#a9aaa1'),sidewalk=mat('#d7d0bf');
 // Small neighborhood green pockets break up the blocks and reserve public space.
 function greenPocket(x,z,w,d){
   const g=new THREE.Mesh(new THREE.BoxGeometry(w,.12,d),mat('#9eae86'));
-  g.position.set(x,surfaceHeight(x,z)+.06,z);g.receiveShadow=true;world.add(g);
+  g.position.set(x,surfaceHeight(x,z)+.06,z);conformFootprint(g,x,z,w,d,.12);g.receiveShadow=true;world.add(g);
   for(const dx of [-w*.28,0,w*.28])tree(x+dx,z,.42+rand()*.12);
 }
-greenPocket(-8,-22,7,4.5);
-greenPocket(23,20,6,4.5);
-greenPocket(-31, -4,4.5,6);
+greenPocket(-12,-24,5.5,3.8);
+greenPocket(0,20,5.5,4);
+greenPocket(-35,-5,4,5);
 
 // Trees, planters and lamps frame public space; no vegetation is placed inside lots.
 function tree(x,z,s=1){const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z),z);g.scale.setScalar(s);const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22,.32,2.8,7),wood);trunk.position.y=1.4;g.add(trunk);for(let i=0;i<3;i++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.35-i*.12,1),greens[i]);crown.position.set((rand()-.5)*.35,3.1+i*.42,(rand()-.5)*.35);crown.scale.set(1.05,.9,1.05);g.add(crown);}g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});world.add(g);}
-[[-34,21],[-17,27],[-6,27],[32,18],[34,-12],[0,13],[9,12]].forEach(([x,z],i)=>tree(x,z,.8+rand()*.35));
+[[-34,21],[-10,28],[-6,27],[34,-12],[0,13],[4,13]].forEach(([x,z],i)=>tree(x,z,.8+rand()*.35));
 function lamp(x,z){const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z),z);const pole=new THREE.Mesh(new THREE.CylinderGeometry(.07,.1,3.4,8),darkWood);pole.position.y=1.7;g.add(pole);const head=new THREE.Mesh(new THREE.BoxGeometry(.62,.28,.62),mat('#f2d9a9',.5,{emissive:'#b98e54',emissiveIntensity:.18}));head.position.y=3.5;g.add(head);world.add(g);}
-[[-30,-8],[-18,-8],[-5,-7],[8,-6],[21,-4],[31,1],[-1,12],[5,12],[14,19]].forEach(([x,z])=>lamp(x,z));
+[[-30,-9.8],[-18,-9.8],[-5,-9.8],[8,-9.8],[21,-9.8],[31,-9.8],[-1,7.2],[5,7.2],[14,7.2]].forEach(([x,z])=>lamp(x,z));
 // Camera auto-fits the entire 11x island on portrait and landscape screens.
 let angle=Math.PI*.24,elevation=.67,distance=650,targetDistance=650;const focus=new THREE.Vector3(0,12,0),FIT_RADIUS=513.3,MAX_DISTANCE=2200;let initialFit=false;
 function fitDistance(){const v=THREE.MathUtils.degToRad(camera.fov*.5),h=Math.atan(Math.tan(v)*camera.aspect);return Math.ceil((FIT_RADIUS/Math.sin(Math.min(v,h)))*1.12);}
