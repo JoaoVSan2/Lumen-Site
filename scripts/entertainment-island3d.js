@@ -171,6 +171,32 @@ for(let i=0;i<48;i++){
 }
 // Diagonal braces stabilize the taller sections of the coaster.
 for(const x of [-7,7]){beamBetween(coaster,[x,2.4,-1],[x,10,2],.1,gold,8);beamBetween(coaster,[x,2.4,8],[x,8,5],.1,gold,8);}
+// COASTER TRAIN — three connected cars follow the full elevated track loop.
+const coasterCars = [];
+const carColors = [coral, gold, teal];
+for (let i = 0; i < 3; i++) {
+  const car = new THREE.Group();
+  box(1.12, 0.38, 0.92, carColors[i], 0, 0, 0, car);
+  box(0.9, 0.13, 0.78, darkWood, 0, 0.25, 0, car);
+  for (const x of [-0.31, 0.31]) {
+    box(0.12, 0.3, 0.12, cream, x, 0.43, -0.22, car);
+    box(0.12, 0.3, 0.12, cream, x, 0.43, 0.22, car);
+  }
+  for (const x of [-0.46, 0.46]) {
+    for (const z of [-0.29, 0.29]) {
+      const wheel = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.16, 0.16, 0.13, 10),
+        darkWood
+      );
+      wheel.rotation.z = Math.PI / 2;
+      wheel.position.set(x, -0.19, z);
+      add(wheel, car);
+    }
+  }
+  add(car, coaster);
+  coasterCars.push(car);
+}
+
 // Carousel pavilion with ten sculpted carousel animals, poles and a striped canopy.
 const carousel=new THREE.Group();carousel.position.set(18,surface(18,19),19);islandWorld.add(carousel);
 cylinder(5.2,5.2,.35,cream,0,.25,0,carousel,40);
@@ -296,7 +322,15 @@ renderer.domElement.addEventListener('keydown',e=>{if(e.key==='+'||e.key==='=')t
 renderer.domElement.tabIndex=0;renderer.domElement.setAttribute('aria-label','Entertainment Island 3D. Arraste para explorar, use dois dedos ou a roda para aproximar.');
 new ResizeObserver(resize).observe(host);resize();updateCamera();
 const clock=new THREE.Clock();
-function animate(){requestAnimationFrame(animate);const dt=clock.getDelta(),t=clock.elapsedTime;distance=THREE.MathUtils.lerp(distance,targetDistance,1-Math.exp(-6*dt));updateCamera();ocean.position.y=SEA+Math.sin(t*.65)*.025;waterMat.color.setHSL(.51+Math.sin(t*.16)*.007,.31,.54);carousel.rotation.y=t*.16;renderer.render(scene,camera);}
+function animate(){requestAnimationFrame(animate);const dt=clock.getDelta(),t=clock.elapsedTime;distance=THREE.MathUtils.lerp(distance,targetDistance,1-Math.exp(-6*dt));updateCamera();ocean.position.y=SEA+Math.sin(t*.65)*.025;waterMat.color.setHSL(.51+Math.sin(t*.16)*.007,.31,.54);carousel.rotation.y=t*.16;
+coasterCars.forEach((car,index)=>{
+  const progress=(t*.025+index*.018)%1;
+  const p=coasterCurve.getPointAt(progress);
+  const tangent=coasterCurve.getTangentAt(progress);
+  car.position.set(p.x,p.y+.48,p.z);
+  car.rotation.y=Math.atan2(tangent.x,tangent.z);
+});
+renderer.render(scene,camera);}
 animate();
 const loading=host.querySelector('.entertainment-loading');if(loading)loading.remove();
 window.lumenEntertainmentIsland={scene,camera,renderer,terrain,attractions:['Ferris Wheel','Roller Coaster','Carousel','Arcade Pavilion','Festival Stage'],scale:11};
