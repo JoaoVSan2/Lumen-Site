@@ -88,7 +88,7 @@ function boardwalk(points,width=1.45) {
   deck.receiveShadow=true;town.add(deck);return deck;
 }
 boardwalk([[31,20],[32,23],[32,27]],1.45);
-slab(32,31,5,15,surfaceHeight(32,31)+.06,wood);for(let z=25;z<=37;z+=3)for(const x of [30,34]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.16,.19,1.8,8),darkWood);p.position.set(x,THREE.MathUtils.lerp(surfaceHeight(x,z),SEA,.35)+.9,z);town.add(p);}
+slab(32,31,5,15,surfaceHeight(32,31)+.06,wood);for(let z=25;z<=37;z+=3)for(const x of [30,34]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.16,.19,3.2,8),darkWood);p.position.set(x,THREE.MathUtils.lerp(surfaceHeight(x,z),SEA,.35)+.2,z);town.add(p);}
 // Empty storefront shells: plot pads, boundary lines, side/rear walls and open fronts.
 const plots=[];
 function sign(group,id,style,z){const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d');ctx.clearRect(0,0,512,128);ctx.fillStyle=style==='modern'?'#eff7f2':'#fff2df';ctx.font='700 54px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(id,256,66);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));s.scale.set(3.1,.78,1);s.position.set(0,.65,z);group.add(s);}
