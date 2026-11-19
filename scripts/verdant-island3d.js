@@ -8,9 +8,9 @@ if (!host) throw new Error('Elemento #verdant-canvas não encontrado.');
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('#b7d4bd');
-scene.fog = new THREE.FogExp2('#b7d4bd', 0.00075);
+scene.fog = new THREE.FogExp2('#b7d4bd', 0.00042);
 
-const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 1800);
+const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 3000);
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 const touch = matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
 
@@ -26,20 +26,20 @@ Object.assign(renderer.domElement.style, { width: '100%', height: '100%', displa
 
 scene.add(new THREE.HemisphereLight('#e9f5e7', '#526b54', 2.0));
 const sun = new THREE.DirectionalLight('#fff0d5', 2.7);
-sun.position.set(-38, 62, 28);
+sun.position.set(-70, 114, 51);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
-sun.shadow.camera.left = -348;
-sun.shadow.camera.right = 348;
-sun.shadow.camera.top = 348;
-sun.shadow.camera.bottom = -348;
+sun.shadow.camera.left = -640;
+sun.shadow.camera.right = 640;
+sun.shadow.camera.top = 640;
+sun.shadow.camera.bottom = -640;
 sun.shadow.bias = -0.00025;
 scene.add(sun);
 
-// Escala global de 500% acima do tamanho original (6x), mantendo
-// todas as partes da ilha e seus elementos naturais na mesma proporção.
+// Escala global de 1000% acima do tamanho original (11x), mantendo
+// terreno, água, árvores, flores, trilhas e detalhes na mesma proporção.
 const islandWorld = new THREE.Group();
-islandWorld.scale.setScalar(6);
+islandWorld.scale.setScalar(11);
 scene.add(islandWorld);
 
 const mat = (color, roughness = 1) => new THREE.MeshStandardMaterial({ color, roughness, flatShading: true });
@@ -253,8 +253,8 @@ clearing(2,24,3.4);
 // Camera controls: independent orbital camera for Verdant Island.
 let angle=Math.PI*.24, elevation=.68, distance=648, targetDistance=648;
 const focus=new THREE.Vector3(0,12,0);
-const ISLAND_FIT_RADIUS = 280;
-const MAX_CAMERA_DISTANCE = 1200;
+const ISLAND_FIT_RADIUS = 513.3;
+const MAX_CAMERA_DISTANCE = 2200;
 let initialCameraFit = false;
 
 function getIslandFitDistance() {
