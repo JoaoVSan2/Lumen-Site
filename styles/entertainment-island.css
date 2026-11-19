@@ -1,0 +1,36 @@
+*{box-sizing:border-box}
+:root{color-scheme:light;--ink:#354d4b;--muted:#627b74}
+html,body{width:100%;height:100%;margin:0;overflow:hidden}
+body{min-width:320px;background:#c7d9d4;color:var(--ink);font-family:"DM Sans",sans-serif}
+.entertainment-experience,.entertainment-stage{width:100%;height:100%}
+.entertainment-stage{position:fixed;inset:0;overflow:hidden;background:#c7d9d4;isolation:isolate}
+.entertainment-canvas{position:absolute;inset:0;overflow:hidden}
+.entertainment-canvas canvas{display:block;width:100%;height:100%;touch-action:none;outline:none}
+.entertainment-loading{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;color:#526f69;pointer-events:none}
+.entertainment-loading span{font-size:34px}.entertainment-loading p{margin:0;font-size:12px;letter-spacing:.08em}
+.entertainment-topbar{position:fixed;z-index:5;inset:0 0 auto;height:62px;padding:0 clamp(16px,3vw,38px);display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+.entertainment-brand{display:inline-flex;align-items:center;gap:10px;color:#354d4b;text-decoration:none;font:700 12px "Manrope",sans-serif;letter-spacing:.15em;pointer-events:auto}
+.entertainment-brand b{font-weight:400}.entertainment-mark{color:#d08c65;font-size:24px}
+.entertainment-edition,.entertainment-eyebrow,.entertainment-regions,.entertainment-hint{font-size:8px;font-weight:700;letter-spacing:.15em}
+.entertainment-edition{color:#5c7770}.entertainment-edition i{padding:0 6px;font-style:normal;opacity:.55}
+.entertainment-vignette{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(241,245,232,.78),rgba(241,245,232,.24) 42%,transparent 72%),linear-gradient(0deg,rgba(39,63,61,.28),transparent 25%)}
+.entertainment-title{position:absolute;z-index:2;top:16%;left:clamp(24px,7vw,100px);width:min(490px,52vw);pointer-events:none}
+.entertainment-eyebrow{color:#6c806f}
+.entertainment-title h1{margin:18px 0 12px;font:500 clamp(40px,5.8vw,74px)/.98 "Manrope",sans-serif;letter-spacing:-.075em;color:#354d4b}
+.entertainment-title h1 em{color:#c17f60;font-style:normal;font-weight:400}
+.entertainment-title p{max-width:310px;color:#5d746e;font-size:14px;line-height:1.65}
+.entertainment-regions{position:absolute;z-index:2;left:clamp(24px,7vw,100px);bottom:34px;display:flex;align-items:center;gap:11px;color:#fffaf0;text-shadow:0 1px 8px rgba(30,54,50,.72);font-size:7px}
+.entertainment-regions i{width:4px;height:4px;border-radius:50%;background:#f0c59e}
+.entertainment-hint{position:absolute;z-index:2;right:26px;bottom:34px;color:#fffaf0;text-shadow:0 1px 8px rgba(30,54,50,.72);font-size:7px}
+.entertainment-hint span{padding:0 5px}
+.entertainment-back{position:absolute;z-index:3;top:74px;right:24px;padding:10px 14px;border:1px solid rgba(255,255,255,.6);border-radius:999px;color:#fffdf5;background:rgba(54,75,70,.48);backdrop-filter:blur(10px);text-decoration:none;font-size:11px}
+.entertainment-back:hover{background:rgba(54,75,70,.72)}
+@media(max-width:700px){
+.entertainment-topbar{height:54px;padding-inline:14px}.entertainment-brand{font-size:10px;gap:7px}.entertainment-mark{font-size:21px}.entertainment-edition{font-size:6px;letter-spacing:.1em}
+.entertainment-title{top:12%;left:7%;width:86%}.entertainment-title h1{margin:13px 0 8px;font-size:clamp(38px,10vw,58px)}.entertainment-title p{max-width:250px;margin-top:8px;font-size:12px}
+.entertainment-vignette{background:linear-gradient(180deg,rgba(241,245,232,.72),rgba(241,245,232,.12) 37%,transparent 65%),linear-gradient(0deg,rgba(39,63,61,.3),transparent 27%)}
+.entertainment-regions{left:7%;bottom:max(22px,env(safe-area-inset-bottom));gap:7px;font-size:6px;letter-spacing:.08em}
+.entertainment-hint{right:7%;bottom:max(43px,calc(env(safe-area-inset-bottom) + 42px));left:7%;text-align:right;font-size:6px}
+.entertainment-back{top:65px;right:14px;padding:8px 11px;font-size:10px}
+}
+@media(max-width:380px){.entertainment-regions{gap:5px;font-size:5px}}
