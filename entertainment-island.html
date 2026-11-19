@@ -16,12 +16,15 @@
   <main class="entertainment-experience">
     <header class="entertainment-topbar">
       <a class="entertainment-brand" href="./" aria-label="Voltar ao Island Core"><span class="entertainment-mark">✳</span><span>LUMEN <b>SOCIETY</b></span></a>
-      <nav class="world-nav" aria-label="Navegação entre ilhas">
-        <a href="./">CORE</a>
-        <a href="./verdant-island.html">VERDANT</a>
-        <a href="./commerce-archipelago.html">COMMERCE</a>
-        <a href="./entertainment-island.html" aria-current="page">ENTERTAINMENT</a>
-      </nav>
+      <details class="lumen-island-switcher">
+  <summary aria-label="Abrir navegação entre as ilhas"><span class="lumen-switcher-kicker">EXPLORAR</span><span class="lumen-switcher-current">ENTERTAINMENT ISLAND</span><span class="lumen-switcher-chevron" aria-hidden="true">⌄</span></summary>
+  <nav class="lumen-island-menu" aria-label="Escolher ilha">
+    <a href="./"><span class="lumen-island-menu-mark">○</span><span>ISLAND CORE</span></a>
+    <a href="./verdant-island.html"><span class="lumen-island-menu-mark">○</span><span>VERDANT ISLAND</span></a>
+    <a href="./commerce-archipelago.html"><span class="lumen-island-menu-mark">○</span><span>COMMERCE ARCHIPELAGO</span></a>
+    <a href="./entertainment-island.html" aria-current="page"><span class="lumen-island-menu-mark">✳</span><span>ENTERTAINMENT ISLAND</span><span class="lumen-island-menu-current">VOCÊ ESTÁ AQUI</span></a>
+  </nav>
+</details>
       <span class="entertainment-edition">ENTERTAINMENT ISLAND <i>·</i> 1.0</span>
     </header>
     <section class="entertainment-stage" aria-label="Exploração 3D da Entertainment Island">
@@ -36,7 +39,7 @@
       </div>
       <div class="entertainment-regions"><span>AMUSEMENT PARK</span><i></i><span>FESTIVAL PLAZA</span><i></i><span>ARCADE GARDENS</span></div>
       <div class="entertainment-hint">Arraste para explorar <span>·</span> Pinça ou roda para aproximar</div>
-      <a class="entertainment-back" href="./">Voltar ao Island Core</a>
+
     </section>
   </main>
   <script type="module" src="./scripts/entertainment-island3d.js?v=20261119-14"></script>
