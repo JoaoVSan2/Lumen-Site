@@ -28,10 +28,15 @@ for(let l=0;l<RINGS-1;l++){const a0=1+l*SEG,b0=a0+SEG;for(let i=0;i<SEG;i++){con
 const c1=new THREE.Color('#789b79'),c2=new THREE.Color('#9fb58a'),c3=new THREE.Color('#b5b28f');
 for(let i=0;i<pos.length;i+=3){const x=pos[i],y=pos[i+1],z=pos[i+2],n=(Math.sin(x*.13+z*.08)+Math.cos(z*.17-x*.06))*.5,c=c1.clone().lerp(c2,smooth(-.2,.8,n)*.55);if(Math.hypot(x,z)>34)c.lerp(c3,.48);cols.push(c.r,c.g,c.b);}
 const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));geo.setIndex(idx);geo.computeVertexNormals();
+// Enlarge only the landmass footprint by 50%; buildings, lots, streets and camera stay unchanged.
+const LANDMASS_SCALE=1.5;
+for(let i=0;i<pos.length;i+=3){pos[i]*=LANDMASS_SCALE;pos[i+2]*=LANDMASS_SCALE;}
+geo.attributes.position.needsUpdate=true;geo.computeVertexNormals();
 const terrain=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));terrain.receiveShadow=true;terrain.castShadow=true;world.add(terrain);
 // Sand ribbon around the island.
 const sp=[],si=[],layers=[1,1.025,1.055,1.085];for(let l=0;l<layers.length;l++)for(let i=0;i<SEG;i++){const a=i/SEG*Math.PI*2,r=edge(a)*layers[l],x=Math.cos(a)*r,z=Math.sin(a)*r,innerX=Math.cos(a)*edge(a),innerZ=Math.sin(a)*edge(a),y=THREE.MathUtils.lerp(surfaceHeight(innerX,innerZ)-.035,SEA-.5,l/(layers.length-1));sp.push(x,y,z);}
 for(let l=0;l<layers.length-1;l++)for(let i=0;i<SEG;i++){const n=(i+1)%SEG,a=l*SEG+i,b=l*SEG+n,c=(l+1)*SEG+i,d=(l+1)*SEG+n;si.push(a,b,c,b,d,c);}
+for(let i=0;i<sp.length;i+=3){sp[i]*=LANDMASS_SCALE;sp[i+2]*=LANDMASS_SCALE;}
 const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(sp,3));sg.setIndex(si);sg.computeVertexNormals();world.add(new THREE.Mesh(sg,new THREE.MeshStandardMaterial({color:'#ddcba5',roughness:1,side:THREE.DoubleSide})));
 // Roads and walkways follow the terrain as broad, flat street surfaces.
 function roadStrip(points,width,material,offset=.025){
