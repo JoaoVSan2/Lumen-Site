@@ -250,6 +250,16 @@ clearing(2,24,3.4);
 // Camera controls: independent orbital camera for Verdant Island.
 let angle=Math.PI*.24, elevation=.68, distance=648, targetDistance=648;
 const focus=new THREE.Vector3(0,12,0);
+const ISLAND_FIT_RADIUS = 280;
+const MAX_CAMERA_DISTANCE = 1200;
+let initialCameraFit = false;
+
+function getIslandFitDistance() {
+  const verticalHalfFov = THREE.MathUtils.degToRad(camera.fov * 0.5);
+  const horizontalHalfFov = Math.atan(Math.tan(verticalHalfFov) * camera.aspect);
+  const limitingHalfFov = Math.min(verticalHalfFov, horizontalHalfFov);
+  return Math.ceil((ISLAND_FIT_RADIUS / Math.sin(limitingHalfFov)) * 1.12);
+}
 const pointers=new Map();
 let previous={x:0,y:0}, pinch=0, dragging=false;
 function updateCamera() {
@@ -265,6 +275,14 @@ function resize() {
   camera.updateProjectionMatrix();
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, (camera.aspect < 1 || touch) ? 1.35 : 1.8));
   renderer.setSize(w,h,false);
+
+  // Na primeira abertura, calcula o afastamento necessário para enquadrar
+  // a ilha inteira, tanto em telas verticais quanto horizontais.
+  if (!initialCameraFit) {
+    distance = getIslandFitDistance();
+    targetDistance = distance;
+    initialCameraFit = true;
+  }
 }
 function pinchDistance() {
   const p=[...pointers.values()]; if(p.length<2)return 0;
@@ -287,7 +305,7 @@ renderer.domElement.addEventListener('pointercancel',endPointer);
 renderer.domElement.addEventListener('wheel',e=>{e.preventDefault();targetDistance=THREE.MathUtils.clamp(targetDistance+e.deltaY*.27,30,720);},{passive:false});
 renderer.domElement.addEventListener('keydown',e=>{
   if(e.key==='+'||e.key==='=')targetDistance=Math.max(30,targetDistance-24);
-  if(e.key==='-')targetDistance=Math.min(720,targetDistance+24);
+  if(e.key==='-')targetDistance=Math.min(MAX_CAMERA_DISTANCE,targetDistance+24);
   if(e.key==='ArrowLeft')angle-=.08;
   if(e.key==='ArrowRight')angle+=.08;
 });
