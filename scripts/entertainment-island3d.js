@@ -67,7 +67,8 @@ path([[1,2],[10,7],[18,14],[22,23]],2.1);
 path([[-2,1],[-11,8],[-19,15],[-25,22]],2.1);
 // PARK ENTRANCE — a clear, welcoming threshold aligned with the main approach path.
 const parkGate = new THREE.Group();
-parkGate.position.set(-6, surface(-6, -32), -32);
+parkGate.position.set(22, surface(22, 25), 25);
+parkGate.rotation.y = 0.42;
 islandWorld.add(parkGate);
 for (const x of [-2.8, 2.8]) {
   box(0.62, 4.7, 0.72, cream, x, 2.35, 0, parkGate);
@@ -183,7 +184,7 @@ for (let i = 0; i < 3; i++) {
     box(0.12, 0.3, 0.12, cream, x, 0.43, 0.22, car);
   }
   for (const x of [-0.46, 0.46]) {
-    for (const z of [-0.29, 0.29]) {
+    for (const z of [-0.48, 0.48]) {
       const wheel = new THREE.Mesh(
         new THREE.CylinderGeometry(0.16, 0.16, 0.13, 10),
         darkWood
