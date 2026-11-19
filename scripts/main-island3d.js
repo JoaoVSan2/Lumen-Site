@@ -1501,8 +1501,8 @@ function animate() {
     group.position.y = terrainHeight(group.position.x, group.position.z) + 0.72 +
       Math.sin(elapsed * 1.8 + phase) * 0.10;
     const flap = Math.sin(elapsed * 8.5 + phase) * 0.62;
-    leftWing.rotation.y = flap;
-    rightWing.rotation.y = -flap;
+    leftWing.rotation.x = flap;
+    rightWing.rotation.x = -flap;
   });
 
   // Movimento das flores.
