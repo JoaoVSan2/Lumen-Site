@@ -335,6 +335,116 @@ for(let i=0;i<16;i++){
 }
 function lamp(x,z){const g=new THREE.Group();g.position.set(x,surface(x,z),z);islandWorld.add(g);cylinder(.07,.1,2.8,darkWood,0,1.4,0,g,8);sphere(.23,gold,0,2.9,0,g);}
 [[-28,-7],[-12,-2],[5,5],[25,6],[11,24],[-15,22],[0,31]].forEach(([x,z])=>lamp(x,z));
+
+/* --- LUMEN PARK EXPANSION: themed landmark, new rides, queue systems and guest details --- */
+// A fairytale castle gives the upper garden a memorable focal point.
+const castle=new THREE.Group();
+castle.position.set(0,surface(0,20),20);
+islandWorld.add(castle);
+box(11,.55,8,cream,0,.28,0,castle);
+box(8,5.2,6.2,mat('#e8d8bd'),0,3.0,0,castle);
+box(3.2,7.2,3.2,coral,0,4.0,-.25,castle);
+box(7.6,3.7,2.1,cream,0,2.0,3.85,castle);
+box(2.4,3.5,.22,teal,0,2.1,4.94,castle);
+for(const x of [-3.2,3.2]){
+  box(2.2,4.5,2.2,cream,x,2.65,-1.4,castle);
+  const turret=new THREE.Mesh(new THREE.ConeGeometry(1.55,2.5,8),[blue,coral][x>0?0:1]);
+  turret.position.set(x,6.1,-1.4);add(turret,castle);
+  box(.55,1.2,.18,blue,x,3.4,4.92,castle);
+}
+for(const x of [-2.2,0,2.2]){
+  const window=new THREE.Mesh(new THREE.CircleGeometry(.48,16),blue);
+  window.position.set(x,3.5,4.99);add(window,castle);
+  box(.12,1.05,.08,gold,x,3.5,5.02,castle);
+  box(.9,.1,.08,gold,x,3.5,5.02,castle);
+}
+const castleRoof=new THREE.Mesh(new THREE.ConeGeometry(2.15,2.7,8),gold);
+castleRoof.position.set(0,8.7,-.25);add(castleRoof,castle);
+for(const x of [-3.2,3.2]){const flag=new THREE.Group();flag.position.set(x,7.55,-1.4);castle.add(flag);cylinder(.045,.045,2.2,gold,0,1.1,0,flag,7);const cloth=box(.72,.42,.05,coral,.34,1.72,0,flag);cloth.rotation.z=-.08;}
+box(1.5,2.35,.16,darkWood,0,1.45,5.08,castle);
+const castleArch=new THREE.Mesh(new THREE.TorusGeometry(.8,.12,8,20,Math.PI),gold);
+castleArch.position.set(0,2.62,5.12);add(castleArch,castle);
+for(const x of [-5.8,5.8]){cylinder(.12,.18,1.8,wood,x,.9,0,castle,8);sphere(.28,gold,x,1.95,0,castle);}
+
+// Pirate ship ride with A-frame, suspended hull and animated pendulum.
+const pirateRide=new THREE.Group();
+pirateRide.position.set(28,surface(28,-27),-27);
+islandWorld.add(pirateRide);
+platform(0,0,13,10,mat('#d4c4a6'));
+for(const x of [-4.6,4.6])beamBetween(pirateRide,[x,.3,0],[0,9.4,0],.32,cream,12);
+beamBetween(pirateRide,[-4.6,.3,0],[4.6,.3,0],.24,darkWood,10);
+beamBetween(pirateRide,[0,9.4,-.35],[0,9.4,.35],.28,gold,10);
+const piratePivot=new THREE.Group();piratePivot.position.set(0,8.7,0);pirateRide.add(piratePivot);
+const pirateHull=new THREE.Group();pirateHull.position.y=-5.2;piratePivot.add(pirateHull);
+const hull=new THREE.Mesh(new THREE.CylinderGeometry(1.15,2.5,8.6,8,1,false),coral);hull.rotation.z=Math.PI/2;hull.scale.set(1,.55,1.1);hull.position.y=-.25;add(hull,pirateHull);
+box(7.8,.32,2.7,wood,0,.15,0,pirateHull);
+for(let i=0;i<9;i++){const x=-3.5+i*.875;box(.12,1.0,.12,gold,x,.7,-1.18,pirateHull);box(.12,1.0,.12,gold,x,.7,1.18,pirateHull);}
+for(const x of [-3.6,3.6]){box(.42,2.0,.42,darkWood,x,.95,0,pirateHull);const sail=box(.08,2.2,1.7,cream,x,2.05,0,pirateHull);sail.rotation.z=x>0?.1:-.1;}
+const pirateMast=box(.18,3.4,.18,darkWood,0,2.1,0,pirateHull);
+const pirateFlag=box(.95,.48,.08,coral,.5,3.65,0,pirateHull);
+for(const x of [-2.7,2.7])sphere(.17,gold,x,.62,1.25,pirateHull);
+
+// Ticket booths at the entry plaza, plus clear signs that read at close range.
+function ticketBooth(x,z,accent){
+  const g=new THREE.Group();g.position.set(x,surface(x,z),z);islandWorld.add(g);
+  box(2.5,2.45,2.0,cream,0,1.22,0,g);
+  box(2.8,.28,2.25,accent,0,2.58,0,g);
+  box(1.55,.72,.12,blue,0,1.75,1.04,g);
+  box(1.8,.16,.22,gold,0,1.22,1.12,g);
+  box(.1,.95,.1,wood,-.9,.48,.78,g);box(.1,.95,.1,wood,.9,.48,.78,g);
+}
+ticketBooth(-5.4,-33,coral);ticketBooth(5.4,-33,teal);
+
+// Queue rails define orderly approach lanes without fencing off the attractions.
+function queueLane(cx,cz,w,d,railMaterial=gold){
+  const y=surface(cx,cz)+.2;
+  for(const side of [-1,1]){
+    const x=cx+side*w/2;
+    for(let z=-d/2;z<=d/2+.01;z+=1.7)cylinder(.055,.075,1.0,cream,x,y+.5,cz+z,islandWorld,7);
+    beamBetween(islandWorld,[x,y+.85,cz-d/2],[x,y+.85,cz+d/2],.055,railMaterial,7);
+  }
+  for(let z=-d/2;z<=d/2+.01;z+=1.7)beamBetween(islandWorld,[cx-w/2,y+.5,cz+z],[cx+w/2,y+.5,cz+z],.045,railMaterial,7);
+}
+queueLane(-22,-11,6.4,5.4,coral);
+queueLane(22,18,7.2,5.4,teal);
+queueLane(28,-27,7.8,4.2,gold);
+queueLane(-23,17,7.6,4.2,blue);
+
+// Small garden islands, flower beds and guest amenities make the walkways feel inhabited.
+function flowerBed(x,z,rx=1.3,rz=.8){
+  const y=surface(x,z)+.12;
+  const bed=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.22,12),wood);
+  bed.scale.set(rx,.55,rz);bed.position.set(x,y,z);add(bed);
+  for(let i=0;i<9;i++){
+    const a=i/9*Math.PI*2,r=.68;
+    const px=x+Math.cos(a)*rx*r,pz=z+Math.sin(a)*rz*r;
+    cylinder(.035,.045,.42,grassA,px,surface(px,pz)+.32,pz,islandWorld,5);
+    sphere(.16,[pink,gold,cream,coral][i%4],px,surface(px,pz)+.57,pz);
+  }
+}
+[[-7,-7],[8,-7],[-13,5],[14,5],[-13,25],[13,27],[-30,7],[31,5],[7,-30]].forEach(([x,z])=>flowerBed(x,z,1.35,.85));
+function trashBin(x,z){
+  const y=surface(x,z);
+  cylinder(.34,.4,.8,teal,x,y+.4,z,islandWorld,10);
+  cylinder(.37,.37,.12,darkWood,x,y+.84,z,islandWorld,10);
+  box(.22,.04,.04,cream,x,y+.93,z+.34,islandWorld);
+}
+[[-9,-13],[9,-13],[-17,9],[17,9],[0,11],[25,-8],[0,29]].forEach(([x,z])=>trashBin(x,z));
+function shadeUmbrella(x,z,color){
+  const y=surface(x,z);
+  cylinder(.055,.055,2.3,wood,x,y+1.15,z,islandWorld,8);
+  const top=new THREE.Mesh(new THREE.ConeGeometry(1.35,.65,10),color);
+  top.position.set(x,y+2.35,z);add(top);
+  cylinder(.16,.16,.12,gold,x,y+2.04,z,islandWorld,10);
+}
+for(const [x,z] of [[-10,3],[-8,5],[10,3],[12,5]])shadeUmbrella(x,z,coral);
+for(const [x,z] of [[-10,3],[10,3]]){box(1.8,.16,1.1,wood,x,surface(x,z)+.65,z+1.8);for(const dx of [-.6,.6])for(const dz of [-.35,.35])cylinder(.045,.045,.65,darkWood,x+dx,surface(x,z)+.32,z+1.8+dz,islandWorld,6);}
+
+// A second path branch makes the pirate-ship cove part of the continuous park circuit.
+path([[17,-23],[22,-26],[27,-29],[32,-27],[34,-21]],2.3);
+// Additional palms frame the outer beach and the entrance promenade.
+[[-38,-4],[-37,16],[-19,35],[19,35],[38,8],[38,-8],[5,-39]].forEach(([x,z],i)=>tree(x,z,.82,i%2===0));
+
 // Fit the whole island on first load, retaining generous zoom-out range on mobile.
 let angle=Math.PI*.24,elevation=.68,distance=648,targetDistance=648;
 const focus=new THREE.Vector3(0,12,0),FIT_RADIUS=520,MAX_DISTANCE=2200;
@@ -353,7 +463,7 @@ renderer.domElement.addEventListener('keydown',e=>{if(e.key==='+'||e.key==='=')t
 renderer.domElement.tabIndex=0;renderer.domElement.setAttribute('aria-label','Entertainment Island 3D. Arraste para explorar, use dois dedos ou a roda para aproximar.');
 new ResizeObserver(resize).observe(host);resize();updateCamera();
 const clock=new THREE.Clock();
-function animate(){requestAnimationFrame(animate);const dt=clock.getDelta(),t=clock.elapsedTime;distance=THREE.MathUtils.lerp(distance,targetDistance,1-Math.exp(-6*dt));updateCamera();ocean.position.y=SEA+Math.sin(t*.65)*.025;waterMat.color.setHSL(.51+Math.sin(t*.16)*.007,.31,.54);carousel.rotation.y=t*.16;
+function animate(){requestAnimationFrame(animate);const dt=clock.getDelta(),t=clock.elapsedTime;distance=THREE.MathUtils.lerp(distance,targetDistance,1-Math.exp(-6*dt));updateCamera();ocean.position.y=SEA+Math.sin(t*.65)*.025;waterMat.color.setHSL(.51+Math.sin(t*.16)*.007,.31,.54);carousel.rotation.y=t*.16;piratePivot.rotation.z=Math.sin(t*1.35)*.42;
 coasterCars.forEach((car,index)=>{
   const progress=(t*.025+index*.018)%1;
   const p=coasterCurve.getPointAt(progress);
@@ -364,6 +474,6 @@ coasterCars.forEach((car,index)=>{
 renderer.render(scene,camera);}
 animate();
 const loading=host.querySelector('.entertainment-loading');if(loading)loading.remove();
-window.lumenEntertainmentIsland={scene,camera,renderer,terrain,attractions:['Ferris Wheel','Roller Coaster','Carousel','Arcade Pavilion','Festival Stage'],scale:11};
+window.lumenEntertainmentIsland={scene,camera,renderer,terrain,attractions:['Ferris Wheel','Roller Coaster','Carousel','Arcade Pavilion','Festival Stage','Fairytale Castle','Pirate Ship','Ticket Booths'],scale:11};
 window.lumenEntertainmentIslandReady=true;
 console.log('Lumen Society — Entertainment Island 1.0 carregada.');
