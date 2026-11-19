@@ -15,12 +15,12 @@ if (!host) {
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('#b9d9d2');
-scene.fog = new THREE.Fog('#b9d9d2', 125, 320);
+scene.fog = new THREE.Fog('#b9d9d2', 420, 1100);
 
 const focus = new THREE.Vector3(0, 0.2, 0);
 
 // Perspectiva real: permite aproximar até uma visão baixa, próxima ao chão.
-const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 150);
+const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 1500);
 
 const renderer = new THREE.WebGLRenderer({
   antialias: true,
