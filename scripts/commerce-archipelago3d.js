@@ -47,14 +47,29 @@ const water=new THREE.Mesh(new THREE.CircleGeometry(2.22,48),oceanMat);water.rot
 const fountain=new THREE.Mesh(new THREE.CylinderGeometry(.28,.4,.85,16),mat('#c5b89f'));fountain.position.set(1,surfaceHeight(1,2)+.93,2);world.add(fountain);
 function bench(x,z,rot=0){const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)+.02,z);g.rotation.y=rot;const a=new THREE.Mesh(new THREE.BoxGeometry(2.1,.16,.55),wood);a.position.y=.65;g.add(a);const b=new THREE.Mesh(new THREE.BoxGeometry(2.1,.72,.14),wood);b.position.set(0,1,-.22);g.add(b);for(const sx of [-.78,.78]){const l=new THREE.Mesh(new THREE.BoxGeometry(.14,.62,.16),darkWood);l.position.set(sx,.31,0);g.add(l);}g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});world.add(g);}
 bench(-5,3,.2);bench(7,3,-.2);bench(1,9,Math.PI/2);
-// Boardwalk and pier.
-// Short boardwalk spur approaches the pier from the open east side, clear of S-02.
-tube([[31,20],[32,23],[32,27]],.58,wood,.25);
-slab(32,31,5,15,surfaceHeight(32,31)+.06,wood);for(let z=25;z<=37;z+=3)for(const x of [30,34]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.16,.19,1.8,8),darkWood);p.position.set(x,surfaceHeight(x,z)+.9,z);world.add(p);}
+// Boardwalk: a flat, terrain-following timber deck, not a cylindrical tube.
+function boardwalk(points,width=1.45) {
+  const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z)));
+  const samples=curve.getPoints(100),vertices=[],indices=[];
+  for(let i=0;i<samples.length;i++) {
+    const p=samples[i],t=curve.getTangent(i/(samples.length-1)),len=Math.hypot(t.x,t.z)||1;
+    const nx=-t.z/len,nz=t.x/len;
+    for(const side of [-1,1]) {
+      const x=p.x+nx*side*width/2,z=p.z+nz*side*width/2;
+      vertices.push(x,surfaceHeight(x,z)+.10,z);
+    }
+    if(i<samples.length-1) {const k=i*2;indices.push(k,k+1,k+2,k+1,k+3,k+2);}
+  }
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));g.setIndex(indices);g.computeVertexNormals();
+  const deck=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:'#8a6247',roughness:.94,side:THREE.DoubleSide}));
+  deck.receiveShadow=true;world.add(deck);return deck;
+}
+boardwalk([[31,20],[32,23],[32,27]],1.45);
+slab(32,31,5,15,surfaceHeight(32,31)+.06,wood);for(let z=25;z<=37;z+=3)for(const x of [30,34]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.16,.19,1.8,8),darkWood);p.position.set(x,THREE.MathUtils.lerp(surfaceHeight(x,z),SEA,.35)+.9,z);world.add(p);}
 // Empty storefront shells: plot pads, boundary lines, side/rear walls and open fronts.
 const plots=[];
 function sign(group,id,style,z){const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d');ctx.clearRect(0,0,512,128);ctx.fillStyle=style==='modern'?'#eff7f2':'#fff2df';ctx.font='700 54px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(id,256,66);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));s.scale.set(3.1,.78,1);s.position.set(0,.65,z);group.add(s);}
-function addPlot(p){const {x,z,w,d,h,style,id,kind}=p,modern=style==='modern',g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)+.02,z);world.add(g);const wall=modern?wallModern:wallCoast,trim=modern?trimModern:terra;
+function addPlot(p){const {x,z,w,d,h,style,id,kind}=p,modern=style==='modern',g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)-.035,z);world.add(g);const wall=modern?wallModern:wallCoast,trim=modern?trimModern:terra;
 const base=new THREE.Mesh(new THREE.BoxGeometry(w,.24,d),mat(modern?'#b9c5c0':'#cbb99d'));base.position.y=.12;conformFootprint(base,x,z,w,d,.24);g.add(base);
 // Keep the complete lot footprint visible, while the empty building shell sits smaller inside it.
 const shell=new THREE.Group();shell.scale.set(.55,.55,.55);g.add(shell);
@@ -65,7 +80,7 @@ const lintel=new THREE.Mesh(new THREE.BoxGeometry(w+.2,.38,.48),trim);lintel.pos
 const roof=new THREE.Mesh(new THREE.BoxGeometry(w+.35,.24,d+.35),modern?mat('#aebfbb'):mat('#b86f53'));roof.position.set(0,.24+h+.24,0);shell.add(roof);
 const signboard=new THREE.Mesh(new THREE.BoxGeometry(w*.62,.48,.12),modern?mat('#536d6b'):mat('#77533f'));signboard.position.set(0,.24+h-.65,d/2+.045);shell.add(signboard);
 const edgeMat=mat(modern?'#6d9691':'#bd946d'),corners=[[-w/2,-d/2],[w/2,-d/2],[w/2,d/2],[-w/2,d/2]];
-for(let i=0;i<4;i++){const a=corners[i],b=corners[(i+1)%4],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),line=new THREE.Mesh(new THREE.BoxGeometry(len,.035,.07),edgeMat);line.position.set((a[0]+b[0])/2,.27,(a[1]+b[1])/2);line.rotation.y=-Math.atan2(dz,dx);g.add(line);}
+for(let i=0;i<4;i++){const a=corners[i],b=corners[(i+1)%4],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),line=new THREE.Mesh(new THREE.BoxGeometry(len,.035,.07),edgeMat);line.position.set((a[0]+b[0])/2,.205,(a[1]+b[1])/2);line.rotation.y=-Math.atan2(dz,dx);g.add(line);}
 g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});sign(g,id,style,d/2+.85);plots.push({...p,position:[x,z],size:[w,d],structureScale:.55});return g;}
 [
 {x:-25,z:-15,w:8.2,d:8.4,h:4.5,style:'modern',id:'M-01',kind:'Pequeno'},
@@ -84,7 +99,7 @@ g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});sign(g,id
 // These are deliberately empty plots, ready for future homes, services and businesses.
 const vacantLots=[];
 function emptyLot({x,z,w=6.4,d=7.2,id,type='urban'}){
-  const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)+.02,z);world.add(g);
+  const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)-.035,z);world.add(g);
   const padMat=mat(type==='green'?'#a4b58d':type==='service'?'#c9c4b2':'#c8c1ad');
   const pad=new THREE.Mesh(new THREE.BoxGeometry(w,.16,d),padMat);pad.position.y=.08;conformFootprint(pad,x,z,w,d,.16);pad.receiveShadow=true;pad.castShadow=true;g.add(pad);
   const curb=mat('#e0d7c4'),edge=.1,y=.19;
