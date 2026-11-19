@@ -92,7 +92,7 @@ slab(32,31,5,15,surfaceHeight(32,31)+.06,wood);for(let z=25;z<=37;z+=3)for(const
 // Empty storefront shells: plot pads, boundary lines, side/rear walls and open fronts.
 const plots=[];
 function sign(group,id,style,z){const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d');ctx.clearRect(0,0,512,128);ctx.fillStyle=style==='modern'?'#eff7f2':'#fff2df';ctx.font='700 54px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(id,256,66);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));s.scale.set(3.1,.78,1);s.position.set(0,.65,z);group.add(s);}
-function addPlot(p){const {x,z,w,d,h,style,id,kind}=p,modern=style==='modern',g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)+.02,z);g.scale.set(.95,1,.95);town.add(g);const wall=modern?wallModern:wallCoast,trim=modern?trimModern:terra;
+function addPlot(p){const {x,z,w,d,h,style,id,kind}=p,modern=style==='modern',g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)+.02,z);town.add(g);const wall=modern?wallModern:wallCoast,trim=modern?trimModern:terra;
 const base=new THREE.Mesh(new THREE.BoxGeometry(w,.24,d),mat(modern?'#b9c5c0':'#cbb99d'));base.position.y=.12;conformFootprint(base,x,z,w,d,.24);g.add(base);
 // Keep the complete lot footprint visible, while the empty building shell sits smaller inside it.
 const shell=new THREE.Group();shell.scale.set(.55,.55,.55);g.add(shell);
@@ -122,7 +122,7 @@ g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});sign(g,id
 // These are deliberately empty plots, ready for future homes, services and businesses.
 const vacantLots=[];
 function emptyLot({x,z,w=6.4,d=7.2,id,type='urban'}){
-  const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)+.02,z);town.add(g);
+  const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)+.02,z);g.scale.set(.95,1,.95);town.add(g);
   const padMat=mat(type==='green'?'#a4b58d':type==='service'?'#c9c4b2':'#c8c1ad');
   const pad=new THREE.Mesh(new THREE.BoxGeometry(w,.16,d),padMat);pad.position.y=.08;conformFootprint(pad,x,z,w,d,.16);pad.receiveShadow=true;pad.castShadow=true;g.add(pad);
   const curb=mat('#e0d7c4'),edge=.1,y=.19;
