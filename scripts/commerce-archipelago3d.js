@@ -1,5 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
-// LUMEN SOCIETY — COMMERCE ARCHIPELAGO 1.0. Cena independente, escala global 11x.
+// LUMEN SOCIETY — COMMERCE ARCHIPELAGO 1.0. Cena independente, escala global 11.22x.
 const host=document.getElementById('commerce-canvas');if(!host)throw new Error('Elemento #commerce-canvas não encontrado.');
 const scene=new THREE.Scene();scene.background=new THREE.Color('#c6d9d6');scene.fog=new THREE.FogExp2('#c6d9d6',.00042);
 const camera=new THREE.PerspectiveCamera(43,1,.1,3000),renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
@@ -8,7 +8,7 @@ renderer.setPixelRatio(Math.min(devicePixelRatio||1,touch?1.3:1.7));renderer.sha
 host.innerHTML='';host.appendChild(renderer.domElement);Object.assign(renderer.domElement.style,{width:'100%',height:'100%',display:'block',touchAction:'none'});
 scene.add(new THREE.HemisphereLight('#eff7ed','#62756d',2));
 const sun=new THREE.DirectionalLight('#fff0d8',2.6);sun.position.set(-70,115,65);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-640;sun.shadow.camera.right=640;sun.shadow.camera.top=640;sun.shadow.camera.bottom=-640;sun.shadow.bias=-.00025;scene.add(sun);
-const world=new THREE.Group();world.scale.setScalar(11);scene.add(world);
+const world=new THREE.Group();world.scale.setScalar(11.22);scene.add(world);
 // Urban layout follows the enlarged island footprint without changing building or road dimensions.
 const town=new THREE.Group();town.scale.set(1.5,1,1.5);world.add(town);
 const mat=(c,r=1,e={})=>new THREE.MeshStandardMaterial({color:c,roughness:r,flatShading:true,...e});
@@ -166,7 +166,7 @@ function tree(x,z,s=1){const g=new THREE.Group();g.position.set(x,surfaceHeight(
 function lamp(x,z){const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z),z);const pole=new THREE.Mesh(new THREE.CylinderGeometry(.07,.1,3.4,8),darkWood);pole.position.y=1.7;g.add(pole);const head=new THREE.Mesh(new THREE.BoxGeometry(.62,.28,.62),mat('#f2d9a9',.5,{emissive:'#b98e54',emissiveIntensity:.18}));head.position.y=3.5;g.add(head);town.add(g);}
 [[-30,-9.8],[-18,-9.8],[-5,-9.8],[8,-9.8],[21,-9.8],[31,-9.8],[-1,7.2],[5,7.2],[14,7.2]].forEach(([x,z])=>lamp(x,z));
 // Camera auto-fits the entire 11x island on portrait and landscape screens.
-let angle=Math.PI*.24,elevation=.67,distance=650,targetDistance=650;const focus=new THREE.Vector3(0,12,0),FIT_RADIUS=513.3,MAX_DISTANCE=2200;let initialFit=false;
+let angle=Math.PI*.24,elevation=.67,distance=650,targetDistance=650;const focus=new THREE.Vector3(0,12,0),FIT_RADIUS=523.566,MAX_DISTANCE=2200;let initialFit=false;
 function fitDistance(){const v=THREE.MathUtils.degToRad(camera.fov*.5),h=Math.atan(Math.tan(v)*camera.aspect);return Math.ceil((FIT_RADIUS/Math.sin(Math.min(v,h)))*1.12);}
 const pointers=new Map();let previous={x:0,y:0},pinch=0,dragging=false;
 function updateCamera(){const horizontal=Math.cos(elevation)*distance;camera.position.set(focus.x+Math.sin(angle)*horizontal,focus.y+Math.sin(elevation)*distance,focus.z+Math.cos(angle)*horizontal);camera.lookAt(focus);}
@@ -182,5 +182,5 @@ renderer.domElement.tabIndex=0;renderer.domElement.setAttribute('aria-label','Co
 new ResizeObserver(resize).observe(host);resize();updateCamera();
 const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const dt=clock.getDelta(),t=clock.elapsedTime;distance=THREE.MathUtils.lerp(distance,targetDistance,1-Math.exp(-6*dt));updateCamera();ocean.position.y=SEA+Math.sin(t*.65)*.025;renderer.render(scene,camera);}animate();
 const loading=host.querySelector('.commerce-loading');if(loading)loading.remove();
-window.lumenCommerceArchipelago={scene,camera,renderer,terrain,plots,vacantLots,scale:11};window.lumenCommerceArchipelagoReady=true;
-console.log('Lumen Society — Commerce Archipelago 1.0 carregado.',{commercialPlots:plots.length,vacantLots:vacantLots.length,scale:11});
+window.lumenCommerceArchipelago={scene,camera,renderer,terrain,plots,vacantLots,scale:11.22};window.lumenCommerceArchipelagoReady=true;
+console.log('Lumen Society — Commerce Archipelago 1.0 carregado.',{commercialPlots:plots.length,vacantLots:vacantLots.length,scale:11.22});
