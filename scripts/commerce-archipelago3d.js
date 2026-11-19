@@ -109,18 +109,8 @@ function emptyLot({x,z,w=6.4,d=7.2,id,type='urban'}){
 {x:7,z:29,w:6.8,d:6.8,id:'L-18',type:'green'}
 ].forEach(emptyLot);
 
-// Side streets form a loose city grid around the commercial core.
-const sideStreet=mat('#a9aaa1'),sidewalk=mat('#d7d0bf');
-[
-[[-34,-23],[-27,-26],[-18,-28],[-7,-29],[5,-29],[17,-28],[30,-25]],
-[[-35,8],[-28,10],[-20,12],[-10,13],[0,13],[11,13],[23,10],[34,6]],
-[[-30,-31],[-29,-20],[-29,-9],[-29,2],[-29,12]],
-[[30,-30],[30,-19],[30,-8],[30,3],[30,15]]
-].forEach((points,i)=>tube(points,i<2?.48:.38,sideStreet,.16));
-// Sidewalk strips soften the transition between streets and future lots.
-[
-[-20,-23,25,1.05], [17,-23,22,1.05], [-20,7,22,1.0], [20,7,22,1.0]
-].forEach(([x,z,w,d])=>slab(x,z,w,d,surfaceHeight(x,z)+.06,sidewalk));
+// Secondary streets and sidewalk strips are intentionally omitted here:
+// the two main routes now remain clear of every reserved commercial footprint.
 
 // Small neighborhood green pockets break up the blocks and reserve public space.
 function greenPocket(x,z,w,d){
