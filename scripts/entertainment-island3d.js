@@ -127,27 +127,77 @@ const carousel=new THREE.Group();carousel.position.set(18,surface(18,19),19);isl
 cylinder(5.2,5.2,.35,cream,0,.25,0,carousel,40);
 const animalMaterials=[cream,coral,teal,gold,blue,pink];
 function carouselAnimal(parent,index){
-  const animal=new THREE.Group();parent.add(animal);const coat=animalMaterials[index%animalMaterials.length],mane=index%2?darkWood:gold;
-  const body=sphere(.43,coat,0,0,0,animal);body.scale.set(1.35,.72,.72);
-  const chest=sphere(.29,coat,-.34,.16,0,animal);chest.scale.set(.72,1.15,.85);
-  const neck=beamBetween(animal,[-.34,.12,0],[-.58,.83,0],.19,coat,12);
-  const head=sphere(.25,coat,-.61,.88,0,animal);head.scale.set(1.05,.82,.78);
-  const muzzle=sphere(.16,cream,-.79,.78,0,animal);muzzle.scale.set(1,.7,.8);
-  for(const side of [-1,1]){const eye=sphere(.045,darkWood,-.68,.94,side*.19,animal);const ear=new THREE.Mesh(new THREE.ConeGeometry(.09,.28,8),coat);ear.position.set(-.53,1.12,side*.13);ear.rotation.z=-.2;add(ear,animal);}
-  // Mane, tail and four separated legs give the familiar carousel-horse silhouette.
-  for(let j=0;j<4;j++){const z=(j<2?-.2:.2),x=j%2?-.12:.27;beamBetween(animal,[x,-.12,z],[x+.02,-.68,z],.085,coat,8);}
-  for(let j=0;j<4;j++){const lock=sphere(.105,mane,-.55+j*.13,.99,0,animal);lock.scale.set(.75,1.3,.8);}
-  beamBetween(animal,[.48,.16,0],[.78,.5,0],.07,mane,8);
-  const saddle=box(.48,.09,.52,coral,.02,.34,0,animal);saddle.rotation.z=-.08;
-  // A small bridle and decorative saddle blanket finish the mount.
-  beamBetween(animal,[-.64,.83,-.22],[-.84,.74,-.13],.025,gold,6);
-  box(.42,.07,.55,animalMaterials[(index+2)%animalMaterials.length],-.02,.27,0,animal);
+  const animal=new THREE.Group();parent.add(animal);
+  const coat=animalMaterials[index%animalMaterials.length],mane=index%2?darkWood:gold;
+  const body=sphere(index===2?.52:.43,coat,0,0,0,animal);body.scale.set(1.35,index===7?.48:.72,.78);
+  const legMat=index===2?teal:coat;
+  for(let j=0;j<4;j++){
+    const z=j<2?-.25:.25,x=j%2?-.25:.29;
+    const radius=index===2?.12:.075;
+    beamBetween(animal,[x,-.12,z],[x+.015,-.67,z],radius,legMat,8);
+    if(index===2)sphere(.13,legMat,x+.015,-.63,z,animal);
+  }
+  // Each mount has its own silhouette and details rather than repeating the same horse.
+  if(index===2){ // Elephant
+    const head=sphere(.39,coat,-.53,.28,0,animal);head.scale.set(.9,1,.95);
+    for(const side of [-1,1]){const ear=sphere(.34,pink,-.52,.35,side*.43,animal);ear.scale.set(.38,1.15,.82);beamBetween(animal,[-.76,.12,side*.18],[-.91,-.27,side*.18],.105,coat,10);beamBetween(animal,[-.7,.16,side*.29],[-.94,.05,side*.29],.045,cream,8);}
+    beamBetween(animal,[-.78,.1,0],[-.91,-.42,0],.12,coat,12);sphere(.045,darkWood,-.78,.39,.27,animal);sphere(.045,darkWood,-.78,.39,-.27,animal);
+  }else if(index===3){ // Giraffe
+    beamBetween(animal,[-.35,.12,0],[-.52,1.12,0],.17,coat,12);
+    const head=sphere(.22,coat,-.56,1.18,0,animal);head.scale.set(1.2,.8,.8);
+    for(const side of [-1,1]){beamBetween(animal,[-.55,1.3,side*.12],[-.56,1.58,side*.12],.045,wood,7);sphere(.07,wood,-.56,1.58,side*.12,animal);}
+    for(let j=0;j<7;j++){const spot=sphere(.09,darkWood,.38-(j%3)*.32,.2+Math.floor(j/3)*.23,(j%2?-.3:.3),animal);spot.scale.set(1,.8,.35);}
+  }else if(index===4){ // Lion
+    const maneBall=sphere(.48,gold,-.57,.48,0,animal);maneBall.scale.set(.82,1.05,1.05);
+    const head=sphere(.29,coat,-.7,.53,0,animal);head.scale.set(1,.9,.9);
+    sphere(.13,cream,-.91,.39,0,animal);
+    for(let j=0;j<7;j++){const tuft=new THREE.Mesh(new THREE.ConeGeometry(.12,.28,7),gold);const a=j/7*Math.PI*2;tuft.position.set(-.57+Math.cos(a)*.4,.48+Math.sin(a)*.4,0);tuft.rotation.z=-a;add(tuft,animal);}
+  }else if(index===5){ // Camel
+    for(const x of [-.18,.3]){const hump=sphere(.3,gold,x,.39,0,animal);hump.scale.set(.8,1.2,.85);}
+    beamBetween(animal,[-.35,.1,0],[-.55,.76,0],.18,coat,10);
+    sphere(.22,coat,-.62,.81,0,animal);sphere(.13,cream,-.78,.7,0,animal);
+  }else if(index===6){ // Deer
+    beamBetween(animal,[-.34,.12,0],[-.59,.83,0],.14,coat,10);
+    sphere(.23,coat,-.64,.9,0,animal);
+    for(const side of [-1,1]){
+      beamBetween(animal,[-.62,1.02,side*.1],[-.7,1.48,side*.16],.045,gold,7);
+      beamBetween(animal,[-.7,1.28,side*.15],[-.91,1.38,side*.2],.035,gold,7);
+      beamBetween(animal,[-.7,1.38,side*.16],[-.55,1.55,side*.2],.035,gold,7);
+      const ear=sphere(.09,coat,-.48,1.02,side*.27,animal);ear.scale.set(1.6,.45,.6);
+    }
+    sphere(.12,cream,-.82,.8,0,animal);
+  }else if(index===7){ // Swan
+    const wing1=sphere(.32,cream,.12,.2,.27,animal);wing1.scale.set(1.1,.35,.55);
+    const wing2=sphere(.32,cream,.12,.2,-.27,animal);wing2.scale.set(1.1,.35,.55);
+    beamBetween(animal,[-.36,.12,0],[-.52,.72,0],.13,cream,10);
+    beamBetween(animal,[-.52,.72,0],[-.72,1.03,0],.11,cream,10);
+    sphere(.16,cream,-.72,1.08,0,animal);
+    beamBetween(animal,[-.82,1.07,0],[-1.02,1.03,0],.055,coral,7);
+    sphere(.035,darkWood,-.76,1.13,.13,animal);
+  }else{
+    // Horse family: horse, zebra, tiger and unicorn have distinct markings or head ornaments.
+    beamBetween(animal,[-.34,.12,0],[-.58,.83,0],.18,coat,12);
+    const head=sphere(.25,coat,-.61,.88,0,animal);head.scale.set(1.05,.82,.78);
+    const muzzle=sphere(.16,index===1?cream:gold,-.79,.78,0,animal);muzzle.scale.set(1,.7,.8);
+    for(const side of [-1,1]){
+      const ear=new THREE.Mesh(new THREE.ConeGeometry(.09,.28,8),coat);ear.position.set(-.53,1.12,side*.13);ear.rotation.z=-.2;add(ear,animal);
+      sphere(.04,darkWood,-.68,.94,side*.19,animal);
+    }
+    for(let j=0;j<4;j++){const lock=sphere(.105,mane,-.55+j*.13,.99,0,animal);lock.scale.set(.75,1.3,.8);}
+    beamBetween(animal,[.48,.16,0],[.78,.5,0],.07,mane,8);
+    if(index===1||index===8){
+      const stripeMat=index===1?darkWood:gold;
+      for(let j=0;j<5;j++){const stripe=box(.1,.42,.86,stripeMat,.34-j*.22,.08,0,animal);stripe.rotation.z=-.35;}
+    }
+    if(index===9)beamBetween(animal,[-.62,1.08,0],[-.72,1.52,0],.055,gold,8);
+    if(index===0){const saddle=box(.48,.09,.52,coral,.02,.34,0,animal);saddle.rotation.z=-.08;}
+  }
   animal.rotation.y=-index/10*Math.PI*2;
   return animal;
 }
 for(let i=0;i<10;i++){
   const a=i/10*Math.PI*2,x=Math.cos(a)*3.9,z=Math.sin(a)*3.9;
-  cylinder(.09,.12,4.2,gold,x,2.35,z,carousel,8);
+  cylinder(.055,.075,4.2,gold,x,2.35,z,carousel,8);
   const mount=new THREE.Group();mount.position.set(x,1.35,z);carousel.add(mount);carouselAnimal(mount,i);
 }
 const canopy=new THREE.Mesh(new THREE.ConeGeometry(5.4,2.0,10),coral);canopy.position.y=5.45;add(canopy,carousel);
