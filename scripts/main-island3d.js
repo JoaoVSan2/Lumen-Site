@@ -118,7 +118,9 @@ const flowerMaterials = [
 
 const SEA_LEVEL = -0.08;
 
-const oceanGeometry = new THREE.PlaneGeometry(150, 150, 40, 40);
+// Oceano amplo para que a borda do plano nunca apareça durante a rotação
+// ou a visão superior, mesmo com a câmera bastante afastada.
+const oceanGeometry = new THREE.PlaneGeometry(2000, 2000, 1, 1);
 const ocean = new THREE.Mesh(oceanGeometry, waterMaterial);
 
 ocean.rotation.x = -Math.PI / 2;
