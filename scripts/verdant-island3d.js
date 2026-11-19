@@ -74,7 +74,10 @@ function insideIsland(x,z,margin=0) {
   return Math.hypot(x,z) < edgeRadius(a)-margin;
 }
 
-const ocean = new THREE.Mesh(new THREE.PlaneGeometry(240,240), waterMat);
+// Oceano ampliado para manter água preenchendo o horizonte em qualquer ângulo.
+// O plano está dentro de islandWorld (escala 6x), então 600 unidades locais
+// equivalem a 3.600 unidades no mundo e escondem a borda durante a rotação.
+const ocean = new THREE.Mesh(new THREE.PlaneGeometry(600,600), waterMat);
 ocean.rotation.x = -Math.PI/2;
 ocean.position.y = SEA;
 ocean.receiveShadow = true;
