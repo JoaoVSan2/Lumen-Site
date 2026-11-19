@@ -65,6 +65,55 @@ path([[-31,-5],[-23,-3],[-14,-1],[-5,1],[5,1],[15,0],[25,2],[32,8]],3.1);
 path([[-7,-30],[-5,-20],[-3,-10],[-1,0],[0,11],[-4,22],[-8,30]],2.5);
 path([[1,2],[10,7],[18,14],[22,23]],2.1);
 path([[-2,1],[-11,8],[-19,15],[-25,22]],2.1);
+// PARK ENTRANCE — a clear, welcoming threshold aligned with the main approach path.
+const parkGate = new THREE.Group();
+parkGate.position.set(-6, surface(-6, -32), -32);
+islandWorld.add(parkGate);
+for (const x of [-2.8, 2.8]) {
+  box(0.62, 4.7, 0.72, cream, x, 2.35, 0, parkGate);
+  box(0.9, 0.32, 0.96, gold, x, 4.62, 0, parkGate);
+  box(0.78, 0.5, 0.82, coral, x, 3.65, 0, parkGate);
+}
+box(6.6, 0.62, 0.82, teal, 0, 4.72, 0, parkGate);
+box(6.85, 0.13, 0.96, gold, 0, 5.1, 0, parkGate);
+const gateCanvas = document.createElement('canvas');
+gateCanvas.width = 512;
+gateCanvas.height = 128;
+const gateContext = gateCanvas.getContext('2d');
+gateContext.clearRect(0, 0, 512, 128);
+gateContext.fillStyle = '#fff5df';
+gateContext.font = '800 64px sans-serif';
+gateContext.textAlign = 'center';
+gateContext.textBaseline = 'middle';
+gateContext.fillText('LUMEN PARK', 256, 66);
+const gateTexture = new THREE.CanvasTexture(gateCanvas);
+gateTexture.colorSpace = THREE.SRGBColorSpace;
+const gateLabel = new THREE.Sprite(new THREE.SpriteMaterial({
+  map: gateTexture, transparent: true, depthWrite: false
+}));
+gateLabel.scale.set(4.6, 1.15, 1);
+gateLabel.position.set(0, 4.72, 0.48);
+parkGate.add(gateLabel);
+for (let i = 0; i < 7; i++) {
+  sphere(0.12, i % 2 ? cream : gold, -2.4 + i * 0.8, 5.16, 0.48, parkGate);
+}
+
+// Rest areas face the central stage while staying clear of the main walking loop.
+function parkBench(x, z, rotation = 0) {
+  const bench = new THREE.Group();
+  bench.position.set(x, surface(x, z) + 0.04, z);
+  bench.rotation.y = rotation;
+  islandWorld.add(bench);
+  box(2.0, 0.16, 0.58, wood, 0, 0.62, 0, bench);
+  box(2.0, 0.72, 0.14, darkWood, 0, 1.0, -0.22, bench);
+  for (const sx of [-0.76, 0.76]) {
+    box(0.14, 0.62, 0.18, gold, sx, 0.31, 0, bench);
+  }
+}
+parkBench(9, -4, -0.12);
+parkBench(-11, 4, 0.2);
+parkBench(7, 12, Math.PI / 2);
+
 // Central festival square with a small circular stage.
 platform(0,2,16,13,mat('#d9d0bd'));
 const plazaRing=new THREE.Mesh(new THREE.RingGeometry(3.4,4.15,48),gold);plazaRing.rotation.x=-Math.PI/2;plazaRing.position.set(0,surface(0,2)+.23,2);add(plazaRing);
