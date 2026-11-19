@@ -18,12 +18,15 @@
         <span class="verdant-mark">✳</span>
         <span>LUMEN <b>SOCIETY</b></span>
       </a>
-      <nav class="world-nav" aria-label="Navegação entre ilhas">
-        <a href="./" >CORE</a>
-        <a href="./verdant-island.html" aria-current="page">VERDANT</a>
-        <a href="./commerce-archipelago.html">COMMERCE</a>
-        <a href="./entertainment-island.html">ENTERTAINMENT</a>
-      </nav>
+      <details class="lumen-island-switcher">
+  <summary aria-label="Abrir navegação entre as ilhas"><span class="lumen-switcher-kicker">EXPLORAR</span><span class="lumen-switcher-current">VERDANT ISLAND</span><span class="lumen-switcher-chevron" aria-hidden="true">⌄</span></summary>
+  <nav class="lumen-island-menu" aria-label="Escolher ilha">
+    <a href="./"><span class="lumen-island-menu-mark">○</span><span>ISLAND CORE</span></a>
+    <a href="./verdant-island.html" aria-current="page"><span class="lumen-island-menu-mark">✳</span><span>VERDANT ISLAND</span><span class="lumen-island-menu-current">VOCÊ ESTÁ AQUI</span></a>
+    <a href="./commerce-archipelago.html"><span class="lumen-island-menu-mark">○</span><span>COMMERCE ARCHIPELAGO</span></a>
+    <a href="./entertainment-island.html"><span class="lumen-island-menu-mark">○</span><span>ENTERTAINMENT ISLAND</span></a>
+  </nav>
+</details>
       <span class="verdant-edition">VERDANT ISLAND <i>·</i> 1.0</span>
     </header>
 
@@ -44,7 +47,7 @@
         <span>EMERALD FOREST</span><i></i><span>HIGHLAND PEAKS</span><i></i><span>CRYSTAL WATERS</span>
       </div>
       <div class="verdant-hint">Arraste para explorar <span>·</span> Pinça ou roda para aproximar</div>
-      <a class="verdant-back" href="./">Voltar ao Island Core</a>
+
     </section>
   </main>
   <script type="module" src="./scripts/verdant-island3d.js?v=20261119-4"></script>
