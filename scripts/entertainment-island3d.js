@@ -110,9 +110,9 @@ function parkBench(x, z, rotation = 0) {
     box(0.14, 0.62, 0.18, gold, sx, 0.31, 0, bench);
   }
 }
-parkBench(9, -4, -0.12);
-parkBench(-11, 4, 0.2);
-parkBench(7, 12, Math.PI / 2);
+parkBench(9, 15, -0.12);
+parkBench(-12, -20, 0.2);
+parkBench(10, 26, Math.PI / 2);
 
 // Central festival square with a small circular stage.
 platform(0,2,16,13,mat('#d9d0bd'));
