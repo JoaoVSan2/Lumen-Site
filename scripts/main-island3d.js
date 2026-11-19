@@ -1054,10 +1054,10 @@ for (let i = 0; i < 7; i++) {
   });
   const wingGeometry = new THREE.SphereGeometry(0.12, 8, 6);
   const leftWing = new THREE.Mesh(wingGeometry, wingMaterial);
-  leftWing.scale.set(1, 0.22, 1.25);
+  leftWing.scale.set(0.22, 1, 1.25);
   leftWing.position.x = -0.105;
   const rightWing = new THREE.Mesh(wingGeometry, wingMaterial);
-  rightWing.scale.set(1, 0.22, 1.25);
+  rightWing.scale.set(0.22, 1, 1.25);
   rightWing.position.x = 0.105;
   const body = new THREE.Mesh(
     new THREE.CylinderGeometry(0.018, 0.024, 0.24, 5),
