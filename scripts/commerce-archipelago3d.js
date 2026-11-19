@@ -122,7 +122,7 @@ g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});sign(g,id
 // These are deliberately empty plots, ready for future homes, services and businesses.
 const vacantLots=[];
 function emptyLot({x,z,w=6.4,d=7.2,id,type='urban'}){
-  const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)+.02,z);g.scale.set(.95,1,.95);town.add(g);
+  const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)+.02,z);const lotScale=/^L-1[1-5]$/.test(id)?.95:1;g.scale.set(lotScale,1,lotScale);town.add(g);
   const padMat=mat(type==='green'?'#a4b58d':type==='service'?'#c9c4b2':'#c8c1ad');
   const pad=new THREE.Mesh(new THREE.BoxGeometry(w,.16,d),padMat);pad.position.y=.08;conformFootprint(pad,x,z,w,d,.16);pad.receiveShadow=true;pad.castShadow=true;g.add(pad);
   const curb=mat('#e0d7c4'),edge=.1,y=.19;
