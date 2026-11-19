@@ -79,6 +79,21 @@
       .construction-status__detail { font-size:8px; }
     }
 
+  
+    .lumen-island-switcher { position:fixed; top:12px; right:clamp(14px,3vw,36px); z-index:50; width:min(250px,62vw); color:#36594c; pointer-events:auto; font-family:"DM Sans",sans-serif; }
+    .lumen-island-switcher summary { list-style:none; display:flex; align-items:center; gap:8px; min-height:42px; padding:7px 12px; border:1px solid rgba(54,89,76,.22); border-radius:13px; background:rgba(245,244,233,.82); box-shadow:0 6px 22px rgba(37,65,54,.09); backdrop-filter:blur(14px); cursor:pointer; }
+    .lumen-island-switcher summary::-webkit-details-marker { display:none; }
+    .lumen-switcher-kicker { font-size:7px; letter-spacing:.13em; opacity:.62; }
+    .lumen-switcher-current { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:9px; font-weight:700; letter-spacing:.06em; }
+    .lumen-switcher-chevron { font-size:15px; transition:transform .2s ease; }
+    .lumen-island-switcher[open] .lumen-switcher-chevron { transform:rotate(180deg); }
+    .lumen-island-menu { display:grid; gap:4px; margin-top:7px; padding:7px; border:1px solid rgba(54,89,76,.18); border-radius:14px; background:rgba(247,246,237,.94); box-shadow:0 14px 34px rgba(34,57,49,.16); backdrop-filter:blur(18px); }
+    .lumen-island-menu a { display:flex; align-items:center; gap:9px; min-height:39px; padding:8px 9px; border-radius:9px; color:#47665a; text-decoration:none; font-size:9px; font-weight:700; letter-spacing:.045em; }
+    .lumen-island-menu a:hover { background:rgba(112,151,119,.13); }
+    .lumen-island-menu a[aria-current="page"] { background:rgba(89,132,99,.16); color:#315a43; }
+    .lumen-island-menu-mark { width:14px; text-align:center; opacity:.7; }
+    .lumen-island-menu-current { margin-left:auto; font-size:6px; letter-spacing:.08em; opacity:.65; }
+    @media(max-width:700px) { .lumen-island-switcher { top:8px; right:10px; width:min(218px,59vw); } .lumen-island-switcher summary { min-height:38px; gap:6px; padding:6px 9px; } .lumen-switcher-kicker { font-size:6px; } .lumen-switcher-current { font-size:8px; } .lumen-island-menu a { min-height:42px; font-size:9px; } }
   </style>
 </head>
 <body>
@@ -87,7 +102,15 @@
       <a class="brand" href="./" aria-label="Lumen Society, início">
         <span class="brand-mark">✳</span><span>LUMEN <b>SOCIETY</b></span>
       </a>
-      <nav class="island-nav" aria-label="Navegação entre ilhas"><a href="./" aria-current="page">ISLAND CORE</a><a href="./verdant-island.html">VERDANT ISLAND ↗</a> <a href="./commerce-archipelago.html">COMMERCE ↗</a> <a href="./entertainment-island.html">ENTERTAINMENT ↗</a></nav>
+      <details class="lumen-island-switcher">
+  <summary aria-label="Abrir navegação entre as ilhas"><span class="lumen-switcher-kicker">EXPLORAR</span><span class="lumen-switcher-current">ISLAND CORE</span><span class="lumen-switcher-chevron" aria-hidden="true">⌄</span></summary>
+  <nav class="lumen-island-menu" aria-label="Escolher ilha">
+    <a href="./" aria-current="page"><span class="lumen-island-menu-mark">✳</span><span>ISLAND CORE</span><span class="lumen-island-menu-current">VOCÊ ESTÁ AQUI</span></a>
+    <a href="./verdant-island.html"><span class="lumen-island-menu-mark">○</span><span>VERDANT ISLAND</span></a>
+    <a href="./commerce-archipelago.html"><span class="lumen-island-menu-mark">○</span><span>COMMERCE ARCHIPELAGO</span></a>
+    <a href="./entertainment-island.html"><span class="lumen-island-menu-mark">○</span><span>ENTERTAINMENT ISLAND</span></a>
+  </nav>
+</details>
       <span class="edition">ISLAND CORE <i>·</i> 0.6</span>
     </header>
     <section class="island-stage" aria-label="Experiência 3D da ilha">
