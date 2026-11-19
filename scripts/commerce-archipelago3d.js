@@ -2,12 +2,12 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.m
 // LUMEN SOCIETY — COMMERCE ARCHIPELAGO 1.0. Cena independente, escala global 11.22x.
 const host=document.getElementById('commerce-canvas');if(!host)throw new Error('Elemento #commerce-canvas não encontrado.');
 const scene=new THREE.Scene();scene.background=new THREE.Color('#c6d9d6');scene.fog=new THREE.FogExp2('#c6d9d6',.00042);
-const camera=new THREE.PerspectiveCamera(43,1,.1,3000),renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
+const camera=new THREE.PerspectiveCamera(43,1,.1,3000),renderer=new THREE.WebGLRenderer({antialias:!touch,alpha:false,powerPreference:'high-performance'});
 const touch=matchMedia('(pointer: coarse)').matches||navigator.maxTouchPoints>0;
-renderer.setPixelRatio(Math.min(devicePixelRatio||1,touch?1.3:1.7));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,touch?1.05:1.5));renderer.shadowMap.enabled=!touch;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;
 host.innerHTML='';host.appendChild(renderer.domElement);Object.assign(renderer.domElement.style,{width:'100%',height:'100%',display:'block',touchAction:'none'});
 scene.add(new THREE.HemisphereLight('#eff7ed','#62756d',2));
-const sun=new THREE.DirectionalLight('#fff0d8',2.6);sun.position.set(-70,115,65);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-640;sun.shadow.camera.right=640;sun.shadow.camera.top=640;sun.shadow.camera.bottom=-640;sun.shadow.bias=-.00025;scene.add(sun);
+const sun=new THREE.DirectionalLight('#fff0d8',2.6);sun.position.set(-70,115,65);sun.castShadow=true;sun.shadow.mapSize.set(touch?512:1536,touch?512:1536);sun.shadow.camera.left=-640;sun.shadow.camera.right=640;sun.shadow.camera.top=640;sun.shadow.camera.bottom=-640;sun.shadow.bias=-.00025;scene.add(sun);
 const world=new THREE.Group();world.scale.setScalar(11.22);scene.add(world);
 // Urban layout follows the enlarged island footprint without changing building or road dimensions.
 const town=new THREE.Group();town.scale.set(1.5,1,1.5);world.add(town);
@@ -245,7 +245,7 @@ let angle=Math.PI*.24,elevation=.67,distance=650,targetDistance=650;const focus=
 function fitDistance(){const v=THREE.MathUtils.degToRad(camera.fov*.5),h=Math.atan(Math.tan(v)*camera.aspect);return Math.ceil((FIT_RADIUS/Math.sin(Math.min(v,h)))*1.12);}
 const pointers=new Map();let previous={x:0,y:0},pinch=0,dragging=false;
 function updateCamera(){const horizontal=Math.cos(elevation)*distance;camera.position.set(focus.x+Math.sin(angle)*horizontal,focus.y+Math.sin(elevation)*distance,focus.z+Math.cos(angle)*horizontal);camera.lookAt(focus);}
-function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);camera.aspect=w/h;camera.fov=camera.aspect<1?Math.min(96,43/camera.aspect):43;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio||1,(camera.aspect<1||touch)?1.3:1.7));renderer.setSize(w,h,false);if(!initialFit){distance=fitDistance();targetDistance=distance;initialFit=true;}}
+function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);camera.aspect=w/h;camera.fov=camera.aspect<1?Math.min(96,43/camera.aspect):43;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio||1,(camera.aspect<1||touch)?1.05:1.5));renderer.setSize(w,h,false);if(!initialFit){distance=fitDistance();targetDistance=distance;initialFit=true;}}
 function pinchDistance(){const p=[...pointers.values()];return p.length<2?0:Math.hypot(p[0].x-p[1].x,p[0].y-p[1].y);}
 renderer.domElement.addEventListener('pointerdown',e=>{pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});renderer.domElement.setPointerCapture(e.pointerId);if(pointers.size===1){dragging=true;previous={x:e.clientX,y:e.clientY};}if(pointers.size===2){dragging=false;pinch=pinchDistance();}});
 renderer.domElement.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pointers.size===2){const d=pinchDistance();if(pinch)targetDistance=THREE.MathUtils.clamp(targetDistance-(d-pinch)*.72,30,MAX_DISTANCE);pinch=d;return;}if(dragging){angle-=(e.clientX-previous.x)*.005;elevation=THREE.MathUtils.clamp(elevation+(e.clientY-previous.y)*.003,.12,1.15);previous={x:e.clientX,y:e.clientY};}});
