@@ -1044,14 +1044,9 @@ for (let fieldIndex = 0; fieldIndex < flowerFields.length; fieldIndex++) {
 // CAMINHO NATURAL DE TERRA
 
 const pathPoints = [
-  new THREE.Vector3(-3.8, 0, 2.0),
-  new THREE.Vector3(-2.6, 0, 1.2),
-  new THREE.Vector3(-1.2, 0, 0.5),
-  new THREE.Vector3(0.2, 0, 0.1),
-  new THREE.Vector3(1.4, 0, -0.5),
-  new THREE.Vector3(2.5, 0, -1.4),
-  new THREE.Vector3(3.4, 0, -2.2)
-];
+  [-3.8, 2.0], [-2.6, 1.2], [-1.2, 0.5], [0.2, 0.1],
+  [1.4, -0.5], [2.5, -1.4], [3.4, -2.2]
+].map(([x, z]) => new THREE.Vector3(x, terrainHeight(x, z) + 0.14, z));
 
 const pathCurve = new THREE.CatmullRomCurve3(pathPoints);
 
@@ -1070,7 +1065,7 @@ const path = new THREE.Mesh(
   pathMaterial
 );
 
-path.position.y = 0.05;
+path.position.y = 0;
 path.receiveShadow = true;
 
 island.add(path);
