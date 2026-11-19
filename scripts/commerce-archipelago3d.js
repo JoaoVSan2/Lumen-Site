@@ -128,7 +128,8 @@ function greenPocket(x,z,w,d){
 greenPocket(-8,-22,7,4.5);
 greenPocket(23,20,6,4.5);
 greenPocket(-31, -4,4.5,6);
-\n// Trees, planters and lamps frame public space; no vegetation is placed inside lots.
+
+// Trees, planters and lamps frame public space; no vegetation is placed inside lots.
 function tree(x,z,s=1){const g=new THREE.Group();g.position.set(x,heightAt(x,z),z);g.scale.setScalar(s);const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22,.32,2.8,7),wood);trunk.position.y=1.4;g.add(trunk);for(let i=0;i<3;i++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.35-i*.12,1),greens[i]);crown.position.set((rand()-.5)*.35,3.1+i*.42,(rand()-.5)*.35);crown.scale.set(1.05,.9,1.05);g.add(crown);}g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});world.add(g);}
 [[-34,21],[-17,27],[-6,27],[32,18],[34,-12],[0,13],[9,12]].forEach(([x,z],i)=>tree(x,z,.8+rand()*.35));
 function lamp(x,z){const g=new THREE.Group();g.position.set(x,heightAt(x,z),z);const pole=new THREE.Mesh(new THREE.CylinderGeometry(.07,.1,3.4,8),darkWood);pole.position.y=1.7;g.add(pole);const head=new THREE.Mesh(new THREE.BoxGeometry(.62,.28,.62),mat('#f2d9a9',.5,{emissive:'#b98e54',emissiveIntensity:.18}));head.position.y=3.5;g.add(head);world.add(g);}
