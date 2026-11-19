@@ -1105,6 +1105,168 @@ path.receiveShadow=true;
 island.add(path);
 
 // ======================================================
+// CONSTRUÇÃO GRADUAL DA CORE — CRONOGRAMA GLOBAL (72H)
+// Os modelos GLB enviados ficam reservados; esta etapa usa apenas
+// geometria provisória para representar a evolução da obra.
+// ======================================================
+
+const coreConstruction = new THREE.Group();
+island.add(coreConstruction);
+
+const constructionPhases = [new THREE.Group(), new THREE.Group(), new THREE.Group()];
+constructionPhases.forEach(group => coreConstruction.add(group));
+
+const concreteMaterial = material('#b9b5a8');
+const timberMaterial = material('#9b7654');
+const wallMaterial = material('#e8dfc9');
+const roofMaterial = material('#8c9d83');
+const glassMaterial = new THREE.MeshStandardMaterial({
+  color: '#9fcac3', roughness: 0.28, metalness: 0.05
+});
+const constructionPlots = [
+  { x: -1.45, z: -1.25, w: 0.72, d: 0.58, h: 0.56 },
+  { x: 0.05, z: -1.65, w: 0.78, d: 0.62, h: 0.62 },
+  { x: 1.52, z: -1.12, w: 0.70, d: 0.56, h: 0.54 }
+];
+
+function addConstructionBox(group, geometry, mat, x, y, z, rotationY = 0) {
+  const mesh = new THREE.Mesh(geometry, mat);
+  mesh.position.set(x, y, z);
+  mesh.rotation.y = rotationY;
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  return mesh;
+}
+
+constructionPlots.forEach((plot, index) => {
+  const baseY = terrainHeight(plot.x, plot.z);
+  const foundation = constructionPhases[0];
+  const frame = constructionPhases[1];
+  const finish = constructionPhases[2];
+
+  // Dia 1: bases, marcação e materiais de obra.
+  addConstructionBox(
+    foundation,
+    new THREE.BoxGeometry(plot.w + 0.12, 0.09, plot.d + 0.12),
+    concreteMaterial, plot.x, baseY + 0.045, plot.z
+  );
+  for (const dx of [-plot.w * 0.38, plot.w * 0.38]) {
+    const pallet = addConstructionBox(
+      foundation, new THREE.BoxGeometry(0.17, 0.07, 0.15),
+      timberMaterial, plot.x + dx, baseY + 0.12, plot.z + plot.d * 0.58
+    );
+    pallet.rotation.y = index * 0.22;
+  }
+
+  // Dia 2: pilares e vigas da estrutura.
+  const cornerX = plot.w * 0.42;
+  const cornerZ = plot.d * 0.42;
+  for (const dx of [-cornerX, cornerX]) {
+    for (const dz of [-cornerZ, cornerZ]) {
+      addConstructionBox(
+        frame, new THREE.BoxGeometry(0.065, plot.h, 0.065),
+        timberMaterial, plot.x + dx, baseY + 0.09 + plot.h / 2, plot.z + dz
+      );
+    }
+  }
+  addConstructionBox(
+    frame, new THREE.BoxGeometry(plot.w, 0.065, 0.065),
+    timberMaterial, plot.x, baseY + 0.09 + plot.h, plot.z - cornerZ
+  );
+  addConstructionBox(
+    frame, new THREE.BoxGeometry(0.065, 0.065, plot.d),
+    timberMaterial, plot.x - cornerX, baseY + 0.09 + plot.h, plot.z
+  );
+
+  // Dia 3: fachadas, esquadrias e cobertura.
+  addConstructionBox(
+    finish, new THREE.BoxGeometry(plot.w, plot.h * 0.78, 0.07),
+    wallMaterial, plot.x, baseY + 0.09 + plot.h * 0.39, plot.z - cornerZ
+  );
+  addConstructionBox(
+    finish, new THREE.BoxGeometry(0.07, plot.h * 0.78, plot.d),
+    wallMaterial, plot.x - cornerX, baseY + 0.09 + plot.h * 0.39, plot.z
+  );
+  addConstructionBox(
+    finish, new THREE.BoxGeometry(plot.w + 0.12, 0.10, plot.d + 0.12),
+    roofMaterial, plot.x, baseY + 0.09 + plot.h * 0.84, plot.z
+  );
+  // Porta e janela voltadas para a área central.
+  addConstructionBox(
+    finish, new THREE.BoxGeometry(0.13, 0.29, 0.025),
+    timberMaterial, plot.x + plot.w * 0.22, baseY + 0.235, plot.z - cornerZ - 0.045
+  );
+  addConstructionBox(
+    finish, new THREE.BoxGeometry(0.17, 0.13, 0.025),
+    glassMaterial, plot.x - plot.w * 0.20, baseY + 0.09 + plot.h * 0.52, plot.z - cornerZ - 0.048
+  );
+});
+
+const constructionStatus = document.createElement('div');
+constructionStatus.className = 'construction-status';
+constructionStatus.innerHTML = '<span class="construction-status__eyebrow">LUMEN SOCIETY · CORE</span><strong class="construction-status__title">Construção planejada</strong><span class="construction-status__detail">O início oficial será anunciado em breve.</span><span class="construction-status__track"><i></i></span>';
+host.appendChild(constructionStatus);
+
+let constructionStartAt = null;
+let constructionLastUpdate = 0;
+const CONSTRUCTION_DAY_MS = 24 * 60 * 60 * 1000;
+const CONSTRUCTION_TOTAL_MS = 3 * CONSTRUCTION_DAY_MS;
+
+function setConstructionStage(stage) {
+  constructionPhases.forEach((group, index) => {
+    group.visible = index <= stage;
+  });
+  constructionStatus.classList.toggle('is-active', stage >= 0);
+}
+
+function updateConstructionStatus(now = Date.now()) {
+  if (!constructionStartAt) {
+    setConstructionStage(-1);
+    constructionStatus.querySelector('.construction-status__title').textContent = 'Construção planejada';
+    constructionStatus.querySelector('.construction-status__detail').textContent = 'O início oficial será anunciado em breve.';
+    constructionStatus.querySelector('.construction-status__track i').style.width = '0%';
+    return;
+  }
+
+  const elapsed = Math.max(0, now - constructionStartAt);
+  const progress = THREE.MathUtils.clamp(elapsed / CONSTRUCTION_TOTAL_MS, 0, 1);
+  const stage = elapsed >= CONSTRUCTION_TOTAL_MS ? 2 : Math.min(2, Math.floor(elapsed / CONSTRUCTION_DAY_MS));
+  setConstructionStage(stage);
+
+  const title = constructionStatus.querySelector('.construction-status__title');
+  const detail = constructionStatus.querySelector('.construction-status__detail');
+  const bar = constructionStatus.querySelector('.construction-status__track i');
+  bar.style.width = (progress * 100).toFixed(2) + '%';
+
+  if (elapsed >= CONSTRUCTION_TOTAL_MS) {
+    title.textContent = 'Central concluída';
+    detail.textContent = 'A primeira etapa da Lumen Society está pronta.';
+  } else {
+    const remaining = CONSTRUCTION_TOTAL_MS - elapsed;
+    const hours = Math.floor(remaining / 3600000);
+    const minutes = Math.floor((remaining % 3600000) / 60000);
+    const phaseNames = ['Fundações e preparação', 'Estruturas principais', 'Acabamentos e inauguração'];
+    title.textContent = phaseNames[stage];
+    detail.textContent = 'Etapa ' + (stage + 1) + ' de 3 · ' + hours + 'h ' + minutes + 'min restantes';
+  }
+}
+
+fetch('./data/core-construction.json', { cache: 'no-store' })
+  .then(response => response.ok ? response.json() : null)
+  .then(config => {
+    if (config?.startAt) {
+      const parsedStart = Date.parse(config.startAt);
+      if (Number.isFinite(parsedStart)) constructionStartAt = parsedStart;
+    }
+    updateConstructionStatus();
+  })
+  .catch(() => updateConstructionStatus());
+
+setConstructionStage(-1);
+updateConstructionStatus();
+
+// ======================================================
 // CÂMERA: ROTAÇÃO, ZOOM E CONTROLES TOUCH
 // ======================================================
 
@@ -1461,6 +1623,11 @@ function animate() {
 
   const delta = clock.getDelta();
   const elapsed = clock.elapsedTime;
+
+  if (elapsed - constructionLastUpdate >= 1) {
+    constructionLastUpdate = elapsed;
+    updateConstructionStatus();
+  }
 
   // Suaviza a aproximação e o afastamento da câmera.
   cameraDistance = THREE.MathUtils.lerp(
