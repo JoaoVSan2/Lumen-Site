@@ -1041,33 +1041,34 @@ for (let fieldIndex = 0; fieldIndex < flowerFields.length; fieldIndex++) {
   }
 }
 
-// CAMINHO NATURAL DE TERRA
-
-const pathPoints = [
+// CAMINHO NATURAL DE TERRA — faixa baixa integrada ao relevo.
+const pathCurve = new THREE.CatmullRomCurve3([
   [-3.8, 2.0], [-2.6, 1.2], [-1.2, 0.5], [0.2, 0.1],
   [1.4, -0.5], [2.5, -1.4], [3.4, -2.2]
-].map(([x, z]) => new THREE.Vector3(x, terrainHeight(x, z) + 0.14, z));
-
-const pathCurve = new THREE.CatmullRomCurve3(pathPoints);
-
-const pathGeometry = new THREE.TubeGeometry(
-  pathCurve,
-  80,
-  0.19,
-  7,
-  false
-);
-
-const pathMaterial = material('#d2b982');
-
-const path = new THREE.Mesh(
-  pathGeometry,
-  pathMaterial
-);
-
-path.position.y = 0;
-path.receiveShadow = true;
-
+].map(([x,z]) => new THREE.Vector3(x, 0, z)));
+const pathVertices = [];
+const pathIndices = [];
+const pathSamples = pathCurve.getPoints(160);
+for (let i=0; i<pathSamples.length; i++) {
+  const p=pathSamples[i], tangent=pathCurve.getTangent(i/(pathSamples.length-1));
+  const length=Math.hypot(tangent.x,tangent.z)||1;
+  const nx=-tangent.z/length, nz=tangent.x/length;
+  for (const side of [-1,1]) {
+    const x=p.x+nx*side*.38, z=p.z+nz*side*.38;
+    pathVertices.push(x,terrainHeight(x,z)+.035,z);
+  }
+  if(i<pathSamples.length-1) {
+    const k=i*2;
+    pathIndices.push(k,k+1,k+2,k+1,k+3,k+2);
+  }
+}
+const pathGeometry=new THREE.BufferGeometry();
+pathGeometry.setAttribute('position',new THREE.Float32BufferAttribute(pathVertices,3));
+pathGeometry.setIndex(pathIndices);
+pathGeometry.computeVertexNormals();
+const pathMaterial=new THREE.MeshStandardMaterial({color:'#c5a875',roughness:1,side:THREE.DoubleSide});
+const path=new THREE.Mesh(pathGeometry,pathMaterial);
+path.receiveShadow=true;
 island.add(path);
 
 // ======================================================
