@@ -1041,6 +1041,39 @@ for (let fieldIndex = 0; fieldIndex < flowerFields.length; fieldIndex++) {
   }
 }
 
+// BORBOLETAS — pequenos movimentos sobre os campos floridos, sem poluir a cena.
+const butterflies = [];
+const butterflyPalette = ['#f4d58a', '#e8a6a0', '#d8b5df', '#f2eee0'];
+for (let i = 0; i < 7; i++) {
+  const butterfly = new THREE.Group();
+  const wingMaterial = new THREE.MeshBasicMaterial({
+    color: butterflyPalette[i % butterflyPalette.length],
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.88
+  });
+  const wingGeometry = new THREE.SphereGeometry(0.12, 8, 6);
+  const leftWing = new THREE.Mesh(wingGeometry, wingMaterial);
+  leftWing.scale.set(1, 0.22, 1.25);
+  leftWing.position.x = -0.105;
+  const rightWing = new THREE.Mesh(wingGeometry, wingMaterial);
+  rightWing.scale.set(1, 0.22, 1.25);
+  rightWing.position.x = 0.105;
+  const body = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.018, 0.024, 0.24, 5),
+    trunkMaterial
+  );
+  body.rotation.z = Math.PI / 2;
+  butterfly.add(leftWing, rightWing, body);
+  const a = i * 2.399;
+  const r = 2.0 + (i % 3) * 0.65;
+  const x = Math.cos(a) * r;
+  const z = Math.sin(a) * r;
+  butterfly.position.set(x, terrainHeight(x, z) + 0.72 + (i % 3) * 0.12, z);
+  vegetation.add(butterfly);
+  butterflies.push({ group: butterfly, leftWing, rightWing, x, z, phase: i * 1.7 });
+}
+
 // CAMINHO NATURAL DE TERRA — faixa baixa integrada ao relevo.
 const pathCurve = new THREE.CatmullRomCurve3([
   [-3.8, 2.0], [-2.6, 1.2], [-1.2, 0.5], [0.2, 0.1],
@@ -1459,6 +1492,17 @@ function animate() {
   trees.forEach((tree, index) => {
     tree.rotation.z =
       Math.sin(elapsed * 0.65 + index) * 0.018;
+  });
+
+  // Borboletas cruzam lentamente os canteiros.
+  butterflies.forEach(({ group, leftWing, rightWing, x, z, phase }) => {
+    group.position.x = x + Math.sin(elapsed * 0.55 + phase) * 0.12;
+    group.position.z = z + Math.cos(elapsed * 0.48 + phase) * 0.10;
+    group.position.y = terrainHeight(group.position.x, group.position.z) + 0.72 +
+      Math.sin(elapsed * 1.8 + phase) * 0.10;
+    const flap = Math.sin(elapsed * 8.5 + phase) * 0.62;
+    leftWing.rotation.y = flap;
+    rightWing.rotation.y = -flap;
   });
 
   // Movimento das flores.
