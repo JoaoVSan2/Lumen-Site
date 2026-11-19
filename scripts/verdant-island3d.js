@@ -203,56 +203,6 @@ for(let i=0;i<330;i++) {
 trunkInstances.count=treeCount; scene.add(trunkInstances);
 crownInstances.forEach((m,i)=>{m.count=counts[i];scene.add(m);});
 
-// Temporary scale-test character (1.75 units tall). Replace with the final player model later.
-function createScaleCharacter() {
-  const character = new THREE.Group();
-  const skin = mat('#d6a27d', .92);
-  const shirt = mat('#557b61', .95);
-  const trousers = mat('#354b43', .98);
-  const boots = mat('#594638', 1);
-  const hair = mat('#49372d', 1);
-  const backpack = mat('#8b6845', 1);
-
-  function part(geometry, material, x, y, z, cast = true) {
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(x, y, z);
-    mesh.castShadow = cast;
-    mesh.receiveShadow = true;
-    character.add(mesh);
-    return mesh;
-  }
-
-  // Boots and legs.
-  part(new THREE.BoxGeometry(.22, .13, .34), boots, -.13, .075, .055);
-  part(new THREE.BoxGeometry(.22, .13, .34), boots, .13, .075, .055);
-  part(new THREE.CylinderGeometry(.085, .095, .68, 8), trousers, -.13, .47, 0);
-  part(new THREE.CylinderGeometry(.085, .095, .68, 8), trousers, .13, .47, 0);
-
-  // Torso, neck and head.
-  part(new THREE.CylinderGeometry(.22, .27, .58, 10), shirt, 0, 1.12, 0);
-  part(new THREE.CylinderGeometry(.075, .075, .12, 8), skin, 0, 1.47, 0);
-  part(new THREE.SphereGeometry(.205, 16, 12), skin, 0, 1.66, 0);
-  part(new THREE.SphereGeometry(.21, 12, 8, 0, Math.PI * 2, 0, Math.PI * .55), hair, 0, 1.72, -.025);
-
-  // Arms hang naturally at the sides.
-  const leftArm = part(new THREE.CylinderGeometry(.065, .075, .48, 8), shirt, -.29, 1.12, 0);
-  leftArm.rotation.z = -.12;
-  const rightArm = part(new THREE.CylinderGeometry(.065, .075, .48, 8), shirt, .29, 1.12, 0);
-  rightArm.rotation.z = .12;
-  part(new THREE.SphereGeometry(.075, 10, 8), skin, -.32, .86, .015);
-  part(new THREE.SphereGeometry(.075, 10, 8), skin, .32, .86, .015);
-
-  // Small explorer's backpack, visible from the three-quarter camera angle.
-  part(new THREE.BoxGeometry(.28, .38, .14), backpack, 0, 1.13, -.22);
-
-  // Place the test character in the broad central clearing so it is not hidden by the western ridge or trees.
-  character.position.set(-10, heightAt(-10, 8) + .06, 8);
-  character.rotation.y = .62;
-  scene.add(character);
-  return character;
-}
-const scaleTestCharacter = createScaleCharacter();
-
 // Flowers and low shrubs in the meadow region.
 const flowerGeo=new THREE.IcosahedronGeometry(.13,0);
 const flowerInstances=flowerMats.map(m=>new THREE.InstancedMesh(flowerGeo,m,240));
@@ -351,6 +301,6 @@ function animate(){
 }
 animate();
 const loading=host.querySelector('.verdant-loading'); if(loading) loading.remove();
-window.lumenVerdantIsland={scene,camera,renderer,terrain:land,treeCount,scaleTestCharacter,regions:['Emerald Forest','Highland Peaks','Crystal Waters','Blooming Fields','Wild Cliffs','Silent Shores']};
+window.lumenVerdantIsland={scene,camera,renderer,terrain:land,treeCount,regions:['Emerald Forest','Highland Peaks','Crystal Waters','Blooming Fields','Wild Cliffs','Silent Shores']};
 window.lumenVerdantIslandReady=true;
 console.log('Lumen Society — Verdant Island 1.0 carregada.',{treeCount});
