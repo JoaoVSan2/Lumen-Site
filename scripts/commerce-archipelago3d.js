@@ -44,15 +44,18 @@ const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32
 // Roads and walkways follow the terrain as broad, flat street surfaces.
 function roadStrip(points,width,material,offset=.025){
   const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z)));
-  const samples=curve.getPoints(220),vertices=[],indices=[];
+  const samples=curve.getPoints(260),across=6,vertices=[],indices=[];
   for(let i=0;i<samples.length;i++){
     const p=samples[i],t=curve.getTangent(i/(samples.length-1)),len=Math.hypot(t.x,t.z)||1;
     const nx=-t.z/len,nz=t.x/len;
-    for(const side of [-1,1]){
-      const x=p.x+nx*side*width/2,z=p.z+nz*side*width/2;
+    for(let j=0;j<=across;j++){
+      const side=j/across-.5,x=p.x+nx*side*width,z=p.z+nz*side*width;
       vertices.push(x,surfaceHeight(x,z)+offset,z);
     }
-    if(i<samples.length-1){const k=i*2;indices.push(k,k+1,k+2,k+1,k+3,k+2);}
+    if(i<samples.length-1){
+      const row=i*(across+1),next=row+across+1;
+      for(let j=0;j<across;j++)indices.push(row+j,row+j+1,next+j,row+j+1,next+j+1,next+j);
+    }
   }
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));g.setIndex(indices);g.computeVertexNormals();
   const street=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:material.color,roughness:.98,side:THREE.DoubleSide}));
