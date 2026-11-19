@@ -30,12 +30,13 @@ for(let i=0;i<pos.length;i+=3){const x=pos[i],y=pos[i+1],z=pos[i+2],n=(Math.sin(
 const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));geo.setIndex(idx);geo.computeVertexNormals();
 const terrain=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:1}));terrain.receiveShadow=true;terrain.castShadow=true;world.add(terrain);
 // Sand ribbon around the island.
-const sp=[],si=[],layers=[1,1.025,1.055,1.085];for(let l=0;l<layers.length;l++)for(let i=0;i<SEG;i++){const a=i/SEG*Math.PI*2,r=edge(a)*layers[l],x=Math.cos(a)*r,z=Math.sin(a)*r,y=THREE.MathUtils.lerp(heightAt(Math.cos(a)*edge(a),Math.sin(a)*edge(a))-.08,SEA-.5,l/(layers.length-1));sp.push(x,y,z);}
+const sp=[],si=[],layers=[1,1.025,1.055,1.085];for(let l=0;l<layers.length;l++)for(let i=0;i<SEG;i++){const a=i/SEG*Math.PI*2,r=edge(a)*layers[l],x=Math.cos(a)*r,z=Math.sin(a)*r,innerX=Math.cos(a)*edge(a),innerZ=Math.sin(a)*edge(a),y=THREE.MathUtils.lerp(surfaceHeight(innerX,innerZ)-.035,SEA-.5,l/(layers.length-1));sp.push(x,y,z);}
 for(let l=0;l<layers.length-1;l++)for(let i=0;i<SEG;i++){const n=(i+1)%SEG,a=l*SEG+i,b=l*SEG+n,c=(l+1)*SEG+i,d=(l+1)*SEG+n;si.push(a,b,c,b,d,c);}
 const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(sp,3));sg.setIndex(si);sg.computeVertexNormals();world.add(new THREE.Mesh(sg,new THREE.MeshStandardMaterial({color:'#ddcba5',roughness:1,side:THREE.DoubleSide})));
 // Roads and walkways follow gentle curves over the island.
 function tube(points,radius,material,y=.13){const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,surfaceHeight(x,z)+y,z)));const m=new THREE.Mesh(new THREE.TubeGeometry(curve,180,radius,8,false),material);m.receiveShadow=true;world.add(m);return m;}
 function slab(x,z,w,d,y,m){const o=new THREE.Mesh(new THREE.BoxGeometry(w,.12,d),m);o.position.set(x,y,z);o.receiveShadow=true;o.castShadow=true;world.add(o);return o;}
+function conformFootprint(mesh,x,z,w,d,thickness){const a=mesh.geometry.attributes.position,center=surfaceHeight(x,z);for(let i=0;i<a.count;i++){const dx=a.getX(i),dz=a.getZ(i),dy=surfaceHeight(x+dx,z+dz)-center;a.setY(i,a.getY(i)+dy);}a.needsUpdate=true;mesh.geometry.computeVertexNormals();}
 tube([[-34,-5],[-25,-7],[-15,-7],[-5,-6],[5,-5],[16,-4],[27,-1],[35,5]],1.05,roadMat);
 tube([[-2,-30],[-1,-20],[0,-10],[1,0],[4,11],[7,22],[11,31]],.72,roadMat);
 tube([[-30,16],[-20,19],[-9,20],[2,20],[14,18],[26,14],[33,9]],.48,paving);
@@ -53,7 +54,7 @@ slab(20,34,5,15,surfaceHeight(20,34)+.06,wood);for(let z=28;z<=40;z+=3)for(const
 const plots=[];
 function sign(group,id,style,z){const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d');ctx.clearRect(0,0,512,128);ctx.fillStyle=style==='modern'?'#eff7f2':'#fff2df';ctx.font='700 54px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(id,256,66);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));s.scale.set(3.1,.78,1);s.position.set(0,.65,z);group.add(s);}
 function addPlot(p){const {x,z,w,d,h,style,id,kind}=p,modern=style==='modern',g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)+.02,z);world.add(g);const wall=modern?wallModern:wallCoast,trim=modern?trimModern:terra;
-const base=new THREE.Mesh(new THREE.BoxGeometry(w,.24,d),mat(modern?'#b9c5c0':'#cbb99d'));base.position.y=.12;g.add(base);
+const base=new THREE.Mesh(new THREE.BoxGeometry(w,.24,d),mat(modern?'#b9c5c0':'#cbb99d'));base.position.y=.12;conformFootprint(base,x,z,w,d,.24);g.add(base);
 // Keep the complete lot footprint visible, while the empty building shell sits smaller inside it.
 const shell=new THREE.Group();shell.scale.set(.55,.55,.55);g.add(shell);
 const back=new THREE.Mesh(new THREE.BoxGeometry(w,h,.34),wall);back.position.set(0,.24+h/2,-d/2+.17);shell.add(back);
@@ -84,7 +85,7 @@ const vacantLots=[];
 function emptyLot({x,z,w=6.4,d=7.2,id,type='urban'}){
   const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)+.02,z);world.add(g);
   const padMat=mat(type==='green'?'#a4b58d':type==='service'?'#c9c4b2':'#c8c1ad');
-  const pad=new THREE.Mesh(new THREE.BoxGeometry(w,.16,d),padMat);pad.position.y=.08;pad.receiveShadow=true;pad.castShadow=true;g.add(pad);
+  const pad=new THREE.Mesh(new THREE.BoxGeometry(w,.16,d),padMat);pad.position.y=.08;conformFootprint(pad,x,z,w,d,.16);pad.receiveShadow=true;pad.castShadow=true;g.add(pad);
   const curb=mat('#e0d7c4'),edge=.1,y=.19;
   const edges=[[w,edge,0,-d/2],[w,edge,0,d/2],[edge,d, -w/2,0],[edge,d,w/2,0]];
   for(const [ew,ed,ex,ez] of edges){const m=new THREE.Mesh(new THREE.BoxGeometry(ew,.12,ed),curb);m.position.set(ex,y,ez);g.add(m);}
