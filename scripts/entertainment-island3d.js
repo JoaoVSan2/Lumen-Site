@@ -76,7 +76,7 @@ const ferris=new THREE.Group();ferris.position.set(-21,surface(-21,-10),-10);isl
 const wheelCenter=new THREE.Vector3(0,10.2,0),wheelRadius=7.6;
 const wheelRing=new THREE.Mesh(new THREE.TorusGeometry(wheelRadius,.24,12,72),coral);wheelRing.position.copy(wheelCenter);add(wheelRing,ferris);
 const innerRing=new THREE.Mesh(new THREE.TorusGeometry(wheelRadius*.78,.13,10,56),gold);innerRing.position.copy(wheelCenter);add(innerRing,ferris);
-for(let i=0;i<12;i++){const a=i/12*Math.PI*2,dir=new THREE.Vector3(Math.cos(a),Math.sin(a),0),spoke=new THREE.Mesh(new THREE.CylinderGeometry(.105,.14,wheelRadius*2,10),cream);spoke.position.copy(wheelCenter).addScaledVector(dir,wheelRadius);spoke.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir);add(spoke,ferris);}
+for(let i=0;i<12;i++){const a=i/12*Math.PI*2,dir=new THREE.Vector3(Math.cos(a),Math.sin(a),0),spoke=new THREE.Mesh(new THREE.CylinderGeometry(.065,.085,wheelRadius,10),cream);spoke.position.copy(wheelCenter).addScaledVector(dir,wheelRadius/2);spoke.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir);add(spoke,ferris);}
 // The two A-frames straddle the wheel and meet at the axle, rather than leaning in the same direction.
 for(const z of [-1.45,1.45]){
   beamBetween(ferris,[-4.9,.32,z],[0,10.2,z],.27,cream,12);
