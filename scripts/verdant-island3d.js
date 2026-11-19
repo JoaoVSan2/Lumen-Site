@@ -234,22 +234,23 @@ for(let i=0;i<170;i++) {
 // Forest: instanced trunks and multi-layer canopies for good browser performance.
 const trunkGeo=new THREE.CylinderGeometry(.16,.25,2.0,6);
 const crownGeo=new THREE.IcosahedronGeometry(1.15,1);
-const trunkInstances=new THREE.InstancedMesh(trunkGeo,trunkMat,330);
-const crownInstances=leafMats.map(m=>new THREE.InstancedMesh(crownGeo,m,330));
+const trunkInstances=new THREE.InstancedMesh(trunkGeo,trunkMat,270);
+const crownInstances=leafMats.map(m=>new THREE.InstancedMesh(crownGeo,m,270));
 trunkInstances.castShadow=true; trunkInstances.receiveShadow=true;
 crownInstances.forEach(m=>{m.castShadow=true;m.receiveShadow=true;});
 const dummy=new THREE.Object3D();
 const counts=[0,0,0,0];
 let treeCount=0;
-for(let i=0;i<330;i++) {
+for(let i=0;i<270;i++) {
   const a=rand()*Math.PI*2, r=Math.sqrt(rand())*37, x=Math.cos(a)*r,z=Math.sin(a)*r;
   if(!insideIsland(x,z,4)) continue;
   // Keep some broad clearings for paths, lakes and future player-built refuges.
   const clearing1=Math.hypot(x+10,z-8)<7;
   const clearing2=Math.hypot(x-14,z+7)<6;
   const clearing3=Math.hypot(x-2,z-24)<5;
-  if(clearing1||clearing2||clearing3) continue;
-  const y=heightAt(x,z), scale=1.12+rand()*.98, crownIndex=Math.floor(rand()*leafMats.length);
+  const bridgeClearing=Math.hypot(x-9.1,z+1.2)<5.8;
+  if(clearing1||clearing2||clearing3||bridgeClearing) continue;
+  const y=heightAt(x,z), scale=.92+rand()*.68, crownIndex=Math.floor(rand()*leafMats.length);
   dummy.position.set(x,y+1.15*scale,z); dummy.rotation.set((rand()-.5)*.12,rand()*6.28,(rand()-.5)*.12); dummy.scale.set(scale,scale*(1.1+rand()*.35),scale); dummy.updateMatrix();
   trunkInstances.setMatrixAt(treeCount,dummy.matrix);
   dummy.position.y=y+2.55*scale; dummy.scale.set(scale*(1.35+rand()*.25),scale*(1.55+rand()*.35),scale*(1.35+rand()*.25)); dummy.updateMatrix();
@@ -302,52 +303,54 @@ function trail(points,width=.24) {
 }
 trail([[-34,7],[-25,3],[-17,-1],[-8,-4],[0,-8],[10,-12],[24,-16],[34,-12]],.32);
 trail([[-8,-4],[-11,5],[-10,14],[-4,23],[4,30]],.24);
-trail([[0,-8],[8,-3],[13,5],[20,10],[29,12]],.2);
+trail([[0,-8],[4,-6],[7,-3]],.2);
+trail([[11.2,-.2],[15,3],[20,10],[29,12]],.2);
 
-// WOODEN FOOTBRIDGE — connects the main trail across the western river cut.
+// WOODEN FOOTBRIDGE — placed at the real crossing of the eastern stream and meadow trail.
 const riverBridge = new THREE.Group();
-riverBridge.position.set(-9.5, heightAt(-9.5, -3.5) + 0.95, -3.5);
-riverBridge.rotation.y = 0.14;
+riverBridge.position.set(9.11, 4.24, -1.22);
+riverBridge.rotation.y = -0.464;
+riverBridge.rotation.z = -0.20;
 islandWorld.add(riverBridge);
 const bridgeDeck = new THREE.Mesh(
-  new THREE.BoxGeometry(4.9, 0.18, 1.55),
+  new THREE.BoxGeometry(5.6, 0.2, 1.9),
   mat('#896448')
 );
-bridgeDeck.position.y = -0.04;
+bridgeDeck.position.y = 0;
 bridgeDeck.castShadow = true;
 bridgeDeck.receiveShadow = true;
 riverBridge.add(bridgeDeck);
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 12; i++) {
   const plank = new THREE.Mesh(
-    new THREE.BoxGeometry(0.43, 0.055, 1.48),
+    new THREE.BoxGeometry(0.43, 0.065, 1.82),
     mat(i % 2 ? '#a27a55' : '#96704d')
   );
-  plank.position.set(-2.18 + i * 0.485, 0.075, 0);
+  plank.position.set(-2.48 + i * 0.45, 0.13, 0);
   plank.castShadow = true;
   riverBridge.add(plank);
 }
 for (const side of [-1, 1]) {
   const rail = new THREE.Mesh(
-    new THREE.BoxGeometry(4.85, 0.13, 0.13),
+    new THREE.BoxGeometry(5.5, 0.13, 0.13),
     trunkMat
   );
-  rail.position.set(0, 0.88, side * 0.69);
+  rail.position.set(0, 0.86, side * 0.84);
   riverBridge.add(rail);
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     const post = new THREE.Mesh(
       new THREE.BoxGeometry(0.13, 0.9, 0.13),
       trunkMat
     );
-    post.position.set(-2.05 + i * 1.025, 0.43, side * 0.69);
+    post.position.set(-2.55 + i * 1.02, 0.43, side * 0.84);
     riverBridge.add(post);
   }
 }
-for (const x of [-1.8, 1.8]) {
+for (const x of [-1.15, 1.15]) {
   const support = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.12, 0.16, 1.0, 8),
+    new THREE.CylinderGeometry(0.13, 0.18, 1.55, 8),
     trunkMat
   );
-  support.position.set(x, -0.55, 0);
+  support.position.set(x, -0.95, 0);
   riverBridge.add(support);
 }
 riverBridge.traverse(o => {
