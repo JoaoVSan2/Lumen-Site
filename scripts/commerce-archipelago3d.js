@@ -53,15 +53,17 @@ const plots=[];
 function sign(group,id,style,z){const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d');ctx.clearRect(0,0,512,128);ctx.fillStyle=style==='modern'?'#eff7f2':'#fff2df';ctx.font='700 54px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(id,256,66);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));s.scale.set(4.8,1.2,1);s.position.set(0,.65,z);group.add(s);}
 function addPlot(p){const {x,z,w,d,h,style,id,kind}=p,modern=style==='modern',g=new THREE.Group();g.position.set(x,heightAt(x,z)+.18,z);world.add(g);const wall=modern?wallModern:wallCoast,trim=modern?trimModern:terra;
 const base=new THREE.Mesh(new THREE.BoxGeometry(w,.24,d),mat(modern?'#b9c5c0':'#cbb99d'));base.position.y=.12;g.add(base);
-const back=new THREE.Mesh(new THREE.BoxGeometry(w,h,.34),wall);back.position.set(0,.24+h/2,-d/2+.17);g.add(back);
-for(const side of [-1,1]){const wing=new THREE.Mesh(new THREE.BoxGeometry(.34,h,d*.72),wall);wing.position.set(side*(w/2-.17),.24+h/2,d*.14);g.add(wing);}
-for(const side of [-1,1]){const post=new THREE.Mesh(new THREE.BoxGeometry(.34,h+.18,.38),trim);post.position.set(side*(w/2-.18),.24+(h+.18)/2,d/2-.18);g.add(post);}
-const lintel=new THREE.Mesh(new THREE.BoxGeometry(w+.2,.38,.48),trim);lintel.position.set(0,.24+h+.02,d/2-.18);g.add(lintel);
-const roof=new THREE.Mesh(new THREE.BoxGeometry(w+.35,.24,d+.35),modern?mat('#aebfbb'):mat('#b86f53'));roof.position.set(0,.24+h+.24,0);g.add(roof);
-const signboard=new THREE.Mesh(new THREE.BoxGeometry(w*.62,.48,.12),modern?mat('#536d6b'):mat('#77533f'));signboard.position.set(0,.24+h-.65,d/2+.045);g.add(signboard);
+// Keep the complete lot footprint visible, while the empty building shell sits smaller inside it.
+const shell=new THREE.Group();shell.scale.set(.76,.72,.76);g.add(shell);
+const back=new THREE.Mesh(new THREE.BoxGeometry(w,h,.34),wall);back.position.set(0,.24+h/2,-d/2+.17);shell.add(back);
+for(const side of [-1,1]){const wing=new THREE.Mesh(new THREE.BoxGeometry(.34,h,d*.72),wall);wing.position.set(side*(w/2-.17),.24+h/2,d*.14);shell.add(wing);}
+for(const side of [-1,1]){const post=new THREE.Mesh(new THREE.BoxGeometry(.34,h+.18,.38),trim);post.position.set(side*(w/2-.18),.24+(h+.18)/2,d/2-.18);shell.add(post);}
+const lintel=new THREE.Mesh(new THREE.BoxGeometry(w+.2,.38,.48),trim);lintel.position.set(0,.24+h+.02,d/2-.18);shell.add(lintel);
+const roof=new THREE.Mesh(new THREE.BoxGeometry(w+.35,.24,d+.35),modern?mat('#aebfbb'):mat('#b86f53'));roof.position.set(0,.24+h+.24,0);shell.add(roof);
+const signboard=new THREE.Mesh(new THREE.BoxGeometry(w*.62,.48,.12),modern?mat('#536d6b'):mat('#77533f'));signboard.position.set(0,.24+h-.65,d/2+.045);shell.add(signboard);
 const edgeMat=mat(modern?'#6d9691':'#bd946d'),corners=[[-w/2,-d/2],[w/2,-d/2],[w/2,d/2],[-w/2,d/2]];
 for(let i=0;i<4;i++){const a=corners[i],b=corners[(i+1)%4],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),line=new THREE.Mesh(new THREE.BoxGeometry(len,.035,.07),edgeMat);line.position.set((a[0]+b[0])/2,.27,(a[1]+b[1])/2);line.rotation.y=-Math.atan2(dz,dx);g.add(line);}
-g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});sign(g,id,style,d/2+.85);plots.push({...p,position:[x,z],size:[w,d]});return g;}
+g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});sign(g,id,style,d/2+.85);plots.push({...p,position:[x,z],size:[w,d],structureScale:.76});return g;}
 [
 {x:-25,z:-15,w:8.2,d:8.4,h:4.5,style:'modern',id:'M-01',kind:'Pequeno'},
 {x:-13,z:-16,w:10,d:9,h:5.1,style:'modern',id:'M-02',kind:'Médio'},
