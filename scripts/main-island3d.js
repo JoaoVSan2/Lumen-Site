@@ -15,7 +15,7 @@ if (!host) {
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('#b9d9d2');
-scene.fog = new THREE.Fog('#b9d9d2', 24, 55);
+scene.fog = new THREE.Fog('#b9d9d2', 30, 68);
 
 const focus = new THREE.Vector3(0, 0.2, 0);
 
@@ -133,8 +133,8 @@ const waves = [];
 for (let i = 0; i < 18; i++) {
   const wave = new THREE.Mesh(
     new THREE.TorusGeometry(
-      0.35 + (i % 3) * 0.2,
-      0.018,
+      (0.35 + (i % 3) * 0.2) * 1.4,
+      0.018 * 1.4,
       4,
       20
     ),
@@ -146,7 +146,7 @@ for (let i = 0; i < 18; i++) {
   );
 
   const angle = i * 2.4;
-  const radius = 6.25 + (i % 4) * 0.35;
+  const radius = (6.25 + (i % 4) * 0.35) * 1.4;
 
   wave.rotation.x = -Math.PI / 2;
   wave.position.set(
@@ -162,6 +162,9 @@ for (let i = 0; i < 18; i++) {
 // TERRENO ORGÂNICO
 
 const island = new THREE.Group();
+// Amplia toda a ilha de forma proporcional, preservando a escala relativa
+// entre terreno, árvores, vegetação, trilhas e detalhes naturais.
+island.scale.setScalar(1.4);
 scene.add(island);
 
 const SEGMENTS = 96;
