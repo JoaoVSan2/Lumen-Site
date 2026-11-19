@@ -231,6 +231,8 @@ for(let i=0;i<170;i++) {
   rock.scale.set(.8+rand()*.8,.65+rand()*.9,.8+rand()*.8); rock.castShadow=true; rock.receiveShadow=true; islandWorld.add(rock);
 }
 
+// Reserved natural clearings for future player-built refuges.
+const RESERVED_BUILD_SITES=[[-25,13],[24,14],[25,-5]];
 // Forest: instanced trunks and multi-layer canopies for good browser performance.
 const trunkGeo=new THREE.CylinderGeometry(.16,.25,2.0,6);
 const crownGeo=new THREE.IcosahedronGeometry(1.15,1);
@@ -249,7 +251,8 @@ for(let i=0;i<270;i++) {
   const clearing2=Math.hypot(x-14,z+7)<6;
   const clearing3=Math.hypot(x-2,z-24)<5;
   const bridgeClearing=Math.hypot(x-9.1,z+1.2)<5.8;
-  if(clearing1||clearing2||clearing3||bridgeClearing) continue;
+  const buildSiteClearing=RESERVED_BUILD_SITES.some(([sx,sz])=>Math.hypot(x-sx,z-sz)<5.2);
+  if(clearing1||clearing2||clearing3||bridgeClearing||buildSiteClearing) continue;
   const y=heightAt(x,z), scale=.92+rand()*.68, crownIndex=Math.floor(rand()*leafMats.length);
   dummy.position.set(x,y+1.15*scale,z); dummy.rotation.set((rand()-.5)*.12,rand()*6.28,(rand()-.5)*.12); dummy.scale.set(scale,scale*(1.1+rand()*.35),scale); dummy.updateMatrix();
   trunkInstances.setMatrixAt(treeCount,dummy.matrix);
