@@ -63,7 +63,24 @@ function conformFootprint(mesh,x,z,w,d,thickness){const a=mesh.geometry.attribut
 // The two connecting streets are continuous flat ribbons, not raised cylindrical tubes.
 roadStrip([[-35,-8],[-25,-8],[-15,-8],[-5,-8],[5,-8],[15,-8],[25,-8],[35,-8]],3.4,roadMat,.035);
 roadStrip([[-35,6],[-25,6],[-15,6],[-5,6],[5,6],[15,6],[25,6],[35,6]],2.5,paving,.03);
-// Central plaza, fountain and benches.
+// Clearly marked pedestrian crossings connect both sides of the main streets.
+const crossingMat = mat('#eee8d7', 0.92);
+function pedestrianCrossing(z) {
+  for (let i = 0; i < 7; i++) {
+    const stripe = new THREE.Mesh(
+      new THREE.BoxGeometry(0.48, 0.035, 2.7),
+      crossingMat
+    );
+    const x = -2.58 + i * 0.86;
+    stripe.position.set(x, surfaceHeight(x, z) + 0.085, z);
+    stripe.receiveShadow = true;
+    town.add(stripe);
+  }
+}
+pedestrianCrossing(-8);
+pedestrianCrossing(6);
+
+
 slab(1,2,17,14,surfaceHeight(1,2)+.06,paving);
 const basin=new THREE.Mesh(new THREE.CylinderGeometry(2.5,2.7,.55,48),mat('#d6d0bd'));basin.position.set(1,surfaceHeight(1,2)+.33,2);town.add(basin);
 const water=new THREE.Mesh(new THREE.CircleGeometry(2.22,48),oceanMat);water.rotation.x=-Math.PI/2;water.position.set(1,surfaceHeight(1,2)+.62,2);town.add(water);
@@ -242,9 +259,7 @@ function greenPocket(x,z,w,d){
   g.position.set(x,surfaceHeight(x,z)+.06,z);conformFootprint(g,x,z,w,d,.12);g.receiveShadow=true;town.add(g);
   for(const dx of [-w*.28,0,w*.28])tree(x+dx,z,.42+rand()*.12);
 }
-greenPocket(-12,-24,5.5,3.8);
 greenPocket(0,20,5.5,4);
-greenPocket(-35,-5,4,5);
 
 // Trees, planters and lamps frame public space; no vegetation is placed inside lots.
 function tree(x,z,s=1){const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z),z);g.scale.setScalar(s);const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22,.32,2.8,7),wood);trunk.position.y=1.4;g.add(trunk);for(let i=0;i<3;i++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.35-i*.12,1),greens[i]);crown.position.set((rand()-.5)*.35,3.1+i*.42,(rand()-.5)*.35);crown.scale.set(1.05,.9,1.05);g.add(crown);}g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});town.add(g);}
