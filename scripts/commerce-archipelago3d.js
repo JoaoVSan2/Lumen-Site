@@ -17,7 +17,8 @@ const wallCoast=mat('#e8d2b5'),terra=mat('#b97859');
 const greens=['#527b5e','#6f9368','#8da575'].map(c=>mat(c));
 let seed=41827;function rand(){seed=seed*16807%2147483647;return(seed-1)/2147483646;}function smooth(a,b,x){const t=THREE.MathUtils.clamp((x-a)/(b-a),0,1);return t*t*(3-2*t);}
 const SEA=-1.1,R=43;function edge(a){return R*(.95+Math.sin(a*3+.5)*.03+Math.sin(a*5+1.3)*.022+Math.cos(a*2-.8)*.022);}
-function heightAt(x,z){return .12+Math.exp(-((x+1)**2+(z+1)**2)/650)*1.7+Math.exp(-((x+27)**2+(z-8)**2)/180)*2+Math.exp(-((x-28)**2+(z+10)**2)/170)*1.5+Math.sin(x*.16+z*.09)*.22+Math.cos(z*.2-x*.07)*.18;}\nfunction surfaceHeight(x,z){return heightAt(x,z)+smooth(29,42,Math.hypot(x,z))*.55;}
+function heightAt(x,z){return .12+Math.exp(-((x+1)**2+(z+1)**2)/650)*1.7+Math.exp(-((x+27)**2+(z-8)**2)/180)*2+Math.exp(-((x-28)**2+(z+10)**2)/170)*1.5+Math.sin(x*.16+z*.09)*.22+Math.cos(z*.2-x*.07)*.18;}
+function surfaceHeight(x,z){return heightAt(x,z)+smooth(29,42,Math.hypot(x,z))*.55;}
 const ocean=new THREE.Mesh(new THREE.PlaneGeometry(600,600),oceanMat);ocean.rotation.x=-Math.PI/2;ocean.position.y=SEA;ocean.receiveShadow=true;world.add(ocean);
 // Organic landform with a gently raised green coast.
 const SEG=192,RINGS=64,pos=[0,heightAt(0,0),0],idx=[],cols=[];
@@ -47,7 +48,7 @@ function bench(x,z,rot=0){const g=new THREE.Group();g.position.set(x,surfaceHeig
 bench(-5,3,.2);bench(7,3,-.2);bench(1,9,Math.PI/2);
 // Boardwalk and pier.
 tube([[-29,27],[-18,31],[-5,32],[9,31],[22,27],[31,21]],.58,wood,.25);
-slab(20,34,5,15,.25,wood);for(let z=28;z<=40;z+=3)for(const x of [18,22]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.16,.19,1.8,8),darkWood);p.position.set(x,surfaceHeight(x,z)+.9,z);world.add(p);}
+slab(20,34,5,15,surfaceHeight(20,34)+.06,wood);for(let z=28;z<=40;z+=3)for(const x of [18,22]){const p=new THREE.Mesh(new THREE.CylinderGeometry(.16,.19,1.8,8),darkWood);p.position.set(x,surfaceHeight(x,z)+.9,z);world.add(p);}
 // Empty storefront shells: plot pads, boundary lines, side/rear walls and open fronts.
 const plots=[];
 function sign(group,id,style,z){const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d');ctx.clearRect(0,0,512,128);ctx.fillStyle=style==='modern'?'#eff7f2':'#fff2df';ctx.font='700 54px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(id,256,66);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));s.scale.set(3.1,.78,1);s.position.set(0,.65,z);group.add(s);}
@@ -122,7 +123,7 @@ const sideStreet=mat('#a9aaa1'),sidewalk=mat('#d7d0bf');
 // Small neighborhood green pockets break up the blocks and reserve public space.
 function greenPocket(x,z,w,d){
   const g=new THREE.Mesh(new THREE.BoxGeometry(w,.12,d),mat('#9eae86'));
-  g.position.set(x,heightAt(x,z)+.22,z);g.receiveShadow=true;world.add(g);
+  g.position.set(x,surfaceHeight(x,z)+.06,z);g.receiveShadow=true;world.add(g);
   for(const dx of [-w*.28,0,w*.28])tree(x+dx,z,.42+rand()*.12);
 }
 greenPocket(-8,-22,7,4.5);
@@ -130,7 +131,7 @@ greenPocket(23,20,6,4.5);
 greenPocket(-31, -4,4.5,6);
 
 // Trees, planters and lamps frame public space; no vegetation is placed inside lots.
-function tree(x,z,s=1){const g=new THREE.Group();g.position.set(x,heightAt(x,z),z);g.scale.setScalar(s);const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22,.32,2.8,7),wood);trunk.position.y=1.4;g.add(trunk);for(let i=0;i<3;i++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.35-i*.12,1),greens[i]);crown.position.set((rand()-.5)*.35,3.1+i*.42,(rand()-.5)*.35);crown.scale.set(1.05,.9,1.05);g.add(crown);}g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});world.add(g);}
+function tree(x,z,s=1){const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z),z);g.scale.setScalar(s);const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22,.32,2.8,7),wood);trunk.position.y=1.4;g.add(trunk);for(let i=0;i<3;i++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.35-i*.12,1),greens[i]);crown.position.set((rand()-.5)*.35,3.1+i*.42,(rand()-.5)*.35);crown.scale.set(1.05,.9,1.05);g.add(crown);}g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});world.add(g);}
 [[-34,21],[-17,27],[-6,27],[32,18],[34,-12],[0,13],[9,12]].forEach(([x,z],i)=>tree(x,z,.8+rand()*.35));
 function lamp(x,z){const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z),z);const pole=new THREE.Mesh(new THREE.CylinderGeometry(.07,.1,3.4,8),darkWood);pole.position.y=1.7;g.add(pole);const head=new THREE.Mesh(new THREE.BoxGeometry(.62,.28,.62),mat('#f2d9a9',.5,{emissive:'#b98e54',emissiveIntensity:.18}));head.position.y=3.5;g.add(head);world.add(g);}
 [[-30,-8],[-18,-8],[-5,-7],[8,-6],[21,-4],[31,1],[-1,12],[5,12],[14,19]].forEach(([x,z])=>lamp(x,z));
