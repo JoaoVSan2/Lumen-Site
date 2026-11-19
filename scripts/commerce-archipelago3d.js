@@ -33,13 +33,28 @@ const terrain=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:tr
 const sp=[],si=[],layers=[1,1.025,1.055,1.085];for(let l=0;l<layers.length;l++)for(let i=0;i<SEG;i++){const a=i/SEG*Math.PI*2,r=edge(a)*layers[l],x=Math.cos(a)*r,z=Math.sin(a)*r,innerX=Math.cos(a)*edge(a),innerZ=Math.sin(a)*edge(a),y=THREE.MathUtils.lerp(surfaceHeight(innerX,innerZ)-.035,SEA-.5,l/(layers.length-1));sp.push(x,y,z);}
 for(let l=0;l<layers.length-1;l++)for(let i=0;i<SEG;i++){const n=(i+1)%SEG,a=l*SEG+i,b=l*SEG+n,c=(l+1)*SEG+i,d=(l+1)*SEG+n;si.push(a,b,c,b,d,c);}
 const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(sp,3));sg.setIndex(si);sg.computeVertexNormals();world.add(new THREE.Mesh(sg,new THREE.MeshStandardMaterial({color:'#ddcba5',roughness:1,side:THREE.DoubleSide})));
-// Roads and walkways follow gentle curves over the island.
-function tube(points,radius,material,y=.13){const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,surfaceHeight(x,z)+y,z)));const m=new THREE.Mesh(new THREE.TubeGeometry(curve,180,radius,8,false),material);m.receiveShadow=true;world.add(m);return m;}
+// Roads and walkways follow the terrain as broad, flat street surfaces.
+function roadStrip(points,width,material,offset=.025){
+  const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z)));
+  const samples=curve.getPoints(220),vertices=[],indices=[];
+  for(let i=0;i<samples.length;i++){
+    const p=samples[i],t=curve.getTangent(i/(samples.length-1)),len=Math.hypot(t.x,t.z)||1;
+    const nx=-t.z/len,nz=t.x/len;
+    for(const side of [-1,1]){
+      const x=p.x+nx*side*width/2,z=p.z+nz*side*width/2;
+      vertices.push(x,surfaceHeight(x,z)+offset,z);
+    }
+    if(i<samples.length-1){const k=i*2;indices.push(k,k+1,k+2,k+1,k+3,k+2);}
+  }
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));g.setIndex(indices);g.computeVertexNormals();
+  const street=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:material.color,roughness:.98,side:THREE.DoubleSide}));
+  street.receiveShadow=true;world.add(street);return street;
+}
 function slab(x,z,w,d,y,m){const o=new THREE.Mesh(new THREE.BoxGeometry(w,.12,d),m);o.position.set(x,y,z);conformFootprint(o,x,z,w,d,.12);o.receiveShadow=true;o.castShadow=true;world.add(o);return o;}
 function conformFootprint(mesh,x,z,w,d,thickness){const a=mesh.geometry.attributes.position,center=surfaceHeight(x,z);for(let i=0;i<a.count;i++){const dx=a.getX(i),dz=a.getZ(i),dy=surfaceHeight(x+dx,z+dz)-center;a.setY(i,a.getY(i)+dy);}a.needsUpdate=true;mesh.geometry.computeVertexNormals();}
-// Main streets now follow the open corridors between the commercial blocks.
-tube([[-35,-8],[-25,-8],[-15,-8],[-5,-8],[5,-8],[15,-8],[25,-8],[35,-8]],.72,roadMat);
-tube([[-35,6],[-25,6],[-15,6],[-5,6],[5,6],[15,6],[25,6],[35,6]],.48,paving);
+// The two connecting streets are continuous flat ribbons, not raised cylindrical tubes.
+roadStrip([[-35,-8],[-25,-8],[-15,-8],[-5,-8],[5,-8],[15,-8],[25,-8],[35,-8]],3.4,roadMat,.035);
+roadStrip([[-35,6],[-25,6],[-15,6],[-5,6],[5,6],[15,6],[25,6],[35,6]],2.5,paving,.03);
 // Central plaza, fountain and benches.
 slab(1,2,17,14,surfaceHeight(1,2)+.06,paving);
 const basin=new THREE.Mesh(new THREE.CylinderGeometry(2.5,2.7,.55,48),mat('#d6d0bd'));basin.position.set(1,surfaceHeight(1,2)+.33,2);world.add(basin);
@@ -69,7 +84,7 @@ slab(32,31,5,15,surfaceHeight(32,31)+.06,wood);for(let z=25;z<=37;z+=3)for(const
 // Empty storefront shells: plot pads, boundary lines, side/rear walls and open fronts.
 const plots=[];
 function sign(group,id,style,z){const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d');ctx.clearRect(0,0,512,128);ctx.fillStyle=style==='modern'?'#eff7f2':'#fff2df';ctx.font='700 54px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(id,256,66);const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));s.scale.set(3.1,.78,1);s.position.set(0,.65,z);group.add(s);}
-function addPlot(p){const {x,z,w,d,h,style,id,kind}=p,modern=style==='modern',g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)-.035,z);world.add(g);const wall=modern?wallModern:wallCoast,trim=modern?trimModern:terra;
+function addPlot(p){const {x,z,w,d,h,style,id,kind}=p,modern=style==='modern',g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)-.16,z);world.add(g);const wall=modern?wallModern:wallCoast,trim=modern?trimModern:terra;
 const base=new THREE.Mesh(new THREE.BoxGeometry(w,.24,d),mat(modern?'#b9c5c0':'#cbb99d'));base.position.y=.12;conformFootprint(base,x,z,w,d,.24);g.add(base);
 // Keep the complete lot footprint visible, while the empty building shell sits smaller inside it.
 const shell=new THREE.Group();shell.scale.set(.55,.55,.55);g.add(shell);
@@ -99,7 +114,7 @@ g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});sign(g,id
 // These are deliberately empty plots, ready for future homes, services and businesses.
 const vacantLots=[];
 function emptyLot({x,z,w=6.4,d=7.2,id,type='urban'}){
-  const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)-.035,z);world.add(g);
+  const g=new THREE.Group();g.position.set(x,surfaceHeight(x,z)-.16,z);world.add(g);
   const padMat=mat(type==='green'?'#a4b58d':type==='service'?'#c9c4b2':'#c8c1ad');
   const pad=new THREE.Mesh(new THREE.BoxGeometry(w,.16,d),padMat);pad.position.y=.08;conformFootprint(pad,x,z,w,d,.16);pad.receiveShadow=true;pad.castShadow=true;g.add(pad);
   const curb=mat('#e0d7c4'),edge=.1,y=.19;
