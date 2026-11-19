@@ -54,7 +54,7 @@ function sign(group,id,style,z){const c=document.createElement('canvas');c.width
 function addPlot(p){const {x,z,w,d,h,style,id,kind}=p,modern=style==='modern',g=new THREE.Group();g.position.set(x,heightAt(x,z)+.18,z);world.add(g);const wall=modern?wallModern:wallCoast,trim=modern?trimModern:terra;
 const base=new THREE.Mesh(new THREE.BoxGeometry(w,.24,d),mat(modern?'#b9c5c0':'#cbb99d'));base.position.y=.12;g.add(base);
 // Keep the complete lot footprint visible, while the empty building shell sits smaller inside it.
-const shell=new THREE.Group();shell.scale.set(.76,.72,.76);g.add(shell);
+const shell=new THREE.Group();shell.scale.set(.55,.55,.55);g.add(shell);
 const back=new THREE.Mesh(new THREE.BoxGeometry(w,h,.34),wall);back.position.set(0,.24+h/2,-d/2+.17);shell.add(back);
 for(const side of [-1,1]){const wing=new THREE.Mesh(new THREE.BoxGeometry(.34,h,d*.72),wall);wing.position.set(side*(w/2-.17),.24+h/2,d*.14);shell.add(wing);}
 for(const side of [-1,1]){const post=new THREE.Mesh(new THREE.BoxGeometry(.34,h+.18,.38),trim);post.position.set(side*(w/2-.18),.24+(h+.18)/2,d/2-.18);shell.add(post);}
@@ -63,7 +63,7 @@ const roof=new THREE.Mesh(new THREE.BoxGeometry(w+.35,.24,d+.35),modern?mat('#ae
 const signboard=new THREE.Mesh(new THREE.BoxGeometry(w*.62,.48,.12),modern?mat('#536d6b'):mat('#77533f'));signboard.position.set(0,.24+h-.65,d/2+.045);shell.add(signboard);
 const edgeMat=mat(modern?'#6d9691':'#bd946d'),corners=[[-w/2,-d/2],[w/2,-d/2],[w/2,d/2],[-w/2,d/2]];
 for(let i=0;i<4;i++){const a=corners[i],b=corners[(i+1)%4],dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),line=new THREE.Mesh(new THREE.BoxGeometry(len,.035,.07),edgeMat);line.position.set((a[0]+b[0])/2,.27,(a[1]+b[1])/2);line.rotation.y=-Math.atan2(dz,dx);g.add(line);}
-g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});sign(g,id,style,d/2+.85);plots.push({...p,position:[x,z],size:[w,d],structureScale:.76});return g;}
+g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});sign(g,id,style,d/2+.85);plots.push({...p,position:[x,z],size:[w,d],structureScale:.55});return g;}
 [
 {x:-25,z:-15,w:8.2,d:8.4,h:4.5,style:'modern',id:'M-01',kind:'Pequeno'},
 {x:-13,z:-16,w:10,d:9,h:5.1,style:'modern',id:'M-02',kind:'Médio'},
@@ -76,7 +76,59 @@ g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});sign(g,id
 {x:-22,z:19,w:14,d:12,h:6.4,style:'modern',id:'S-01',kind:'Especial'},
 {x:20,z:25,w:14,d:12,h:6.4,style:'coastal',id:'S-02',kind:'Especial'}
 ].forEach(addPlot);
-// Trees, planters and lamps frame public space; no vegetation is placed inside lots.
+
+// New urban blocks: additional vacant parcels, sidewalks and calmer side streets.
+// These are deliberately empty plots, ready for future homes, services and businesses.
+const vacantLots=[];
+function emptyLot({x,z,w=6.4,d=7.2,id,type='urban'}){
+  const g=new THREE.Group();g.position.set(x,heightAt(x,z)+.2,z);world.add(g);
+  const padMat=mat(type==='green'?'#a4b58d':type==='service'?'#c9c4b2':'#c8c1ad');
+  const pad=new THREE.Mesh(new THREE.BoxGeometry(w,.16,d),padMat);pad.position.y=.08;pad.receiveShadow=true;pad.castShadow=true;g.add(pad);
+  const curb=mat('#e0d7c4'),edge=.1,y=.19;
+  const edges=[[w,edge,0,-d/2],[w,edge,0,d/2],[edge,d, -w/2,0],[edge,d,w/2,0]];
+  for(const [ew,ed,ex,ez] of edges){const m=new THREE.Mesh(new THREE.BoxGeometry(ew,.12,ed),curb);m.position.set(ex,y,ez);g.add(m);}
+  // A small entrance path connects each lot to the street.
+  const path=new THREE.Mesh(new THREE.BoxGeometry(1.35,.045,1.35),paving);path.position.set(0,.19,d/2-.55);g.add(path);
+  g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+  sign(g,id,'modern',d/2+.58);
+  vacantLots.push({id,position:[x,z],size:[w,d],type});
+  return g;
+}
+// A second row of compact plots makes the island read as a growing town.
+[
+{x:-32,z:-25,w:6.2,d:6.8,id:'L-11'},
+{x:-18,z:-29,w:6.4,d:6.8,id:'L-12'},
+{x:-5,z:-30,w:6.8,d:6.8,id:'L-13',type:'service'},
+{x:9,z:-29,w:6.4,d:6.8,id:'L-14'},
+{x:31,z:-25,w:6.2,d:6.8,id:'L-15'},
+{x:-34,z:11,w:6.2,d:6.8,id:'L-16'},
+{x:34,z:-3,w:6.2,d:6.8,id:'L-17'},
+{x:7,z:29,w:6.8,d:6.8,id:'L-18',type:'green'}
+].forEach(emptyLot);
+
+// Side streets form a loose city grid around the commercial core.
+const sideStreet=mat('#a9aaa1'),sidewalk=mat('#d7d0bf');
+[
+[[-34,-23],[-27,-26],[-18,-28],[-7,-29],[5,-29],[17,-28],[30,-25]],
+[[-35,8],[-28,10],[-20,12],[-10,13],[0,13],[11,13],[23,10],[34,6]],
+[[-30,-31],[-29,-20],[-29,-9],[-29,2],[-29,12]],
+[[30,-30],[30,-19],[30,-8],[30,3],[30,15]]
+].forEach((points,i)=>tube(points,i<2?.48:.38,sideStreet,.16));
+// Sidewalk strips soften the transition between streets and future lots.
+[
+[-20,-23,25,1.05], [17,-23,22,1.05], [-20,7,22,1.0], [20,7,22,1.0]
+].forEach(([x,z,w,d])=>slab(x,z,w,d,heightAt(x,z)+.24,sidewalk));
+
+// Small neighborhood green pockets break up the blocks and reserve public space.
+function greenPocket(x,z,w,d){
+  const g=new THREE.Mesh(new THREE.BoxGeometry(w,.12,d),mat('#9eae86'));
+  g.position.set(x,heightAt(x,z)+.22,z);g.receiveShadow=true;world.add(g);
+  for(const dx of [-w*.28,0,w*.28])tree(x+dx,z,.42+rand()*.12);
+}
+greenPocket(-8,-22,7,4.5);
+greenPocket(23,20,6,4.5);
+greenPocket(-31, -4,4.5,6);
+\n// Trees, planters and lamps frame public space; no vegetation is placed inside lots.
 function tree(x,z,s=1){const g=new THREE.Group();g.position.set(x,heightAt(x,z),z);g.scale.setScalar(s);const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22,.32,2.8,7),wood);trunk.position.y=1.4;g.add(trunk);for(let i=0;i<3;i++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.35-i*.12,1),greens[i]);crown.position.set((rand()-.5)*.35,3.1+i*.42,(rand()-.5)*.35);crown.scale.set(1.05,.9,1.05);g.add(crown);}g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});world.add(g);}
 [[-35,-20],[-34,5],[-34,21],[-17,27],[-6,27],[10,26],[32,18],[34,-12],[5,-29],[-18,-28],[0,13],[9,12]].forEach(([x,z],i)=>tree(x,z,.8+rand()*.35));
 function lamp(x,z){const g=new THREE.Group();g.position.set(x,heightAt(x,z),z);const pole=new THREE.Mesh(new THREE.CylinderGeometry(.07,.1,3.4,8),darkWood);pole.position.y=1.7;g.add(pole);const head=new THREE.Mesh(new THREE.BoxGeometry(.62,.28,.62),mat('#f2d9a9',.5,{emissive:'#b98e54',emissiveIntensity:.18}));head.position.y=3.5;g.add(head);world.add(g);}
@@ -98,5 +150,5 @@ renderer.domElement.tabIndex=0;renderer.domElement.setAttribute('aria-label','Co
 new ResizeObserver(resize).observe(host);resize();updateCamera();
 const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const dt=clock.getDelta(),t=clock.elapsedTime;distance=THREE.MathUtils.lerp(distance,targetDistance,1-Math.exp(-6*dt));updateCamera();ocean.position.y=SEA+Math.sin(t*.65)*.025;renderer.render(scene,camera);}animate();
 const loading=host.querySelector('.commerce-loading');if(loading)loading.remove();
-window.lumenCommerceArchipelago={scene,camera,renderer,terrain,plots,scale:11};window.lumenCommerceArchipelagoReady=true;
-console.log('Lumen Society — Commerce Archipelago 1.0 carregado.',{plots:plots.length,scale:11});
+window.lumenCommerceArchipelago={scene,camera,renderer,terrain,plots,vacantLots,scale:11};window.lumenCommerceArchipelagoReady=true;
+console.log('Lumen Society — Commerce Archipelago 1.0 carregado.',{commercialPlots:plots.length,vacantLots:vacantLots.length,scale:11});
