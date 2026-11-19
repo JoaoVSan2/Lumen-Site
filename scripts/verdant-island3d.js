@@ -60,6 +60,24 @@ const ISLAND_RADIUS = 43;
 function edgeRadius(a) {
   return ISLAND_RADIUS * (0.94 + Math.sin(a*3+0.4)*0.035 + Math.sin(a*5+1.1)*0.022 + Math.cos(a*2-0.7)*0.025);
 }
+const LAKE_BASINS = [
+  {x:-10,z:8,rx:5.5,rz:3.8,depth:2.15},
+  {x:14,z:-7,rx:4.2,rz:3.0,depth:1.75},
+  {x:5,z:25,rx:3.1,rz:2.1,depth:1.35}
+];
+const RIVER_PATHS = [
+  {points:[[-5,-27],[-3,-20],[-7,-13],[-5,-7],[-10,-1],[-9,6],[-5,13],[0,19],[4,26]],width:.62,depth:.9},
+  {points:[[18,-20],[15,-15],[17,-10],[14,-7],[10,-3],[7,3]],width:.42,depth:.72}
+];
+function distanceToPath(x,z,points) {
+  let best=Infinity;
+  for(let i=0;i<points.length-1;i++) {
+    const [ax,az]=points[i],[bx,bz]=points[i+1],dx=bx-ax,dz=bz-az;
+    const t=THREE.MathUtils.clamp(((x-ax)*dx+(z-az)*dz)/(dx*dx+dz*dz),0,1);
+    best=Math.min(best,Math.hypot(x-(ax+dx*t),z-(az+dz*t)));
+  }
+  return best;
+}
 function heightAt(x, z) {
   const northPeak = Math.exp(-((x+7)**2 + (z+23)**2)/190) * 13.5;
   const northEastPeak = Math.exp(-((x-17)**2 + (z+18)**2)/125) * 9.5;
@@ -67,7 +85,16 @@ function heightAt(x, z) {
   const centralRise = Math.exp(-((x-1)**2 + (z+2)**2)/420) * 3.2;
   const valley = Math.exp(-((x-3)**2 + (z-15)**2)/115) * 1.8;
   const rolling = Math.sin(x*0.19+z*0.11)*0.42 + Math.cos(z*0.23-x*0.08)*0.34 + Math.sin((x+z)*0.31)*0.18;
-  return 0.15 + northPeak + northEastPeak + westRidge + centralRise - valley + rolling;
+  let y=0.15+northPeak+northEastPeak+westRidge+centralRise-valley+rolling;
+  for(const lake of LAKE_BASINS) {
+    const r=Math.hypot((x-lake.x)/lake.rx,(z-lake.z)/lake.rz);
+    y-=lake.depth*(1-smooth(.72,1.28,r));
+  }
+  for(const river of RIVER_PATHS) {
+    const d=distanceToPath(x,z,river.points);
+    y-=river.depth*(1-smooth(river.width*.55,river.width*2.5,d));
+  }
+  return y;
 }
 function insideIsland(x,z,margin=0) {
   const a = Math.atan2(z,x);
@@ -143,25 +170,45 @@ shoreGeo.setIndex(shoreIndices); shoreGeo.computeVertexNormals();
 const shore=new THREE.Mesh(shoreGeo,new THREE.MeshStandardMaterial({color:'#d9c69a',roughness:1,side:THREE.DoubleSide}));
 shore.receiveShadow=true; islandWorld.add(shore);
 
-// Water bodies: natural lakes, river bends and waterfall curtains.
+// Water bodies sit inside shallow, sculpted basins rather than on top of the land.
 function lake(x,z,rx,rz) {
-  const g=new THREE.CircleGeometry(1,64);
-  const m=new THREE.Mesh(g,waterMat);
-  m.rotation.x=-Math.PI/2; m.position.set(x,heightAt(x,z)+.10,z); m.scale.set(rx,rz,1); m.receiveShadow=true; islandWorld.add(m);
-  const rim=new THREE.Mesh(new THREE.TorusGeometry(1,.08,6,64),mat('#9cae82'));
-  rim.rotation.x=Math.PI/2; rim.position.set(x,m.position.y-.04,z); rim.scale.set(rx,rz,1); islandWorld.add(rim);
+  const g=new THREE.CircleGeometry(1,96);
+  const a=g.attributes.position;
+  for(let i=1;i<a.count;i++) {
+    const angle=Math.atan2(a.getY(i),a.getX(i));
+    const wobble=1+.045*Math.sin(angle*3+.7)+.025*Math.sin(angle*7+1.4);
+    a.setX(i,a.getX(i)*wobble);
+    a.setY(i,a.getY(i)*wobble);
+  }
+  g.computeVertexNormals();
+  const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:'#64aaa9',roughness:.32,metalness:.02,transparent:true,opacity:.96,side:THREE.DoubleSide}));
+  m.rotation.x=-Math.PI/2;
+  m.position.set(x,heightAt(x,z)+.075,z);
+  m.scale.set(rx,rz,1);
+  m.receiveShadow=true;
+  islandWorld.add(m);
 }
-lake(-10,8,5.5,3.8);
-lake(14,-7,4.2,3.0);
-lake(5,25,3.1,2.1);
+for(const lake of LAKE_BASINS) lake(lake.x,lake.z,lake.rx,lake.rz);
 
 function river(points,radius,color='#66aaa5') {
-  const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,heightAt(x,z)+.18,z)));
-  const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,180,radius,8,false),new THREE.MeshStandardMaterial({color,roughness:.25,transparent:true,opacity:.94}));
-  mesh.castShadow=false; islandWorld.add(mesh); return mesh;
+  const curve=new THREE.CatmullRomCurve3(points.map(([x,z])=>new THREE.Vector3(x,0,z)));
+  const samples=curve.getPoints(180),vertices=[],indices=[];
+  for(let i=0;i<samples.length;i++) {
+    const p=samples[i],t=curve.getTangent(i/(samples.length-1)),len=Math.hypot(t.x,t.z)||1;
+    const nx=-t.z/len,nz=t.x/len;
+    for(const side of [-1,1]) {
+      const x=p.x+nx*side*radius*1.45,z=p.z+nz*side*radius*1.45;
+      vertices.push(x,heightAt(x,z)+.055,z);
+    }
+    if(i<samples.length-1) {const k=i*2;indices.push(k,k+1,k+2,k+1,k+3,k+2);}
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+  g.setIndex(indices);g.computeVertexNormals();
+  const mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color,roughness:.3,transparent:true,opacity:.96,side:THREE.DoubleSide}));
+  mesh.receiveShadow=true;islandWorld.add(mesh);return mesh;
 }
-river([[-5,-27],[-3,-20],[-7,-13],[-5,-7],[-10,-1],[-9,6],[-5,13],[0,19],[4,26]],.62);
-river([[18,-20],[15,-15],[17,-10],[14,-7],[10,-3],[7,3]],.42);
+for(const riverData of RIVER_PATHS) river(riverData.points,riverData.width);
 
 // Waterfall sheets on the northern highlands.
 function waterfall(x,z,width,drop,rotation=0) {
