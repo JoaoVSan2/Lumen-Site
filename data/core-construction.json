@@ -1,0 +1,18 @@
+{
+  "startAt": null,
+  "durationHours": 72,
+  "stages": [
+    {
+      "afterHours": 0,
+      "label": "Fundações e preparação"
+    },
+    {
+      "afterHours": 24,
+      "label": "Estruturas principais"
+    },
+    {
+      "afterHours": 48,
+      "label": "Acabamentos e inauguração"
+    }
+  ]
+}
