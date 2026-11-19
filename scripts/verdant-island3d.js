@@ -304,6 +304,56 @@ trail([[-34,7],[-25,3],[-17,-1],[-8,-4],[0,-8],[10,-12],[24,-16],[34,-12]],.32);
 trail([[-8,-4],[-11,5],[-10,14],[-4,23],[4,30]],.24);
 trail([[0,-8],[8,-3],[13,5],[20,10],[29,12]],.2);
 
+// WOODEN FOOTBRIDGE — connects the main trail across the western river cut.
+const riverBridge = new THREE.Group();
+riverBridge.position.set(-8.3, heightAt(-8.3, -3.5) + 0.52, -3.5);
+riverBridge.rotation.y = 0.72;
+islandWorld.add(riverBridge);
+const bridgeDeck = new THREE.Mesh(
+  new THREE.BoxGeometry(4.9, 0.18, 1.55),
+  mat('#896448')
+);
+bridgeDeck.position.y = -0.04;
+bridgeDeck.castShadow = true;
+bridgeDeck.receiveShadow = true;
+riverBridge.add(bridgeDeck);
+for (let i = 0; i < 10; i++) {
+  const plank = new THREE.Mesh(
+    new THREE.BoxGeometry(0.43, 0.055, 1.48),
+    mat(i % 2 ? '#a27a55' : '#96704d')
+  );
+  plank.position.set(-2.18 + i * 0.485, 0.075, 0);
+  plank.castShadow = true;
+  riverBridge.add(plank);
+}
+for (const side of [-1, 1]) {
+  const rail = new THREE.Mesh(
+    new THREE.BoxGeometry(4.85, 0.13, 0.13),
+    trunkMat
+  );
+  rail.position.set(0, 0.88, side * 0.69);
+  riverBridge.add(rail);
+  for (let i = 0; i < 5; i++) {
+    const post = new THREE.Mesh(
+      new THREE.BoxGeometry(0.13, 0.9, 0.13),
+      trunkMat
+    );
+    post.position.set(-2.05 + i * 1.025, 0.43, side * 0.69);
+    riverBridge.add(post);
+  }
+}
+for (const x of [-1.8, 1.8]) {
+  const support = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.12, 0.16, 1.0, 8),
+    trunkMat
+  );
+  support.position.set(x, -0.55, 0);
+  riverBridge.add(support);
+}
+riverBridge.traverse(o => {
+  if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; }
+});
+
 // Cave entrance at the foot of the northern ridge.
 const caveGroup=new THREE.Group(); caveGroup.position.set(-18,heightAt(-18,-18),-18); caveGroup.rotation.y=.45; islandWorld.add(caveGroup);
 const caveDark=new THREE.Mesh(new THREE.CircleGeometry(1.55,32),new THREE.MeshBasicMaterial({color:'#17231d'}));
