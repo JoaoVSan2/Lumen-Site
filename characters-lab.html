@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#e8eee6">
+  <meta name="description" content="Laboratório de personagens originais do Lumen Society.">
+  <title>Lumen Society — Character Lab</title>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"}}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles/characters-lab.css">
+</head>
+<body>
+  <main class="lab">
+    <header class="lab-header">
+      <a class="brand" href="./"><span class="brand-mark">✳</span><span>LUMEN <b>SOCIETY</b></span></a>
+      <span class="edition">AVATAR SYSTEM <i>·</i> PROTOTYPE 001</span>
+    </header>
+    <section class="lab-layout">
+      <div class="preview-panel">
+        <div class="preview-copy">
+          <span class="eyebrow">ORIGINAL CHARACTER PROJECT</span>
+          <h1>Character <em>Lab</em></h1>
+          <p>Uma nova identidade para os habitantes do Lumen Society.</p>
+        </div>
+        <div id="character-canvas" class="character-canvas" aria-label="Prévia 3D do personagem-base"></div>
+        <div class="preview-footer"><span>BASE MODEL · V0.1</span><span>ARRASTE PARA GIRAR</span></div>
+      </div>
+      <aside class="spec-panel">
+        <span class="eyebrow">FOUNDATION / 001</span>
+        <h2>O primeiro habitante.</h2>
+        <p class="spec-intro">Modelo-base original, criado em geometria 3D modular. Esta é a fundação para os futuros avatares personalizáveis.</p>
+        <div class="spec-list">
+          <div><span>ESTILO</span><b>Stylized 3D</b></div>
+          <div><span>PROPORÇÕES</span><b>Balanced</b></div>
+          <div><span>ESTRUTURA</span><b>Modular / articulável</b></div>
+          <div><span>ALTURA-BASE</span><b>2.0 unidades</b></div>
+          <div><span>ORIGEM</span><b>Original Lumen Society</b></div>
+        </div>
+        <div class="palette">
+          <span class="eyebrow">PALETA INICIAL</span>
+          <div class="swatches"><i class="skin"></i><i class="shirt"></i><i class="pants"></i><i class="shoes"></i></div>
+        </div>
+        <p class="next-step"><b>PRÓXIMA ETAPA</b><br>Refinar rosto, silhueta e articulações antes de iniciar cabelos e roupas intercambiáveis.</p>
+        <a class="back-link" href="./">← Voltar ao Island Core</a>
+      </aside>
+    </section>
+    <footer class="lab-footer"><span>LUMEN SOCIETY</span><span>CHARACTER DEVELOPMENT / 2026</span></footer>
+  </main>
+  <script type="module" src="./scripts/characters/character-lab.js?v=1"></script>
+</body>
+</html>
