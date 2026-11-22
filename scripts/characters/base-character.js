@@ -135,8 +135,8 @@ export function createBaseCharacter(options = {}) {
     const knee = group(`knee-${label}`, hip, [0, -0.29, 0]);
     mesh(`shin-${label}`, geometry.shin, trousers, knee, [0, -0.145, 0]);
     const ankle = group(`ankle-${label}`, knee, [0, -0.29, 0]);
-    mesh(`shoe-${label}`, geometry.foot, shoes, ankle, [0, -0.025, 0.055], [0.105, 0.075, 0.19]);
-    mesh(`shoe-sole-${label}`, geometry.foot, sole, ankle, [0, -0.073, 0.06], [0.108, 0.027, 0.192]);
+    mesh(`shoe-${label}`, geometry.foot, shoes, ankle, [0, -0.205, 0.055], [0.105, 0.075, 0.19]);
+    mesh(`shoe-sole-${label}`, geometry.foot, sole, ankle, [0, -0.253, 0.06], [0.108, 0.027, 0.192]);
     legs[label] = { hip, knee, ankle };
   }
 
