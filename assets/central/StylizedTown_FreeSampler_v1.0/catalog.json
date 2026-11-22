@@ -1,0 +1,274 @@
+[
+ {
+  "name": "shopping_cart_01",
+  "category": "supermarket",
+  "physics": "dynamic",
+  "mass_kg": 14.7,
+  "wind": false,
+  "tris_lod0": 1152,
+  "tris_lod1": 574,
+  "collider_tris": 38,
+  "colliders": 1,
+  "size_m": [
+   1.09,
+   0.57,
+   1.05
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "shopping_basket_01",
+  "category": "supermarket",
+  "physics": "dynamic",
+  "mass_kg": 1.2,
+  "wind": false,
+  "tris_lod0": 420,
+  "tris_lod1": 174,
+  "collider_tris": 12,
+  "colliders": 1,
+  "size_m": [
+   0.44,
+   0.3,
+   0.35
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "cardboard_box_01",
+  "category": "supermarket",
+  "physics": "dynamic",
+  "mass_kg": 4.2,
+  "wind": false,
+  "tris_lod0": 80,
+  "tris_lod1": 46,
+  "collider_tris": 44,
+  "colliders": 1,
+  "size_m": [
+   0.5,
+   0.4,
+   0.35
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "wet_floor_sign_01",
+  "category": "supermarket",
+  "physics": "dynamic",
+  "mass_kg": 1.7,
+  "wind": false,
+  "tris_lod0": 172,
+  "tris_lod1": 106,
+  "collider_tris": 60,
+  "colliders": 1,
+  "size_m": [
+   0.3,
+   0.36,
+   0.67
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "vending_machine_01",
+  "category": "supermarket",
+  "physics": "static",
+  "mass_kg": 0.0,
+  "wind": false,
+  "tris_lod0": 2078,
+  "tris_lod1": 976,
+  "collider_tris": 64,
+  "colliders": 1,
+  "size_m": [
+   1.0,
+   0.84,
+   1.9
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "sofa_02",
+  "category": "home",
+  "physics": "static",
+  "mass_kg": 0.0,
+  "wind": false,
+  "tris_lod0": 508,
+  "tris_lod1": 254,
+  "collider_tris": 40,
+  "colliders": 1,
+  "size_m": [
+   1.7,
+   0.92,
+   0.92
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "coffee_table_01",
+  "category": "home",
+  "physics": "dynamic",
+  "mass_kg": 28.9,
+  "wind": false,
+  "tris_lod0": 488,
+  "tris_lod1": 242,
+  "collider_tris": 30,
+  "colliders": 1,
+  "size_m": [
+   1.1,
+   0.6,
+   0.51
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "chair_01",
+  "category": "home",
+  "physics": "dynamic",
+  "mass_kg": 5.9,
+  "wind": false,
+  "tris_lod0": 344,
+  "tris_lod1": 172,
+  "collider_tris": 38,
+  "colliders": 1,
+  "size_m": [
+   0.44,
+   0.44,
+   0.92
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "plant_pot_01",
+  "category": "home",
+  "physics": "dynamic",
+  "mass_kg": 6.4,
+  "wind": true,
+  "tris_lod0": 574,
+  "tris_lod1": 276,
+  "collider_tris": 60,
+  "colliders": 1,
+  "size_m": [
+   1.26,
+   1.26,
+   0.99
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "table_lamp_01",
+  "category": "home",
+  "physics": "dynamic",
+  "mass_kg": 2.4,
+  "wind": false,
+  "tris_lod0": 192,
+  "tris_lod1": 124,
+  "collider_tris": 108,
+  "colliders": 1,
+  "size_m": [
+   0.3,
+   0.3,
+   0.48
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "bench_01",
+  "category": "street",
+  "physics": "static",
+  "mass_kg": 0.0,
+  "wind": false,
+  "tris_lod0": 524,
+  "tris_lod1": 262,
+  "collider_tris": 36,
+  "colliders": 1,
+  "size_m": [
+   1.8,
+   0.58,
+   0.87
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "street_lamp_01",
+  "category": "street",
+  "physics": "static",
+  "mass_kg": 0.0,
+  "wind": false,
+  "tris_lod0": 220,
+  "tris_lod1": 140,
+  "collider_tris": 76,
+  "colliders": 1,
+  "size_m": [
+   0.45,
+   1.71,
+   4.88
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "fire_hydrant_01",
+  "category": "street",
+  "physics": "static",
+  "mass_kg": 0.0,
+  "wind": false,
+  "tris_lod0": 334,
+  "tris_lod1": 158,
+  "collider_tris": 78,
+  "colliders": 1,
+  "size_m": [
+   0.37,
+   0.33,
+   0.73
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "mailbox_01",
+  "category": "street",
+  "physics": "static",
+  "mass_kg": 0.0,
+  "wind": false,
+  "tris_lod0": 172,
+  "tris_lod1": 108,
+  "collider_tris": 76,
+  "colliders": 1,
+  "size_m": [
+   0.42,
+   0.57,
+   1.49
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "car_hatchback_01",
+  "category": "street",
+  "physics": "dynamic",
+  "mass_kg": 1281.0,
+  "wind": false,
+  "tris_lod0": 1036,
+  "tris_lod1": 470,
+  "collider_tris": 60,
+  "colliders": 1,
+  "size_m": [
+   1.99,
+   4.08,
+   1.56
+  ],
+  "from_pack": "Stylized Cozy Town"
+ },
+ {
+  "name": "road_straight_01",
+  "category": "street",
+  "physics": "static",
+  "mass_kg": 0.0,
+  "wind": false,
+  "tris_lod0": 160,
+  "tris_lod1": 94,
+  "collider_tris": 100,
+  "colliders": 3,
+  "size_m": [
+   8.0,
+   8.0,
+   0.25
+  ],
+  "from_pack": "Stylized Cozy Town"
+ }
+]
