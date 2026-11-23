@@ -1,0 +1,288 @@
+AMANO PROPS - STYLE GUIDE (Supermarket Kit v1.0.2)
+=======================================================
+
+1. SCALE
+   - 1 unit = 1 meter. Supermarket walls 4 m wide x 5 m high (parapet included), roof top 4.5 m, ceiling 4.2-4.3 m,
+     sliding door 2.6 x 3.3 m, aisles 1.9 m high, checkout counter 0.88 m, loading dock platform 1.2 m.
+2. GRID
+   - 4 m grid: walls, storefront modules, floor / roof / ceiling tiles, parking tiles, rack bays
+     (= Town Starter road tiles = Gas Station 24h canopy cells = Terrain Kit tiles).
+   - 2 m grid: aisles (gondolas), open chillers, freezers, counters. End caps close a row.
+3. ORIGINS AND ORIENTATION
+   - Origin on the ground at the center of the footprint; front faces -Y in Blender.
+   - Walls: origin at the foot of the wall on the grid line, outside = -Y.
+   - Wall items: back on the wall plane. Ceiling and hanging items: origin on the ceiling. Moving parts: separate
+     child objects, pivot on the hinge / hub / track.
+4. PALETTES
+   - ONE texture: Textures/props_palette.png, 16 x 16 cells of 16 px (256 x 256 px).
+   - Every polygon is UV-mapped to the CENTER of one cell: no texture painting.
+   - Rows 0-7 are identical to Town Starter MegaKit, rows 0-10 to Route 66 Desert Stop, rows 0-12 (first half) to
+     Gas Station 24h Kit; the supermarket colors fill the free cells (row 12 second half, row 13, row 14).
+     v1.0.2: cells 237-249 = the Diner Kit colors (identical), cells 250-254 = sky dome colors; cell 255 is free.
+     Colors are only ever ADDED.
+   - Classic (day), Night (dark blue, windows and neons lit), Pastel, Winter: same UVs, swap the palette AND the
+     matching emission map.
+   - Glass uses a second material, PropsGlass (plain color, alpha 0.2), the same in every palette.
+5. STYLE
+   - Low poly, flat shaded; 54 to 2,222 polygons (quads) per asset (design limit: 2,500 polygons).
+   - Objects only: no characters, no real brands. Products are plain colored packs without labels; signs use
+     generic pictograms; the only word is the generic MARKET on Mart_Sign_Neon_Market_6m.
+6. NAMING
+   - Family_Variant (Mart_Wall_Door_Slide_4m, Aisle_Shelf_Cans_2m, Checkout_Lane_Express_Market...). Names never
+     collide with the other Amano Props packs. Existing file names, scales and pivots never change in updates.
+PALETTE TABLE (index -> name -> color -> cell column,row)
+    0  asphalt          #55585E  0,0
+    1  asphalt_dark     #45474C  1,0
+    2  asphalt_light    #6A6D73  2,0
+    3  line_white       #E8E8E0  3,0
+    4  line_yellow      #E8D27A  4,0
+    5  curb             #8F939A  5,0
+    6  sidewalk         #B4B0A8  6,0
+    7  sidewalk_dark    #9A968E  7,0
+    8  paving           #C2B8A6  8,0
+    9  paving_red       #A8705A  9,0
+   10  grass            #79B24E  10,0
+   11  grass_dark       #5F9A42  11,0
+   12  dirt             #8A6A48  12,0
+   13  gravel           #9A948A  13,0
+   14  rail_steel       #7A7E86  14,0
+   15  sleeper          #5A4636  15,0
+   16  brick            #A4523E  0,1
+   17  brick_dark       #7E3A2C  1,1
+   18  brick_light      #C06A50  2,1
+   19  plaster          #E6DCC8  3,1
+   20  plaster_yellow   #E8C878  4,1
+   21  plaster_blue     #9CC0D0  5,1
+   22  plaster_pink     #E0A8A0  6,1
+   23  plaster_green    #A8C8A0  7,1
+   24  siding_white     #E8E8E2  8,1
+   25  siding_blue      #7EA0C0  9,1
+   26  siding_green     #8AAE88  10,1
+   27  siding_yellow    #E4CC84  11,1
+   28  concrete         #A8A8A4  12,1
+   29  concrete_dark    #7C7C7A  13,1
+   30  stone            #9A9288  14,1
+   31  trim             #F2F0EA  15,1
+   32  roof_red         #A8463A  0,2
+   33  roof_dark        #4A4A52  1,2
+   34  roof_brown       #7A5440  2,2
+   35  roof_green       #4E7458  3,2
+   36  roof_flat        #6E6E70  4,2
+   37  wood             #9A6A44  5,2
+   38  wood_dark        #5E4232  6,2
+   39  wood_light       #C09868  7,2
+   40  metal            #8A9098  8,2
+   41  metal_dark       #4A4E56  9,2
+   42  metal_light      #C4C8CE  10,2
+   43  black            #1E1E22  11,2
+   44  white            #F0F0EC  12,2
+   45  chrome           #D0D4DA  13,2
+   46  rubber           #26262A  14,2
+   47  rust             #8A4A2A  15,2
+   48  red              #C83A32  0,3
+   49  red_dark         #8E2622  1,3
+   50  orange           #E8803A  2,3
+   51  yellow           #F0C838  3,3
+   52  taxi_yellow      #F2B830  4,3
+   53  green            #4A9A4A  5,3
+   54  green_dark       #2E6A3E  6,3
+   55  teal             #3A9A96  7,3
+   56  blue             #3A6AB0  8,3
+   57  blue_dark        #24406E  9,3
+   58  blue_light       #8AB8E0  10,3
+   59  purple           #7A4A9A  11,3
+   60  pink             #E888A8  12,3
+   61  cream            #F0E2C0  13,3
+   62  brown            #7A5236  14,3
+   63  grey             #8A8A8E  15,3
+   64  leaf             #5A9A3E  0,4
+   65  leaf_dark        #3E7A32  1,4
+   66  leaf_light       #8AC05A  2,4
+   67  leaf_yellow      #C8B040  3,4
+   68  bark             #6A4A34  4,4
+   69  birch            #E0DCD0  5,4
+   70  hedge            #4A8A3A  6,4
+   71  flower_red       #D84A4A  7,4
+   72  flower_yellow    #F0D040  8,4
+   73  flower_white     #F4F0E8  9,4
+   74  flower_purple    #9A5AC8  10,4
+   75  flower_pink      #F08AB8  11,4
+   76  palm             #6AA040  12,4
+   77  soil             #5A4030  13,4
+   78  water            #4A90B8  14,4
+   79  pine             #2E6A3A  15,4
+   80  lamp_glow        #FFF0C0  0,5
+   81  neon_pink        #FF4AA8  1,5
+   82  neon_blue        #4AD8FF  2,5
+   83  neon_green       #6AFF7A  3,5
+   84  neon_yellow      #FFE040  4,5
+   85  neon_red         #FF3A3A  5,5
+   86  light_red        #FF2A20  6,5
+   87  light_amber      #FFB020  7,5
+   88  light_green      #40FF70  8,5
+   89  headlight        #FFF8E0  9,5
+   90  taillight        #E01818  10,5
+   91  siren_blue       #3A7AFF  11,5
+   92  screen           #9AE0FF  12,5
+   93  fire_glow        #FF8A28  13,5
+   94  led_white        #F4F8FF  14,5
+   95  sign_glow        #F8F4E8  15,5
+   96  glass            #8AB8CC  0,6
+   97  glass_dark       #3A4A58  1,6
+   98  window           #9AC4D8  2,6
+   99  window_b         #A8C8D4  3,6
+  100  shop_window      #B0D0DC  4,6
+  101  car_glass        #2E3A46  5,6
+  102  mirror           #C0D0D8  6,6
+  103  glass_green      #6A9A8A  7,6
+  104  sign_red         #C8282A  8,6
+  105  sign_blue        #2A5AB0  9,6
+  106  sign_green       #2A8A4A  10,6
+  107  sign_yellow      #F0C020  11,6
+  108  sign_white       #F0F0EC  12,6
+  109  hazard_orange    #F07A20  13,6
+  110  hazard_black     #2A2A2A  14,6
+  111  sign_brown       #7A4A2A  15,6
+  112  fabric_red       #B83A3A  0,7
+  113  fabric_green     #3A8A5A  1,7
+  114  fabric_blue      #3A6AB0  2,7
+  115  fabric_white     #EEE8DC  3,7
+  116  leather          #6A3A2A  4,7
+  117  seat             #4A4A50  5,7
+  118  bread            #D0A050  6,7
+  119  food_red         #C83A2A  7,7
+  120  food_green       #5AA040  8,7
+  121  cardboard        #B08A5A  9,7
+  122  paper            #EEEAE0  10,7
+  123  plastic_white    #EEEEEE  11,7
+  124  plastic_blue     #3A7AC8  12,7
+  125  plastic_green    #4A9A5A  13,7
+  126  plastic_red      #D04040  14,7
+  127  dumpster         #3E6A4A  15,7
+  128  desert_sand      #D9B47A  0,8
+  129  desert_sand_dark #BF955F  1,8
+  130  desert_sand_light #E9CC98  2,8
+  131  sand_drift       #E2C690  3,8
+  132  red_rock         #B5603E  4,8
+  133  red_rock_dark    #8A4430  5,8
+  134  red_rock_light   #CF8460  6,8
+  135  mesa_band        #E2A070  7,8
+  136  stucco           #E8D6B4  8,8
+  137  stucco_dark      #C9B08A  9,8
+  138  stucco_white     #F2EBDC  10,8
+  139  stucco_ochre     #C98F62  11,8
+  140  tin_roof         #9AA2A6  12,8
+  141  tin_rust         #A8603A  13,8
+  142  old_asphalt      #6C6864  14,8
+  143  asphalt_crack    #4A4644  15,8
+  144  retro_turquoise  #3AA8A8  0,9
+  145  retro_red        #D4483A  1,9
+  146  retro_cream      #F4E6C4  2,9
+  147  retro_coral      #EE8068  3,9
+  148  sun_yellow       #F2C040  4,9
+  149  motel_pink       #E48AA0  5,9
+  150  diner_mint       #92D2C0  6,9
+  151  steel_blue       #5A7A98  7,9
+  152  sage             #8FA874  8,9
+  153  cactus_green     #4F9A5A  9,9
+  154  cactus_dark      #3A7848  10,9
+  155  agave            #7AA890  11,9
+  156  dry_brush        #A88E5C  12,9
+  157  joshua_bark      #7A6448  13,9
+  158  tank_wood        #A87848  14,9
+  159  neon_orange      #FF8A3A  15,9
+  160  motel_neon       #D4483A  0,10
+  161  wood_weathered   #9A8670  1,10
+  162  palo_green       #9AB85A  2,10
+  163  cholla           #B4BF78  3,10
+  164  creosote         #5F8040  4,10
+  165  airstream        #C8CCD2  5,10
+  166  cruiser_blue     #6A9AC8  6,10
+  167  cruiser_pink     #E8A0B0  7,10
+  168  olive_drab       #6A6E44  8,10
+  169  block_grey       #B8B4AA  9,10
+  170  canvas_tan       #D8C49A  10,10
+  171  gas_green        #4A8A5A  11,10
+  172  reserved_r66_1   #FF00FF  12,10
+  173  reserved_r66_2   #FF00FF  13,10
+  174  reserved_r66_3   #FF00FF  14,10
+  175  reserved_r66_4   #FF00FF  15,10
+  176  fuel_green       #2F9A52  0,11
+  177  fuel_yellow      #F2C22E  1,11
+  178  fuel_black       #26262B  2,11
+  179  fuel_blue        #2E66C8  3,11
+  180  canopy_white     #F2F3F0  4,11
+  181  canopy_red       #C8302C  5,11
+  182  canopy_blue      #1F5AA6  6,11
+  183  canopy_green     #1F8656  7,11
+  184  pump_body        #E2E5E8  8,11
+  185  pump_panel       #353A42  9,11
+  186  hose_black       #1C1C20  10,11
+  187  store_glass      #9CC8D6  11,11
+  188  tile_floor       #D6D3CB  12,11
+  189  tile_floor_dark  #B2AFA8  13,11
+  190  fridge_steel     #B6BCC4  14,11
+  191  wash_brush_blue  #2E78D0  15,11
+  192  neon_cyan_st     #3AF0E6  0,12
+  193  neon_magenta_st  #FF3CCC  1,12
+  194  neon_lime_st     #B6FF3A  2,12
+  195  price_led_red    #FF3320  3,12
+  196  price_led_green  #4CFF5E  4,12
+  197  fridge_glow      #E6F2FF  5,12
+  198  canopy_led       #F6F8FF  6,12
+  199  wash_glow_blue   #3A9CFF  7,12
+  200  apple_red        #C8302A  8,12
+  201  orange_fruit     #F08A24  9,12
+  202  banana_yellow    #F2D24A  10,12
+  203  lemon            #DFE04A  11,12
+  204  lime             #7CC03A  12,12
+  205  tomato           #D8402C  13,12
+  206  carrot           #E8762A  14,12
+  207  eggplant         #5A2E5E  15,12
+  208  cabbage          #8CC070  0,13
+  209  potato           #C8A070  1,13
+  210  meat_red         #A8302E  2,13
+  211  meat_pink        #E08A8A  3,13
+  212  fat_white        #F0E4D8  4,13
+  213  fish_silver      #A8B4BC  5,13
+  214  ice_blue         #D8EEF6  6,13
+  215  crust_gold       #D89A48  7,13
+  216  crust_dark       #9A5E2A  8,13
+  217  dough            #EED8A8  9,13
+  218  pack_red         #D8443A  10,13
+  219  pack_yellow      #F2C83A  11,13
+  220  pack_blue        #3A78C8  12,13
+  221  pack_green       #4AA05A  13,13
+  222  pack_purple      #8A5AB8  14,13
+  223  pack_orange      #EE8A32  15,13
+  224  pack_pink        #E87AA8  0,14
+  225  shelf_grey       #CFD2D4  1,14
+  226  shelf_blue       #36628E  2,14
+  227  rack_blue        #2E5A9A  3,14
+  228  rack_orange      #E0742A  4,14
+  229  tile_cream       #E8E2D2  5,14
+  230  wall_mart_green  #2F8A4E  6,14
+  231  wall_mart_red    #B8382E  7,14
+  232  pallet_wood      #C49A62  8,14
+  233  wrap_clear       #D8E4E8  9,14
+  234  freezer_blue     #5A9AD0  10,14
+  235  price_tag_yellow #F4DC5A  11,14
+  236  mart_cream       #EFE6D2  12,14
+  237  patty_brown      #6A3C24  13,14
+  238  cheese_yellow    #F4B42A  14,14
+  239  choc_brown       #5C3622  15,14
+  240  coffee_dark      #3A2418  0,15
+  241  pie_cherry       #B01E2C  1,15
+  242  pie_blueberry    #3C3C7C  2,15
+  243  maple_amber      #C8782A  3,15
+  244  diner_teal_dark  #1F6E6E  4,15
+  245  vinyl_cherry     #B8283A  5,15
+  246  formica_grey     #CDD4D4  6,15
+  247  chrome_bright    #EEF2F6  7,15
+  248  gold_trim        #D8B048  8,15
+  249  vinyl_teal       #4CC0BC  9,15
+  250  sky_day_horizon  #CFE2F2  10,15
+  251  sky_day_zenith   #6FA6E0  11,15
+  252  sky_night_horizon #2F3C59  12,15
+  253  sky_night_mid    #1C2742  13,15
+  254  sky_night_zenith #0B1428  14,15
