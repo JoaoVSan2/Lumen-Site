@@ -8,7 +8,7 @@ import * as THREE from 'three';
 export function createTaikaCharacter() {
   const root = new THREE.Group();
   root.name = 'Taika_Solados';
-  root.userData = { characterId: 'solados-taika-001', version: '0.1.0', source: 'User-supplied character references', forward: '+Z', height: 2.0 };
+  root.userData = { characterId: 'solados-taika-001', version: '0.2.0', source: 'User-supplied character references', forward: '+Z', height: 2.08 };
 
   const material = (color, roughness = 0.88, metalness = 0) =>
     new THREE.MeshStandardMaterial({ color, roughness, metalness });
@@ -67,7 +67,7 @@ export function createTaikaCharacter() {
   // Boots, narrow trousers and legs.
   for (const side of [-1,1]) {
     const x = side * 0.105;
-    const leg = group(side < 0 ? 'leg-left' : 'leg-right', root, [x,0.82,0]);
+    const leg = group(side < 0 ? 'leg-left' : 'leg-right', root, [x,0.783,0]);
     add('trouser-leg', capsule(0.068,0.47), M.pants, leg, [0,-0.28,0], [1,1,0.92]);
     add('knee-fold', sphere, M.coatEdge, leg, [0,-0.12,0.056], [0.052,0.012,0.012]);
     const boot = group('boot', leg, [0,-0.68,0.035]);
@@ -133,10 +133,10 @@ export function createTaikaCharacter() {
   add('eye-right', sphere, M.white, head, [0.092,0.015,0.185], [0.055,0.031,0.025]);
   add('iris-left', sphere, M.eye, head, [-0.09,0.012,0.208], [0.019,0.022,0.012]);
   add('iris-right', sphere, M.eye, head, [0.094,0.012,0.208], [0.019,0.022,0.012]);
-  tube('eyebrow-left', [[-0.16,0.075,0.19],[-0.10,0.09,0.205],[-0.04,0.07,0.20]], 0.014, M.hair, head);
-  tube('eyebrow-right', [[0.04,0.07,0.20],[0.10,0.09,0.205],[0.16,0.075,0.19]], 0.014, M.hair, head);
+  tube('eyebrow-left', [[-0.16,0.075,0.19],[-0.10,0.035,0.205],[-0.04,0.07,0.20]], 0.016, M.hair, head);
+  tube('eyebrow-right', [[0.04,0.07,0.20],[0.10,0.035,0.205],[0.16,0.075,0.19]], 0.016, M.hair, head);
   add('nose', sphere, M.skinShade, head, [0,-0.045,0.205], [0.025,0.04,0.025]);
-  tube('mouth', [[-0.045,-0.13,0.17],[0,-0.14,0.18],[0.045,-0.13,0.17]], 0.007, M.hair, head);
+  tube('mouth', [[-0.045,-0.13,0.17],[0,-0.105,0.18],[0.045,-0.13,0.17]], 0.008, M.hair, head);
 
 
   // Small freckles visible around the mask, echoing the inked reference drawing.
