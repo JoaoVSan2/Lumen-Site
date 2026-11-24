@@ -8,7 +8,7 @@ import * as THREE from 'three';
 export function createTaikaCharacter() {
   const root = new THREE.Group();
   root.name = 'Taika_Solados';
-  root.userData = { characterId: 'solados-taika-001', version: '0.2.0', source: 'User-supplied character references', forward: '+Z', height: 2.08 };
+  root.userData = { characterId: 'solados-taika-001', version: '0.3.0', source: 'User-supplied character references', forward: '+Z', height: 2.08 };
 
   const material = (color, roughness = 0.88, metalness = 0) =>
     new THREE.MeshStandardMaterial({ color, roughness, metalness });
@@ -84,8 +84,24 @@ export function createTaikaCharacter() {
   add('high-neck', new THREE.CylinderGeometry(0.091,0.094,0.13,24), M.shirt, torso, [0,0.30,0.015]);
   add('neckline-metal', new THREE.TorusGeometry(0.09,0.008,8,28), M.silver, torso, [0,0.25,0.015], null, [Math.PI/2,0,0]);
 
-  // Long split-tail coat: front body, red piping and two flared tails.
-  add('coat-body', capsule(0.215,0.34), M.coat, torso, [0,-0.015,0.015], [1.08,1.18,0.94]);
+  // Long tailored coat: a continuous shaped shell replaces the old capsule torso.
+  // The changing radii create a broader shoulder line, fitted waist and flared hem.
+  const coatProfile = [
+    new THREE.Vector2(0.305,-0.79),
+    new THREE.Vector2(0.292,-0.70),
+    new THREE.Vector2(0.258,-0.48),
+    new THREE.Vector2(0.232,-0.22),
+    new THREE.Vector2(0.224,0.02),
+    new THREE.Vector2(0.245,0.22),
+    new THREE.Vector2(0.205,0.36),
+    new THREE.Vector2(0.145,0.39)
+  ];
+  const coatShell = new THREE.LatheGeometry(coatProfile, 40);
+  coatShell.scale(1, 1, 0.66);
+  add('coat-tailored-shell', coatShell, M.coat, torso, [0,-0.12,0.012]);
+  // Subtle tailoring seams follow the side contour instead of reading as hard primitive edges.
+  tube('coat-side-seam-left', [[-0.19,0.25,0.075],[-0.205,0.02,0.09],[-0.19,-0.28,0.095],[-0.245,-0.66,0.09]], 0.0045, M.hairLight, torso);
+  tube('coat-side-seam-right', [[0.19,0.25,0.075],[0.205,0.02,0.09],[0.19,-0.28,0.095],[0.245,-0.66,0.09]], 0.0045, M.hairLight, torso);
   shape('coat-left-tail', [[-0.19,0.12],[-0.02,0.13],[-0.055,-0.12],[-0.20,-0.67],[-0.34,-0.77],[-0.28,-0.38]], 0.035, M.coat, torso, [0,0,-0.035]);
   shape('coat-right-tail', [[0.02,0.13],[0.19,0.12],[0.28,-0.38],[0.34,-0.91],[0.20,-0.82],[0.055,-0.12]], 0.035, M.coat, torso, [0,0,-0.035]);
   shape('lining-left', [[-0.19,0.10],[-0.14,0.10],[-0.24,-0.58],[-0.31,-0.70],[-0.27,-0.35]], 0.009, M.lining, torso, [0,0,0.006]);
