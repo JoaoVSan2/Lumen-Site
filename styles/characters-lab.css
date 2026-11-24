@@ -28,7 +28,7 @@ h1 em{font-weight:400;color:#88a486;font-style:normal}
 .spec-list span{font-size:7px;font-weight:700;letter-spacing:.12em;color:#8a9b8d}
 .spec-list b{font-size:10px;font-weight:600;color:#496858;text-align:right}
 .palette{margin-top:28px}.swatches{display:flex;gap:8px;margin-top:12px}.swatches i{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.8);box-shadow:0 0 0 1px var(--line)}
-.skin{background:#c98f70}.shirt{background:#6d9c91}.pants{background:#526c78}.shoes{background:#e8e1d2}
+.hair{background:#211b1b}.coat{background:#171719}.lining{background:#4a101b}.mask{background:#eee9df}.glove{background:#eee9df}.boot{background:#100f10}
 .next-step{margin:26px 0 20px;padding:13px 14px;border-left:2px solid #91ae91;background:rgba(220,233,219,.42);color:#6d8375;font-size:10px;line-height:1.7}
 .next-step b{font-size:7px;letter-spacing:.15em;color:#567663}
 .back-link{margin-top:auto;color:#5d7d6b;text-decoration:none;font-size:10px;font-weight:700}
