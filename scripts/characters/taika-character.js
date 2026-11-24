@@ -51,6 +51,19 @@ export function createTaikaCharacter() {
     return add(name, geo, mat, parent, pos);
   };
 
+
+  const maskPatch = (name, points, holeCenter, parent) => {
+    const outer = new THREE.Shape();
+    outer.moveTo(points[0][0], points[0][1]);
+    for (let i=1;i<points.length;i++) outer.lineTo(points[i][0], points[i][1]);
+    outer.closePath();
+    const hole = new THREE.Path();
+    hole.absellipse(holeCenter[0], holeCenter[1], 0.056, 0.031, 0, Math.PI*2, true, 0);
+    outer.holes.push(hole);
+    const geo = new THREE.ExtrudeGeometry(outer, { depth: 0.014, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.004, bevelThickness: 0.004 });
+    return add(name, geo, M.mask, parent, [0,0,0.202]);
+  };
+
   // Boots, narrow trousers and legs.
   for (const side of [-1,1]) {
     const x = side * 0.105;
@@ -118,9 +131,19 @@ export function createTaikaCharacter() {
   add('nose', sphere, M.skinShade, head, [0,-0.045,0.205], [0.025,0.04,0.025]);
   tube('mouth', [[-0.045,-0.13,0.17],[0,-0.14,0.18],[0.045,-0.13,0.17]], 0.007, M.hair, head);
 
+
+  // Small freckles visible around the mask, echoing the inked reference drawing.
+  for (const side of [-1,1]) {
+    for (let i=0;i<4;i++) {
+      add('freckle', sphere, M.skinShade, head,
+        [side*(0.145 + (i%2)*0.022), -0.075 - Math.floor(i/2)*0.026, 0.168],
+        [0.007,0.007,0.004]);
+    }
+  }
+
   // White angular domino mask with red graphic edges, kept separate for customization.
-  shape('mask-left-white', [[-0.205,0.10],[-0.045,0.075],[-0.035,-0.015],[-0.11,-0.075],[-0.19,-0.02]], 0.012, M.mask, head, [0,0,0.202]);
-  shape('mask-right-white', [[0.045,0.075],[0.205,0.10],[0.19,-0.02],[0.11,-0.075],[0.035,-0.015]], 0.012, M.mask, head, [0,0,0.202]);
+  maskPatch('mask-left-white', [[-0.205,0.10],[-0.045,0.075],[-0.035,-0.015],[-0.11,-0.075],[-0.19,-0.02]], [-0.11,0.015], head);
+  maskPatch('mask-right-white', [[0.045,0.075],[0.205,0.10],[0.19,-0.02],[0.11,-0.075],[0.035,-0.015]], [0.11,0.015], head);
   tube('mask-red-left', [[-0.20,0.08,0.22],[-0.12,0.12,0.22],[-0.045,0.07,0.22],[-0.08,-0.04,0.22],[-0.18,-0.02,0.22]], 0.012, M.maskRed, head);
   tube('mask-red-right', [[0.20,0.08,0.22],[0.12,0.12,0.22],[0.045,0.07,0.22],[0.08,-0.04,0.22],[0.18,-0.02,0.22]], 0.012, M.maskRed, head);
   add('mask-center-bridge', new THREE.BoxGeometry(0.045,0.045,0.018), M.maskRed, head, [0,0.055,0.214], null, [0,0,Math.PI/4]);
