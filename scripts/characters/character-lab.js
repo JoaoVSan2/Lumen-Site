@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { createBaseCharacter } from './base-character.js';
+import { createTaikaCharacter } from './taika-character.js';
 
 const host = document.getElementById('character-canvas');
 if (!host) throw new Error('Character Lab canvas host not found.');
@@ -35,7 +35,7 @@ const fill = new THREE.DirectionalLight('#c5e4df', 1.0);
 fill.position.set(4, 2, -3);
 scene.add(fill);
 
-const character = createBaseCharacter();
+const character = createTaikaCharacter();
 const turntable = new THREE.Group();
 turntable.add(character);
 scene.add(turntable);
