@@ -6,9 +6,9 @@ if (!host) throw new Error('Character Lab canvas host not found.');
 
 const scene = new THREE.Scene();
 scene.background = null;
-const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 50);
+const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 50);
 camera.position.set(0, 1.18, 5.7);
-camera.lookAt(0, 1.02, 0);
+camera.lookAt(0, 1.08, 0);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
 const touch = matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
@@ -91,7 +91,7 @@ function resize() {
   const height = Math.max(1, host.clientHeight);
   renderer.setSize(width, height, false);
   camera.aspect = width / height;
-  camera.fov = width < 600 ? 39 : 34;
+  camera.fov = width < 600 ? 41 : 36;
   camera.position.z = (width < 600 ? 6.2 : 5.7) / zoom;
   camera.updateProjectionMatrix();
 }
@@ -105,7 +105,8 @@ function animate() {
   if (!dragging) targetRotation += 0.0018;
   turntable.rotation.y += (targetRotation - turntable.rotation.y) * 0.08;
   turntable.rotation.x += (targetTilt - turntable.rotation.x) * 0.08;
-  character.userData.rig.torsoPivot.scale.y = 1 + Math.sin(elapsed * 1.6) * 0.008;
+  character.userData.rig.torsoPivot.scale.y = 1 + Math.sin(elapsed * 1.6) * 0.003;
+  character.userData.rig.headPivot.rotation.z = Math.sin(elapsed * 0.9) * 0.008;
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }
