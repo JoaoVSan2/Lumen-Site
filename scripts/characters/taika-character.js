@@ -87,8 +87,8 @@ export function createTaikaCharacter() {
   // Long split-tail coat: front body, red piping and two flared tails.
   add('coat-body', capsule(0.215,0.34), M.coat, torso, [0,-0.015,0.015], [1.08,1.18,0.94]);
   shape('coat-left-tail', [[-0.19,0.12],[-0.02,0.13],[-0.055,-0.12],[-0.20,-0.67],[-0.34,-0.77],[-0.28,-0.38]], 0.035, M.coat, torso, [0,0,-0.035]);
-  shape('coat-right-tail', [[0.02,0.13],[0.19,0.12],[0.28,-0.38],[0.34,-0.77],[0.20,-0.67],[0.055,-0.12]], 0.035, M.coat, torso, [0,0,-0.035]);
-  shape('lining-left', [[-0.19,0.10],[-0.14,0.10],[-0.24,-0.58],[-0.31,-0.70],[-0.27,-0.35]], 0.009, M.lining, torso, [0,0,-0.073]);
+  shape('coat-right-tail', [[0.02,0.13],[0.19,0.12],[0.28,-0.38],[0.34,-0.91],[0.20,-0.82],[0.055,-0.12]], 0.035, M.coat, torso, [0,0,-0.035]);
+  shape('lining-left', [[-0.19,0.10],[-0.14,0.10],[-0.24,-0.58],[-0.31,-0.70],[-0.27,-0.35]], 0.009, M.lining, torso, [0,0,0.006]);
   shape('lining-right', [[0.14,0.10],[0.19,0.10],[0.27,-0.35],[0.31,-0.70],[0.24,-0.58]], 0.009, M.lining, torso, [0,0,-0.073]);
   // Red lapel outlines and front fasteners.
   tube('left-lapel-red', [[-0.19,0.29,0.105],[-0.10,0.23,0.19],[-0.04,0.12,0.205],[-0.12,-0.02,0.19]], 0.012, M.coatEdge, torso);
@@ -103,18 +103,25 @@ export function createTaikaCharacter() {
   tube('collar-red-left', [[-0.24,0.46,0.074],[-0.16,0.38,0.074],[-0.08,0.25,0.074]], 0.012, M.coatEdge, torso);
   tube('collar-red-right', [[0.24,0.46,0.074],[0.16,0.38,0.074],[0.08,0.25,0.074]], 0.012, M.coatEdge, torso);
 
-  // Sleeves, wide cuffs, hands and fingers.
+  // Sleeves, wide cuffs, hands and fingers. Taika's left hand rests near the coat pocket;
+  // the right arm opens outward in the characteristic presenting gesture.
   for (const side of [-1,1]) {
-    const arm = group(side < 0 ? 'arm-left' : 'arm-right', torso, [side*0.22,0.20,0]);
-    add('sleeve', capsule(0.075,0.29), M.coat, arm, [side*0.07,-0.16,0], [1,1.2,1]);
-    const cuff = add('wide-cuff', new THREE.CylinderGeometry(0.095,0.082,0.14,20), M.coat, arm, [side*0.11,-0.38,0], [1,1,0.9], [0,0,side*-0.12]);
-    add('cuff-red-edge', new THREE.TorusGeometry(0.087,0.009,7,20), M.coatEdge, arm, [side*0.11,-0.445,0], [1,1,0.9], [Math.PI/2,0,0]);
-    add('hand', sphere, M.glove, arm, [side*0.12,-0.52,0.018], [0.075,0.045,0.085]);
-    for (let f=0;f<4;f++) {
-      const fx = side*0.12 + (f-1.5)*0.032;
-      const finger = add('gloved-finger', capsule(0.012,0.055), M.glove, arm, [fx,-0.575,0.055], [1,1,1], [0,0,(f-1.5)*-0.12]);
+    const isOpenArm = side > 0;
+    const arm = group(side < 0 ? 'arm-left' : 'arm-right', torso, [side*0.22,0.20,isOpenArm ? 0 : 0.075]);
+    arm.rotation.z = isOpenArm ? 1.02 : 0.35;
+    add('sleeve', capsule(0.078,0.31), M.coat, arm, [side*0.07,-0.16,0], [1,1.2,1]);
+    add('wide-cuff', new THREE.CylinderGeometry(0.098,0.084,0.15,20), M.coat, arm, [side*0.11,-0.38,0], [1,1,0.9], [0,0,side*-0.12]);
+    add('cuff-red-edge', new THREE.TorusGeometry(0.089,0.008,7,20), M.coatEdge, arm, [side*0.11,-0.45,0], [1,1,0.9], [Math.PI/2,0,0]);
+    const handZ = isOpenArm ? 0.035 : 0.20;
+    add('hand', sphere, M.glove, arm, [side*0.12,-0.52,handZ], [0.078,0.045,0.09]);
+    for (let finger=0;finger<4;finger++) {
+      const spread = (finger-1.5)*0.036;
+      add('gloved-finger', capsule(0.012,0.065), M.glove, arm,
+        [side*0.12+spread,-0.585,handZ+0.04],
+        [1,1,1], [0,0,(finger-1.5)*-0.18]);
     }
-    add('thumb', capsule(0.014,0.035), M.glove, arm, [side*0.19,-0.535,0.04], null, [0,0,side*0.8]);
+    add('thumb', capsule(0.014,0.04), M.glove, arm,
+      [side*0.19,-0.535,handZ+0.025], null, [0,0,side*0.8]);
   }
 
   // Head and facial expression.
@@ -158,6 +165,13 @@ export function createTaikaCharacter() {
   curls.forEach((p,i) => {
     const size = 0.065 + (i%3)*0.008;
     add('hair-curl-'+i, sphere, i%4===0 ? M.hairLight : M.hair, head, p, [size*1.15,size,size]);
+    if (p[2] > 0.08) {
+      tube('curl-groove-'+i,
+        [[p[0]-size*0.42,p[1],p[2]+size*0.78],
+         [p[0]-size*0.05,p[1]+size*0.34,p[2]+size*0.94],
+         [p[0]+size*0.38,p[1]+size*0.08,p[2]+size*0.82]],
+        0.0038, M.hairLight, head);
+    }
   });
   // Sideburns frame the mask and keep the silhouette close to the drawing.
   add('sideburn-left', capsule(0.045,0.10), M.hair, head, [-0.22,-0.035,0.035], [1,1,0.8]);
@@ -167,6 +181,7 @@ export function createTaikaCharacter() {
   add('pendant-chain', new THREE.TorusGeometry(0.035,0.006,7,20), M.silver, torso, [0,0.245,0.10], null, [Math.PI/2,0,0]);
   add('pendant', new THREE.OctahedronGeometry(0.035,0), M.silver, torso, [0,0.19,0.115], [0.8,1.2,0.55]);
 
+  root.userData.rig = { torsoPivot: torso, headPivot: head };
   root.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   return root;
 }
