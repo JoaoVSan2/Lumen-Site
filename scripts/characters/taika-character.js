@@ -8,7 +8,7 @@ import * as THREE from 'three';
 export function createTaikaCharacter() {
   const root = new THREE.Group();
   root.name = 'Taika_Solados';
-  root.userData = { characterId: 'solados-taika-001', version: '0.3.0', source: 'User-supplied character references', forward: '+Z', height: 2.08 };
+  root.userData = { characterId: 'solados-taika-001', version: '0.4.0', source: 'User-supplied character references', forward: '+Z', height: 2.08 };
 
   const material = (color, roughness = 0.88, metalness = 0) =>
     new THREE.MeshStandardMaterial({ color, roughness, metalness });
@@ -119,25 +119,22 @@ export function createTaikaCharacter() {
   tube('collar-red-left', [[-0.24,0.46,0.074],[-0.16,0.38,0.074],[-0.08,0.25,0.074]], 0.012, M.coatEdge, torso);
   tube('collar-red-right', [[0.24,0.46,0.074],[0.16,0.38,0.074],[0.08,0.25,0.074]], 0.012, M.coatEdge, torso);
 
-  // Sleeves, wide cuffs, hands and fingers. Taika's left hand rests near the coat pocket;
-  // the right arm opens outward in the characteristic presenting gesture.
+  // Symmetrical T-pose: both arms extend horizontally from the shoulders.
+  // Keep the hand and finger geometry aligned along each arm's outward axis.
   for (const side of [-1,1]) {
-    const isOpenArm = side > 0;
-    const arm = group(side < 0 ? 'arm-left' : 'arm-right', torso, [side*0.22,0.20,isOpenArm ? 0 : 0.075]);
-    arm.rotation.z = isOpenArm ? 1.02 : 0.35;
-    add('sleeve', capsule(0.078,0.31), M.coat, arm, [side*0.07,-0.16,0], [1,1.2,1]);
-    add('wide-cuff', new THREE.CylinderGeometry(0.098,0.084,0.15,20), M.coat, arm, [side*0.11,-0.38,0], [1,1,0.9], [0,0,side*-0.12]);
-    add('cuff-red-edge', new THREE.TorusGeometry(0.089,0.008,7,20), M.coatEdge, arm, [side*0.11,-0.45,0], [1,1,0.9], [Math.PI/2,0,0]);
-    const handZ = isOpenArm ? 0.035 : 0.20;
-    add('hand', sphere, M.glove, arm, [side*0.12,-0.52,handZ], [0.078,0.045,0.09]);
+    const arm = group(side < 0 ? 'arm-left' : 'arm-right', torso, [side*0.22,0.20,0.025]);
+    arm.rotation.z = side * Math.PI / 2;
+    add('sleeve', capsule(0.078,0.31), M.coat, arm, [0,-0.16,0], [1,1.2,1]);
+    add('wide-cuff', new THREE.CylinderGeometry(0.098,0.084,0.15,20), M.coat, arm, [0,-0.38,0], [1,1,0.9]);
+    add('cuff-red-edge', new THREE.TorusGeometry(0.089,0.008,7,20), M.coatEdge, arm, [0,-0.45,0], [1,1,0.9], [Math.PI/2,0,0]);
+    add('hand', sphere, M.glove, arm, [0,-0.52,0.015], [0.078,0.045,0.09]);
     for (let finger=0;finger<4;finger++) {
       const spread = (finger-1.5)*0.036;
       add('gloved-finger', capsule(0.012,0.065), M.glove, arm,
-        [side*0.12+spread,-0.585,handZ+0.04],
-        [1,1,1], [0,0,(finger-1.5)*-0.18]);
+        [0,-0.585,spread+0.015], [1,1,1], [0,0,(finger-1.5)*-0.08]);
     }
     add('thumb', capsule(0.014,0.04), M.glove, arm,
-      [side*0.19,-0.535,handZ+0.025], null, [0,0,side*0.8]);
+      [side*0.055,-0.535,0.045], null, [0,0,side*0.8]);
   }
 
   // Head and facial expression.
