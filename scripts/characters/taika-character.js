@@ -10,9 +10,9 @@ export function createTaikaCharacter() {
   root.name = 'Taika_Solados';
   root.userData = {
     characterId: 'solados-taika-001',
-    version: '0.6.0',
+    version: '0.7.0',
     source: 'Original procedural model based on user-supplied Solados references',
-    style: 'soft organic low-poly game character',
+    style: 'rounded sculpted low-poly game character',
     forward: '+Z',
     height: 1.9
   };
@@ -124,13 +124,13 @@ export function createTaikaCharacter() {
     const shoulder = group(side < 0 ? 'arm-left' : 'arm-right', torso, [side * 0.255, 0.245, 0.015]);
     shoulder.rotation.z = side * Math.PI / 2;
     add('rounded-shoulder-cap', sphere, M.coat, shoulder, [0, -0.025, 0], [0.135, 0.14, 0.125]);
-    add('upper-sleeve', capsule(0.105, 0.22), M.coat, shoulder, [0, -0.17, 0], [1.12, 1.08, 1.06]);
-    add('elbow-volume', sphere, M.coat, shoulder, [0, -0.29, 0], [0.105, 0.105, 0.105]);
-    add('lower-sleeve', capsule(0.088, 0.12), M.coat, shoulder, [0, -0.37, 0], [1.08, 1, 1.04]);
-    add('cuff', capsule(0.092, 0.055), M.coatShade, shoulder, [0, -0.465, 0], [1.04, 1, 1]);
-    add('cuff-red-band', new THREE.TorusGeometry(0.09, 0.009, 8, 28), M.red, shoulder, [0, -0.49, 0], [1, 1, 0.95], [Math.PI / 2, 0, 0]);
-    add('rounded-glove-palm', sphere, M.glove, shoulder, [0, -0.55, 0.015], [0.09, 0.105, 0.10]);
-    add('thumb', capsule(0.026, 0.05), M.glove, shoulder, [side * 0.058, -0.54, 0.07], null, [0, 0, side * 0.75]);
+    add('upper-sleeve', sphere, M.coat, shoulder, [0, -0.145, 0], [0.125, 0.205, 0.115]);
+    add('elbow-volume', sphere, M.coat, shoulder, [0, -0.285, 0], [0.112, 0.12, 0.112]);
+    add('lower-sleeve', sphere, M.coat, shoulder, [0, -0.39, 0], [0.095, 0.16, 0.10]);
+    add('cuff', sphere, M.coatShade, shoulder, [0, -0.49, 0], [0.098, 0.065, 0.102]);
+    add('cuff-red-band', new THREE.TorusGeometry(0.083, 0.008, 8, 28), M.red, shoulder, [0, -0.49, 0], [1, 1, 0.92], [Math.PI / 2, 0, 0]);
+    add('rounded-glove-palm', sphere, M.glove, shoulder, [0, -0.555, 0.012], [0.071, 0.083, 0.078]);
+    add('thumb', sphere, M.glove, shoulder, [side * 0.047, -0.535, 0.055], [0.032, 0.043, 0.034]);
   }
 
   // Larger rounded head, a signature of the shared cute/stylized game language.
@@ -147,25 +147,26 @@ export function createTaikaCharacter() {
   tube('brow-right', [[0.045, 0.085, 0.20], [0.10, 0.065, 0.205], [0.16, 0.09, 0.19]], 0.012, M.hair, head);
 
   // Angular two-piece domino mask with bold red edge graphics.
-  panel('mask-left', [[-0.22, 0.105], [-0.045, 0.085], [-0.04, -0.025], [-0.12, -0.09], [-0.205, -0.035]], 0.018, M.mask, head, [0, 0, 0.19]);
-  panel('mask-right', [[0.045, 0.085], [0.22, 0.105], [0.205, -0.035], [0.12, -0.09], [0.04, -0.025]], 0.018, M.mask, head, [0, 0, 0.19]);
-  tube('mask-red-left', [[-0.205, 0.09, 0.225], [-0.12, 0.12, 0.23], [-0.045, 0.08, 0.23], [-0.09, -0.045, 0.23], [-0.19, -0.02, 0.225]], 0.012, M.maskRed, head);
-  tube('mask-red-right', [[0.205, 0.09, 0.225], [0.12, 0.12, 0.23], [0.045, 0.08, 0.23], [0.09, -0.045, 0.23], [0.19, -0.02, 0.225]], 0.012, M.maskRed, head);
-  add('mask-bridge', new THREE.BoxGeometry(0.045, 0.045, 0.022), M.maskRed, head, [0, 0.055, 0.23], null, [0, 0, Math.PI / 4]);
+  panel('mask-left', [[-0.235, 0.12], [-0.035, 0.105], [-0.035, -0.075], [-0.12, -0.145], [-0.215, -0.085]], 0.035, M.mask, head, [0, 0, 0.205]);
+  panel('mask-right', [[0.035, 0.105], [0.235, 0.12], [0.215, -0.085], [0.12, -0.145], [0.035, -0.075]], 0.035, M.mask, head, [0, 0, 0.205]);
+  tube('mask-red-left', [[-0.22, 0.10, 0.252], [-0.13, 0.125, 0.255], [-0.04, 0.085, 0.255], [-0.085, -0.09, 0.255], [-0.19, -0.055, 0.252]], 0.009, M.maskRed, head);
+  tube('mask-red-right', [[0.22, 0.10, 0.252], [0.13, 0.125, 0.255], [0.04, 0.085, 0.255], [0.085, -0.09, 0.255], [0.19, -0.055, 0.252]], 0.009, M.maskRed, head);
+  panel('mask-center-bridge', [[-0.035, 0.105], [0.035, 0.105], [0.045, -0.075], [0, -0.115], [-0.045, -0.075]], 0.025, M.mask, head, [0, 0, 0.215]);
 
   // One generous hair mass plus a controlled number of large sculptural curls.
   add('hair-main-volume', sphere, M.hair, head, [0, 0.205, -0.005], [0.315, 0.215, 0.255]);
   add('hair-back-volume', sphere, M.hair, head, [0, 0.045, -0.125], [0.275, 0.235, 0.19]);
   const curls = [
-    [-0.23, 0.25, 0.035], [-0.16, 0.35, 0.035], [-0.055, 0.39, 0.02],
-    [0.06, 0.39, 0.015], [0.17, 0.34, 0.03], [0.245, 0.24, 0.025],
-    [-0.24, 0.12, 0.07], [-0.17, 0.19, 0.18], [-0.06, 0.23, 0.205],
-    [0.07, 0.23, 0.205], [0.18, 0.18, 0.17], [0.245, 0.11, 0.07],
-    [-0.17, 0.30, -0.13], [-0.03, 0.36, -0.17], [0.12, 0.32, -0.14]
+    [-0.255, 0.23, 0.055], [-0.205, 0.34, 0.025], [-0.115, 0.405, 0.015],
+    [-0.005, 0.425, 0.015], [0.11, 0.40, 0.02], [0.21, 0.33, 0.035],
+    [0.265, 0.22, 0.055], [-0.27, 0.095, 0.075], [-0.205, 0.18, 0.19],
+    [-0.105, 0.245, 0.22], [0.015, 0.25, 0.23], [0.13, 0.225, 0.21],
+    [0.225, 0.16, 0.17], [0.27, 0.075, 0.08], [-0.22, 0.29, -0.13],
+    [-0.10, 0.37, -0.17], [0.04, 0.39, -0.18], [0.17, 0.32, -0.15]
   ];
   curls.forEach((p, i) => {
-    const s = 0.072 + (i % 3) * 0.006;
-    add('sculpted-curl', sphere, i % 4 === 0 ? M.hairAlt : M.hair, head, p, [s * 1.12, s, s]);
+    const s = 0.075 + (i % 3) * 0.007;
+    add('sculpted-curl', sphere, i % 4 === 0 ? M.hairAlt : M.hair, head, p, [s * 1.08, s, s * 0.96]);
   });
   add('sideburn-left', capsule(0.05, 0.11), M.hair, head, [-0.235, -0.055, 0.025], [1, 1, 0.9]);
   add('sideburn-right', capsule(0.05, 0.11), M.hair, head, [0.235, -0.055, 0.025], [1, 1, 0.9]);
