@@ -10,9 +10,9 @@ export function createTaikaCharacter() {
   root.name = 'Taika_Solados';
   root.userData = {
     characterId: 'solados-taika-001',
-    version: '0.5.0',
+    version: '0.6.0',
     source: 'Original procedural model based on user-supplied Solados references',
-    style: 'rounded stylized game avatar',
+    style: 'soft organic low-poly game character',
     forward: '+Z',
     height: 1.9
   };
@@ -67,38 +67,46 @@ export function createTaikaCharacter() {
     return add(name, geo, material, parent, position);
   };
 
-  // Compact legs and chunky boots: simple silhouettes, not segmented mannequin parts.
+  // Soft, compact trouser legs with broad knees and rounded boots.
   for (const side of [-1, 1]) {
-    const leg = group(side < 0 ? 'leg-left' : 'leg-right', root, [side * 0.115, 0.60, 0]);
-    add('trouser', capsule(0.105, 0.34), M.pants, leg, [0, -0.20, 0], [1, 1, 0.92]);
-    add('boot-shaft', capsule(0.105, 0.15), M.boot, leg, [0, -0.48, 0.015], [1, 1, 1]);
-    add('rounded-boot-toe', sphere, M.boot, leg, [0, -0.55, 0.095], [0.12, 0.085, 0.17]);
-    add('boot-sole', sphere, M.sole, leg, [0, -0.615, 0.09], [0.125, 0.022, 0.17]);
-    add('boot-buckle', new THREE.BoxGeometry(0.10, 0.025, 0.014), M.silver, leg, [0, -0.45, 0.11]);
+    const leg = group(side < 0 ? 'leg-left' : 'leg-right', root, [side * 0.12, 0.62, 0]);
+    add('upper-trouser-volume', sphere, M.pants, leg, [0, -0.10, 0], [0.115, 0.19, 0.112]);
+    add('lower-trouser-volume', capsule(0.095, 0.23), M.pants, leg, [0, -0.34, 0], [1.02, 1.05, 1.02]);
+    add('soft-knee-fold', sphere, M.coatShade, leg, [0, -0.24, 0.078], [0.075, 0.035, 0.018]);
+    add('boot-shaft', capsule(0.105, 0.16), M.boot, leg, [0, -0.51, 0.015], [1.08, 1, 1.04]);
+    add('rounded-boot-toe', sphere, M.boot, leg, [0, -0.575, 0.105], [0.135, 0.09, 0.18]);
+    add('boot-sole', sphere, M.sole, leg, [0, -0.635, 0.095], [0.14, 0.026, 0.18]);
+    add('boot-buckle', new THREE.BoxGeometry(0.095, 0.028, 0.018), M.silver, leg, [0, -0.48, 0.112], null, [0, 0, -side * 0.08]);
   }
 
   // A single broad coat silhouette with a soft waist and flared lower half.
   const torso = group('upper-body', root, [0, 1.02, 0]);
   const coatProfile = [
-    new THREE.Vector2(0.27, -0.72),
-    new THREE.Vector2(0.30, -0.62),
-    new THREE.Vector2(0.265, -0.35),
-    new THREE.Vector2(0.225, -0.08),
-    new THREE.Vector2(0.245, 0.16),
-    new THREE.Vector2(0.29, 0.30),
-    new THREE.Vector2(0.20, 0.37),
-    new THREE.Vector2(0.12, 0.38)
+    new THREE.Vector2(0.31, -0.74),
+    new THREE.Vector2(0.335, -0.68),
+    new THREE.Vector2(0.315, -0.56),
+    new THREE.Vector2(0.285, -0.34),
+    new THREE.Vector2(0.255, -0.12),
+    new THREE.Vector2(0.265, 0.08),
+    new THREE.Vector2(0.30, 0.24),
+    new THREE.Vector2(0.275, 0.34),
+    new THREE.Vector2(0.18, 0.40),
+    new THREE.Vector2(0.12, 0.40)
   ];
   const coatGeo = new THREE.LatheGeometry(coatProfile, 48);
-  coatGeo.scale(1, 1, 0.72);
+  coatGeo.scale(1, 1, 0.78);
   add('one-piece-coat-body', coatGeo, M.coat, torso, [0, -0.05, 0]);
+  add('rounded-shoulder-yoke', sphere, M.coatShade, torso, [0, 0.275, -0.005], [0.305, 0.145, 0.225]);
+  add('soft-waist-shaping', sphere, M.coat, torso, [0, -0.22, 0], [0.267, 0.205, 0.205]);
   add('inner-shirt', capsule(0.17, 0.24), M.shirt, torso, [0, 0.18, 0], [1, 1.08, 0.78]);
 
   // Split tails expose the burgundy lining as a deliberate graphic accent.
-  panel('left-coat-tail', [[-0.22, -0.30], [-0.015, -0.27], [-0.045, -0.53], [-0.20, -0.79], [-0.34, -0.77], [-0.29, -0.48]], 0.035, M.coatShade, torso, [0, 0, -0.025]);
-  panel('right-coat-tail', [[0.015, -0.27], [0.22, -0.30], [0.29, -0.48], [0.34, -0.77], [0.20, -0.79], [0.045, -0.53]], 0.035, M.coatShade, torso, [0, 0, -0.025]);
-  panel('left-lining', [[-0.19, -0.42], [-0.13, -0.39], [-0.23, -0.69], [-0.30, -0.75], [-0.27, -0.53]], 0.012, M.lining, torso, [0, 0, 0.012]);
-  panel('right-lining', [[0.13, -0.39], [0.19, -0.42], [0.27, -0.53], [0.30, -0.75], [0.23, -0.69]], 0.012, M.lining, torso, [0, 0, -0.065]);
+  panel('left-coat-tail', [[-0.22, -0.29], [-0.012, -0.27], [-0.045, -0.52], [-0.19, -0.78], [-0.33, -0.76], [-0.30, -0.48]], 0.055, M.coatShade, torso, [0, 0, -0.035]);
+  panel('right-coat-tail', [[0.012, -0.27], [0.22, -0.29], [0.30, -0.48], [0.33, -0.76], [0.19, -0.78], [0.045, -0.52]], 0.055, M.coatShade, torso, [0, 0, -0.035]);
+  panel('left-lining', [[-0.19, -0.40], [-0.13, -0.38], [-0.23, -0.68], [-0.30, -0.74], [-0.27, -0.52]], 0.018, M.lining, torso, [0, 0, 0.026]);
+  panel('right-lining', [[0.13, -0.38], [0.19, -0.40], [0.27, -0.52], [0.30, -0.74], [0.23, -0.68]], 0.018, M.lining, torso, [0, 0, -0.078]);
+  tube('left-coat-edge', [[-0.30, -0.46, 0.065], [-0.27, -0.61, 0.065], [-0.20, -0.76, 0.06]], 0.009, M.red, torso);
+  tube('right-coat-edge', [[0.30, -0.46, 0.065], [0.27, -0.61, 0.065], [0.20, -0.76, 0.06]], 0.009, M.red, torso);
 
   // Raised collar and bold lapels; larger, cleaner shapes read at game-camera distance.
   panel('collar-left', [[-0.07, 0.30], [-0.24, 0.46], [-0.34, 0.39], [-0.22, 0.20], [-0.08, 0.19]], 0.05, M.coatShade, torso, [0, 0, 0.035]);
@@ -113,18 +121,22 @@ export function createTaikaCharacter() {
 
   // T-pose arms use broad rounded sleeves and mitten-like gloves.
   for (const side of [-1, 1]) {
-    const shoulder = group(side < 0 ? 'arm-left' : 'arm-right', torso, [side * 0.235, 0.22, 0.015]);
+    const shoulder = group(side < 0 ? 'arm-left' : 'arm-right', torso, [side * 0.255, 0.245, 0.015]);
     shoulder.rotation.z = side * Math.PI / 2;
-    add('rounded-sleeve', capsule(0.095, 0.31), M.coat, shoulder, [0, -0.17, 0], [1.05, 1.15, 1]);
-    add('cuff', capsule(0.09, 0.055), M.coatShade, shoulder, [0, -0.37, 0], [1.04, 1, 1]);
-    add('cuff-red-band', new THREE.TorusGeometry(0.088, 0.009, 8, 28), M.red, shoulder, [0, -0.405, 0], [1, 1, 0.95], [Math.PI / 2, 0, 0]);
-    add('mitten-glove', sphere, M.glove, shoulder, [0, -0.49, 0.015], [0.085, 0.105, 0.095]);
-    add('thumb', capsule(0.025, 0.045), M.glove, shoulder, [side * 0.055, -0.49, 0.07], null, [0, 0, side * 0.75]);
+    add('rounded-shoulder-cap', sphere, M.coat, shoulder, [0, -0.025, 0], [0.135, 0.14, 0.125]);
+    add('upper-sleeve', capsule(0.105, 0.22), M.coat, shoulder, [0, -0.17, 0], [1.12, 1.08, 1.06]);
+    add('elbow-volume', sphere, M.coat, shoulder, [0, -0.29, 0], [0.105, 0.105, 0.105]);
+    add('lower-sleeve', capsule(0.088, 0.12), M.coat, shoulder, [0, -0.37, 0], [1.08, 1, 1.04]);
+    add('cuff', capsule(0.092, 0.055), M.coatShade, shoulder, [0, -0.465, 0], [1.04, 1, 1]);
+    add('cuff-red-band', new THREE.TorusGeometry(0.09, 0.009, 8, 28), M.red, shoulder, [0, -0.49, 0], [1, 1, 0.95], [Math.PI / 2, 0, 0]);
+    add('rounded-glove-palm', sphere, M.glove, shoulder, [0, -0.55, 0.015], [0.09, 0.105, 0.10]);
+    add('thumb', capsule(0.026, 0.05), M.glove, shoulder, [side * 0.058, -0.54, 0.07], null, [0, 0, side * 0.75]);
   }
 
   // Larger rounded head, a signature of the shared cute/stylized game language.
   const head = group('head', root, [0, 1.58, 0.015]);
-  add('head-shape', sphere, M.skin, head, [0, 0, 0], [0.255, 0.285, 0.225]);
+  add('head-shape', sphere, M.skin, head, [0, 0, 0], [0.265, 0.29, 0.235]);
+  add('soft-jaw', sphere, M.skin, head, [0, -0.105, 0.045], [0.205, 0.145, 0.19]);
   add('ear-left', sphere, M.skin, head, [-0.245, -0.025, 0], [0.065, 0.082, 0.052]);
   add('ear-right', sphere, M.skin, head, [0.245, -0.025, 0], [0.065, 0.082, 0.052]);
 
@@ -142,7 +154,8 @@ export function createTaikaCharacter() {
   add('mask-bridge', new THREE.BoxGeometry(0.045, 0.045, 0.022), M.maskRed, head, [0, 0.055, 0.23], null, [0, 0, Math.PI / 4]);
 
   // One generous hair mass plus a controlled number of large sculptural curls.
-  add('hair-main-volume', sphere, M.hair, head, [0, 0.205, -0.005], [0.30, 0.205, 0.245]);
+  add('hair-main-volume', sphere, M.hair, head, [0, 0.205, -0.005], [0.315, 0.215, 0.255]);
+  add('hair-back-volume', sphere, M.hair, head, [0, 0.045, -0.125], [0.275, 0.235, 0.19]);
   const curls = [
     [-0.23, 0.25, 0.035], [-0.16, 0.35, 0.035], [-0.055, 0.39, 0.02],
     [0.06, 0.39, 0.015], [0.17, 0.34, 0.03], [0.245, 0.24, 0.025],
