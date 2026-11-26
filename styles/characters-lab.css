@@ -43,3 +43,6 @@ h1 em{font-weight:400;color:#88a486;font-style:normal}
 .zoom-controls button:active{transform:scale(.94)}
 .zoom-controls button:last-child{font-size:19px}
 @media(max-width:480px){.zoom-controls{right:12px;top:52%}.zoom-controls button{width:36px;height:36px}}
+
+.zoom-controls button[aria-pressed="true"]{background:#456756;color:#fff;border-color:#456756}
+.zoom-controls button:last-child{font-size:16px;font-weight:700}
