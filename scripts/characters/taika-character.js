@@ -10,7 +10,7 @@ export function createTaikaCharacter() {
   root.name = 'Taika_Solados';
   root.userData = {
     characterId: 'solados-taika-001',
-    version: '0.7.0',
+    version: '0.8.0',
     source: 'Original procedural model based on user-supplied Solados references',
     style: 'rounded sculpted low-poly game character',
     forward: '+Z',
@@ -131,6 +131,10 @@ export function createTaikaCharacter() {
     add('cuff-red-band', new THREE.TorusGeometry(0.083, 0.008, 8, 28), M.red, shoulder, [0, -0.49, 0], [1, 1, 0.92], [Math.PI / 2, 0, 0]);
     add('rounded-glove-palm', sphere, M.glove, shoulder, [0, -0.555, 0.012], [0.071, 0.083, 0.078]);
     add('thumb', sphere, M.glove, shoulder, [side * 0.047, -0.535, 0.055], [0.032, 0.043, 0.034]);
+    // Three subtle rounded finger forms add hand readability without breaking the mitten-like style.
+    for (const fingerX of [-0.038, 0, 0.038]) {
+      add('glove-finger', sphere, M.glove, shoulder, [fingerX, -0.625, 0.035], [0.021, 0.047, 0.024]);
+    }
   }
 
   // Larger rounded head, a signature of the shared cute/stylized game language.
