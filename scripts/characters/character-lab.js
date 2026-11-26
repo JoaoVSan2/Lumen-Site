@@ -62,6 +62,7 @@ let targetRotation = 0;
 let targetTilt = 0;
 let zoom = 1;
 let baseCameraDistance = 5.7;
+let smallScalePreview = false;
 const minZoom = 0.65;
 const maxZoom = 2.4;
 const pointers = new Map();
@@ -72,6 +73,19 @@ function updateZoom(nextZoom) {
   zoom = THREE.MathUtils.clamp(nextZoom, minZoom, maxZoom);
   camera.position.z = baseCameraDistance / zoom;
   camera.updateProjectionMatrix();
+}
+
+function setSmallScalePreview(enabled) {
+  smallScalePreview = enabled;
+  character.scale.setScalar(enabled ? 0.52 : 1);
+  const button = document.getElementById('small-scale-preview');
+  if (button) {
+    button.setAttribute('aria-pressed', String(enabled));
+    button.textContent = enabled ? '1:1' : '½';
+    button.title = enabled
+      ? 'Voltar à escala normal'
+      : 'Visualizar personagem em escala reduzida';
+  }
 }
 
 function setPinchOrigin() {
@@ -142,6 +156,9 @@ renderer.domElement.addEventListener('wheel', event => {
 document.getElementById('zoom-in')?.addEventListener('click', () => updateZoom(zoom * 1.18));
 document.getElementById('zoom-out')?.addEventListener('click', () => updateZoom(zoom / 1.18));
 document.getElementById('zoom-reset')?.addEventListener('click', () => updateZoom(1));
+document.getElementById('small-scale-preview')?.addEventListener('click', () => {
+  setSmallScalePreview(!smallScalePreview);
+});
 
 function resize() {
   const width = Math.max(1, host.clientWidth);
