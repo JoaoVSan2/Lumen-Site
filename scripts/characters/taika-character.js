@@ -10,7 +10,7 @@ export function createTaikaCharacter() {
   root.name = 'Taika_Solados';
   root.userData = {
     characterId: 'solados-taika-001',
-    version: '1.0.0',
+    version: '1.1.0',
     source: 'Original procedural model based on user-supplied Solados references',
     style: 'rounded sculpted low-poly game character',
     forward: '+Z',
@@ -107,8 +107,8 @@ export function createTaikaCharacter() {
   // Broad wine-colored inner facings remain visible even at reduced character scale.
   panel('left-inner-facing', [[-0.205, 0.23], [-0.105, 0.19], [-0.075, -0.12], [-0.20, -0.48], [-0.285, -0.70], [-0.31, -0.58], [-0.235, -0.30]], 0.024, M.lining, torso, [0, 0, 0.105]);
   panel('right-inner-facing', [[0.105, 0.19], [0.205, 0.23], [0.235, -0.30], [0.31, -0.58], [0.285, -0.70], [0.20, -0.48], [0.075, -0.12]], 0.024, M.lining, torso, [0, 0, 0.105]);
-  panel('left-lining-tail', [[-0.205, -0.36], [-0.145, -0.34], [-0.17, -0.43], [-0.205, -0.54], [-0.255, -0.65], [-0.285, -0.70], [-0.27, -0.57], [-0.235, -0.45]], 0.014, M.lining, torso, [0, 0, 0.132]);
-  panel('right-lining-tail', [[0.145, -0.34], [0.205, -0.36], [0.235, -0.45], [0.27, -0.57], [0.285, -0.70], [0.255, -0.65], [0.205, -0.54], [0.17, -0.43]], 0.014, M.lining, torso, [0, 0, 0.132]);
+  panel('left-lining-tail', [[-0.235, -0.35], [-0.12, -0.33], [-0.14, -0.49], [-0.205, -0.61], [-0.275, -0.70], [-0.295, -0.66], [-0.265, -0.53], [-0.245, -0.43]], 0.014, M.lining, torso, [0, 0, 0.132]);
+  panel('right-lining-tail', [[0.12, -0.33], [0.235, -0.35], [0.245, -0.43], [0.265, -0.53], [0.295, -0.66], [0.275, -0.70], [0.205, -0.61], [0.14, -0.49]], 0.014, M.lining, torso, [0, 0, 0.132]);
   tube('left-coat-edge', [[-0.30, -0.43, 0.17], [-0.27, -0.60, 0.17], [-0.20, -0.77, 0.15]], 0.011, M.red, torso);
   tube('right-coat-edge', [[0.30, -0.43, 0.17], [0.27, -0.60, 0.17], [0.20, -0.77, 0.15]], 0.011, M.red, torso);
   tube('coat-hem-red', [[-0.30, -0.765, 0.04], [-0.16, -0.79, 0.075], [0, -0.795, 0.08], [0.16, -0.79, 0.075], [0.30, -0.765, 0.04]], 0.009, M.red, torso);
@@ -126,8 +126,11 @@ export function createTaikaCharacter() {
   // Back yoke and center seam give the rear coat a deliberate silhouette.
   panel('back-yoke-raised', [[-0.255, 0.19], [-0.18, 0.255], [0, 0.285], [0.18, 0.255], [0.255, 0.19], [0.18, 0.145], [0, 0.17], [-0.18, 0.145]], 0.018, M.coatShade, torso, [0, 0, -0.205]);
   tube('back-yoke-seam', [[-0.245, 0.19, -0.19], [-0.12, 0.235, -0.207], [0, 0.255, -0.211], [0.12, 0.235, -0.207], [0.245, 0.19, -0.19]], 0.008, M.red, torso);
-  add('back-tail-volume', sphere, M.coatShade, torso, [0, -0.49, -0.155], [0.205, 0.285, 0.055]);
-  tube('back-center-seam', [[0, 0.15, -0.212], [0, -0.16, -0.214], [0, -0.47, -0.205], [0, -0.75, -0.15]], 0.009, M.coatShade, torso);
+  add('back-tail-volume', sphere, M.coatShade, torso, [0, -0.49, -0.155], [0.235, 0.30, 0.075]);
+  panel('back-tail-shaped-panel', [[-0.19, -0.27], [-0.225, -0.42], [-0.205, -0.66], [-0.14, -0.77], [0, -0.79], [0.14, -0.77], [0.205, -0.66], [0.225, -0.42], [0.19, -0.27]], 0.018, M.coatShade, torso, [0, 0, -0.215]);
+  tube('back-center-seam', [[0, 0.15, -0.215], [0, -0.16, -0.226], [0, -0.47, -0.232], [0, -0.75, -0.20]], 0.009, M.coat, torso);
+  tube('back-tail-side-seam-left', [[-0.19, -0.31, -0.218], [-0.205, -0.49, -0.225], [-0.16, -0.70, -0.222]], 0.006, M.coat, torso);
+  tube('back-tail-side-seam-right', [[0.19, -0.31, -0.218], [0.205, -0.49, -0.225], [0.16, -0.70, -0.222]], 0.006, M.coat, torso);
   panel('back-vent-lining', [[-0.035, -0.53], [0.035, -0.53], [0.075, -0.67], [0.105, -0.755], [0.055, -0.775], [0, -0.75], [-0.055, -0.775], [-0.105, -0.755], [-0.075, -0.67]], 0.012, M.lining, torso, [0, 0, -0.213]);
 
   for (let i = 0; i < 3; i++) {
@@ -139,10 +142,10 @@ export function createTaikaCharacter() {
     const shoulder = group(side < 0 ? 'arm-left' : 'arm-right', torso, [side * 0.255, 0.245, 0.015]);
     shoulder.rotation.z = side * Math.PI / 2;
     add('rounded-shoulder-cap', sphere, M.coat, shoulder, [0, -0.035, 0], [0.145, 0.15, 0.13]);
-    add('continuous-sleeve-core', capsule(0.102, 0.43), M.coat, shoulder, [0, -0.265, 0], [1.16, 1.0, 1.08]);
-    add('upper-sleeve-volume', sphere, M.coat, shoulder, [0, -0.145, 0], [0.125, 0.19, 0.12]);
-    add('soft-elbow-volume', sphere, M.coat, shoulder, [0, -0.31, 0], [0.116, 0.115, 0.112]);
-    add('lower-sleeve-volume', sphere, M.coat, shoulder, [0, -0.405, 0], [0.105, 0.13, 0.105]);
+    add('continuous-sleeve-core', capsule(0.108, 0.48), M.coat, shoulder, [0, -0.285, 0], [1.12, 1.0, 1.06]);
+    add('rounded-upper-sleeve-blend', sphere, M.coat, shoulder, [0, -0.145, 0], [0.132, 0.17, 0.125]);
+    add('soft-elbow-transition', sphere, M.coat, shoulder, [0, -0.315, 0], [0.113, 0.105, 0.108]);
+    add('tapered-forearm-blend', sphere, M.coat, shoulder, [0, -0.425, 0], [0.098, 0.135, 0.10]);
     add('cuff', sphere, M.coatShade, shoulder, [0, -0.49, 0], [0.098, 0.065, 0.102]);
     add('cuff-red-band', new THREE.TorusGeometry(0.083, 0.008, 8, 28), M.red, shoulder, [0, -0.49, 0], [1, 1, 0.92], [Math.PI / 2, 0, 0]);
     add('rounded-glove-palm', sphere, M.glove, shoulder, [0, -0.555, 0.012], [0.071, 0.083, 0.078]);
@@ -171,7 +174,10 @@ export function createTaikaCharacter() {
   panel('mask-right', [[0.035, 0.105], [0.235, 0.12], [0.215, -0.085], [0.12, -0.145], [0.035, -0.075]], 0.035, M.mask, head, [0, 0, 0.205]);
   tube('mask-red-left', [[-0.22, 0.10, 0.252], [-0.13, 0.125, 0.255], [-0.04, 0.085, 0.255], [-0.085, -0.09, 0.255], [-0.19, -0.055, 0.252]], 0.009, M.maskRed, head);
   tube('mask-red-right', [[0.22, 0.10, 0.252], [0.13, 0.125, 0.255], [0.04, 0.085, 0.255], [0.085, -0.09, 0.255], [0.19, -0.055, 0.252]], 0.009, M.maskRed, head);
-  panel('mask-center-bridge', [[-0.035, 0.105], [0.035, 0.105], [0.045, -0.075], [0, -0.115], [-0.045, -0.075]], 0.035, M.mask, head, [0, 0, 0.222]);
+  panel('mask-center-bridge', [[-0.045, 0.11], [0.045, 0.11], [0.075, -0.09], [0, -0.155], [-0.075, -0.09]], 0.052, M.mask, head, [0, 0, 0.222]);
+  panel('mask-cheek-wrap-left', [[-0.215, -0.055], [-0.15, -0.13], [-0.075, -0.155], [-0.035, -0.105], [-0.12, -0.19], [-0.205, -0.145]], 0.026, M.mask, head, [0, 0, 0.19]);
+  panel('mask-cheek-wrap-right', [[0.15, -0.13], [0.215, -0.055], [0.205, -0.145], [0.12, -0.19], [0.035, -0.105], [0.075, -0.155]], 0.026, M.mask, head, [0, 0, 0.19]);
+  tube('mask-underface-contour', [[-0.19, -0.13, 0.238], [-0.10, -0.18, 0.245], [0, -0.195, 0.25], [0.10, -0.18, 0.245], [0.19, -0.13, 0.238]], 0.012, M.maskRed, head);
   panel('mask-red-relief-left', [[-0.225, 0.105], [-0.145, 0.132], [-0.075, 0.095], [-0.105, 0.045], [-0.205, 0.055]], 0.012, M.maskRed, head, [0, 0, 0.246]);
   panel('mask-red-relief-right', [[0.145, 0.132], [0.225, 0.105], [0.205, 0.055], [0.105, 0.045], [0.075, 0.095]], 0.012, M.maskRed, head, [0, 0, 0.246]);
   panel('mask-side-fin-left', [[-0.225, 0.085], [-0.265, 0.13], [-0.255, -0.055], [-0.205, -0.09]], 0.026, M.mask, head, [0, 0, 0.19]);
@@ -181,11 +187,10 @@ export function createTaikaCharacter() {
   add('hair-main-volume', sphere, M.hair, head, [0, 0.205, -0.005], [0.315, 0.215, 0.255]);
   add('hair-back-volume', sphere, M.hair, head, [0, 0.045, -0.125], [0.275, 0.235, 0.19]);
   const curls = [
-    [-0.235, 0.245, 0.035], [-0.16, 0.345, 0.015], [-0.055, 0.39, 0.005],
-    [0.065, 0.385, 0.008], [0.17, 0.33, 0.02], [0.235, 0.235, 0.035],
-    [-0.235, 0.105, 0.055], [-0.155, 0.205, 0.175], [-0.045, 0.245, 0.205],
-    [0.075, 0.24, 0.205], [0.18, 0.19, 0.16], [0.235, 0.085, 0.06],
-    [-0.15, 0.31, -0.145], [0.015, 0.345, -0.16], [0.16, 0.29, -0.14]
+    [-0.205, 0.255, 0.045], [-0.105, 0.355, 0.025], [0.025, 0.385, 0.02],
+    [0.15, 0.325, 0.035], [0.22, 0.205, 0.045],
+    [-0.205, 0.105, 0.075], [-0.12, 0.22, 0.18], [0.015, 0.255, 0.205],
+    [0.15, 0.205, 0.17], [-0.10, 0.30, -0.14], [0.08, 0.325, -0.15]
   ];
   curls.forEach((p, i) => {
     const s = 0.078 + (i % 3) * 0.008;
