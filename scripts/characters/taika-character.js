@@ -10,7 +10,7 @@ export function createTaikaCharacter() {
   root.name = 'Taika_Solados';
   root.userData = {
     characterId: 'solados-taika-001',
-    version: '0.8.0',
+    version: '0.9.0',
     source: 'Original procedural model based on user-supplied Solados references',
     style: 'rounded sculpted low-poly game character',
     forward: '+Z',
@@ -100,23 +100,36 @@ export function createTaikaCharacter() {
   add('soft-waist-shaping', sphere, M.coat, torso, [0, -0.22, 0], [0.267, 0.205, 0.205]);
   add('inner-shirt', capsule(0.17, 0.24), M.shirt, torso, [0, 0.18, 0], [1, 1.08, 0.78]);
 
-  // Split tails expose the burgundy lining as a deliberate graphic accent.
-  panel('left-coat-tail', [[-0.22, -0.29], [-0.012, -0.27], [-0.045, -0.52], [-0.19, -0.78], [-0.33, -0.76], [-0.30, -0.48]], 0.055, M.coatShade, torso, [0, 0, -0.035]);
-  panel('right-coat-tail', [[0.012, -0.27], [0.22, -0.29], [0.30, -0.48], [0.33, -0.76], [0.19, -0.78], [0.045, -0.52]], 0.055, M.coatShade, torso, [0, 0, -0.035]);
-  panel('left-lining', [[-0.19, -0.40], [-0.13, -0.38], [-0.23, -0.68], [-0.30, -0.74], [-0.27, -0.52]], 0.018, M.lining, torso, [0, 0, 0.026]);
-  panel('right-lining', [[0.13, -0.38], [0.19, -0.40], [0.27, -0.52], [0.30, -0.74], [0.23, -0.68]], 0.018, M.lining, torso, [0, 0, -0.078]);
-  tube('left-coat-edge', [[-0.30, -0.46, 0.065], [-0.27, -0.61, 0.065], [-0.20, -0.76, 0.06]], 0.009, M.red, torso);
-  tube('right-coat-edge', [[0.30, -0.46, 0.065], [0.27, -0.61, 0.065], [0.20, -0.76, 0.06]], 0.009, M.red, torso);
+  // Open-front coat panels make the burgundy lining readable from the front and sides.
+  panel('left-coat-tail', [[-0.22, -0.24], [-0.025, -0.25], [-0.045, -0.54], [-0.19, -0.79], [-0.34, -0.77], [-0.30, -0.47]], 0.065, M.coatShade, torso, [0, 0, -0.025]);
+  panel('right-coat-tail', [[0.025, -0.25], [0.22, -0.24], [0.30, -0.47], [0.34, -0.77], [0.19, -0.79], [0.045, -0.54]], 0.065, M.coatShade, torso, [0, 0, -0.025]);
 
-  // Raised collar and bold lapels; larger, cleaner shapes read at game-camera distance.
-  panel('collar-left', [[-0.07, 0.30], [-0.24, 0.46], [-0.34, 0.39], [-0.22, 0.20], [-0.08, 0.19]], 0.05, M.coatShade, torso, [0, 0, 0.035]);
-  panel('collar-right', [[0.07, 0.30], [0.24, 0.46], [0.34, 0.39], [0.22, 0.20], [0.08, 0.19]], 0.05, M.coatShade, torso, [0, 0, 0.035]);
-  tube('collar-red-left', [[-0.24, 0.43, 0.09], [-0.16, 0.35, 0.10], [-0.09, 0.23, 0.11]], 0.012, M.red, torso);
-  tube('collar-red-right', [[0.24, 0.43, 0.09], [0.16, 0.35, 0.10], [0.09, 0.23, 0.11]], 0.012, M.red, torso);
-  tube('lapel-left', [[-0.19, 0.26, 0.17], [-0.10, 0.18, 0.205], [-0.045, 0.06, 0.20], [-0.12, -0.10, 0.17]], 0.014, M.red, torso);
-  tube('lapel-right', [[0.19, 0.26, 0.17], [0.10, 0.18, 0.205], [0.045, 0.06, 0.20], [0.12, -0.10, 0.17]], 0.014, M.red, torso);
+  // Broad wine-colored inner facings remain visible even at reduced character scale.
+  panel('left-inner-facing', [[-0.205, 0.23], [-0.105, 0.19], [-0.075, -0.12], [-0.20, -0.48], [-0.285, -0.70], [-0.31, -0.58], [-0.235, -0.30]], 0.024, M.lining, torso, [0, 0, 0.105]);
+  panel('right-inner-facing', [[0.105, 0.19], [0.205, 0.23], [0.235, -0.30], [0.31, -0.58], [0.285, -0.70], [0.20, -0.48], [0.075, -0.12]], 0.024, M.lining, torso, [0, 0, 0.105]);
+  panel('left-lining-tail', [[-0.205, -0.38], [-0.135, -0.34], [-0.23, -0.69], [-0.30, -0.75], [-0.275, -0.53]], 0.018, M.lining, torso, [0, 0, 0.145]);
+  panel('right-lining-tail', [[0.135, -0.34], [0.205, -0.38], [0.275, -0.53], [0.30, -0.75], [0.23, -0.69]], 0.018, M.lining, torso, [0, 0, 0.145]);
+  tube('left-coat-edge', [[-0.30, -0.43, 0.17], [-0.27, -0.60, 0.17], [-0.20, -0.77, 0.15]], 0.011, M.red, torso);
+  tube('right-coat-edge', [[0.30, -0.43, 0.17], [0.27, -0.60, 0.17], [0.20, -0.77, 0.15]], 0.011, M.red, torso);
+  tube('coat-hem-red', [[-0.30, -0.765, 0.04], [-0.16, -0.79, 0.075], [0, -0.795, 0.08], [0.16, -0.79, 0.075], [0.30, -0.765, 0.04]], 0.009, M.red, torso);
+
+  // Taller folded collar with a visible burgundy inner surface.
+  panel('collar-left', [[-0.065, 0.29], [-0.255, 0.53], [-0.365, 0.43], [-0.245, 0.18], [-0.075, 0.17]], 0.065, M.coatShade, torso, [0, 0, 0.045]);
+  panel('collar-right', [[0.065, 0.29], [0.255, 0.53], [0.365, 0.43], [0.245, 0.18], [0.075, 0.17]], 0.065, M.coatShade, torso, [0, 0, 0.045]);
+  panel('collar-lining-left', [[-0.235, 0.445], [-0.16, 0.39], [-0.095, 0.235], [-0.18, 0.235]], 0.018, M.lining, torso, [0, 0, 0.118]);
+  panel('collar-lining-right', [[0.235, 0.445], [0.16, 0.39], [0.095, 0.235], [0.18, 0.235]], 0.018, M.lining, torso, [0, 0, 0.118]);
+  tube('collar-red-left', [[-0.255, 0.50, 0.13], [-0.17, 0.39, 0.145], [-0.09, 0.23, 0.15]], 0.014, M.red, torso);
+  tube('collar-red-right', [[0.255, 0.50, 0.13], [0.17, 0.39, 0.145], [0.09, 0.23, 0.15]], 0.014, M.red, torso);
+  tube('lapel-left', [[-0.205, 0.25, 0.19], [-0.12, 0.15, 0.215], [-0.055, 0.015, 0.215], [-0.13, -0.16, 0.18]], 0.016, M.red, torso);
+  tube('lapel-right', [[0.205, 0.25, 0.19], [0.12, 0.15, 0.215], [0.055, 0.015, 0.215], [0.13, -0.16, 0.18]], 0.016, M.red, torso);
+
+  // Back yoke and center seam give the rear coat a deliberate silhouette.
+  tube('back-yoke-seam', [[-0.245, 0.20, -0.185], [-0.12, 0.25, -0.205], [0, 0.27, -0.21], [0.12, 0.25, -0.205], [0.245, 0.20, -0.185]], 0.012, M.coatShade, torso);
+  tube('back-center-seam', [[0, 0.18, -0.205], [0, -0.18, -0.205], [0, -0.48, -0.19], [0, -0.76, -0.14]], 0.009, M.coatShade, torso);
+  panel('back-vent-lining', [[-0.045, -0.48], [0.045, -0.48], [0.12, -0.77], [-0.12, -0.77]], 0.014, M.lining, torso, [0, 0, -0.205]);
+
   for (let i = 0; i < 3; i++) {
-    add('coat-fastener', new THREE.SphereGeometry(0.018, 16, 12), M.silver, torso, [0, -0.04 - i * 0.105, 0.205]);
+    add('coat-fastener', new THREE.SphereGeometry(0.018, 16, 12), M.silver, torso, [0, -0.04 - i * 0.105, 0.225]);
   }
 
   // T-pose arms use broad rounded sleeves and mitten-like gloves.
@@ -124,9 +137,9 @@ export function createTaikaCharacter() {
     const shoulder = group(side < 0 ? 'arm-left' : 'arm-right', torso, [side * 0.255, 0.245, 0.015]);
     shoulder.rotation.z = side * Math.PI / 2;
     add('rounded-shoulder-cap', sphere, M.coat, shoulder, [0, -0.025, 0], [0.135, 0.14, 0.125]);
-    add('upper-sleeve', sphere, M.coat, shoulder, [0, -0.145, 0], [0.125, 0.205, 0.115]);
-    add('elbow-volume', sphere, M.coat, shoulder, [0, -0.285, 0], [0.112, 0.12, 0.112]);
-    add('lower-sleeve', sphere, M.coat, shoulder, [0, -0.39, 0], [0.095, 0.16, 0.10]);
+    add('upper-sleeve', sphere, M.coat, shoulder, [0, -0.145, 0], [0.135, 0.205, 0.12]);
+    add('elbow-volume', sphere, M.coat, shoulder, [0, -0.285, 0], [0.118, 0.125, 0.115]);
+    add('lower-sleeve', sphere, M.coat, shoulder, [0, -0.39, 0], [0.108, 0.16, 0.108]);
     add('cuff', sphere, M.coatShade, shoulder, [0, -0.49, 0], [0.098, 0.065, 0.102]);
     add('cuff-red-band', new THREE.TorusGeometry(0.083, 0.008, 8, 28), M.red, shoulder, [0, -0.49, 0], [1, 1, 0.92], [Math.PI / 2, 0, 0]);
     add('rounded-glove-palm', sphere, M.glove, shoulder, [0, -0.555, 0.012], [0.071, 0.083, 0.078]);
